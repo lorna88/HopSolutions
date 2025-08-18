@@ -1,7 +1,9 @@
-from django.contrib.auth.forms import UserCreationForm
+
 from django.views.generic import CreateView
+
+from .forms import UserRegistrationForm
 
 
 class UserCreateView(CreateView):
-    form_class = UserCreationForm
+    form_class = UserRegistrationForm
     template_name = 'users/register.html'

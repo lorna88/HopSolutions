@@ -7,7 +7,7 @@ from .models import User
 class UserRegistrationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = ('email', 'Username', 'first_name', 'last_name', 'password1', 'password2')
+        fields = ('email', 'username', 'first_name', 'last_name', 'password1', 'password2')
 
     def clean_email(self):
         email = self.cleaned_data.get('email')

@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (localStorage.getItem('isLoggedIn') === 'true') {
             document.body.classList.add('user-logged-in');
         } else {
-            document.body.classList.remove('user-logged-in');
+            document.body.classList .remove('user-logged-in');
         }
     }
     if (loginForm) {
@@ -15,14 +15,14 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             localStorage.setItem('isLoggedIn', 'true');
             const nextUrl = new URLSearchParams(window.location.search).get('next');
-            window.location.href = nextUrl || 'home.html';
+            window.location.href = nextUrl || '/users/home';
         });
     }
     if (logoutButton) {
         logoutButton.addEventListener('click', function(e) {
             e.preventDefault();
             localStorage.removeItem('isLoggedIn');
-            window.location.href = 'home.html';
+            window.location.href = '/users/home';
         });
     }
     checkLoginStatus();

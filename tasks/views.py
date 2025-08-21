@@ -6,3 +6,4 @@ from .models import Task
 class TaskDetailView(DetailView):
     model = Task
     template_name = 'tasks/task-details.html'
+    slug_field = 'slug'

@@ -2,3 +2,51 @@
 
 {% load static %}
 {% block content %}
+
+<!-- Main Content -->
+<main class="page-product">
+  <div class="container">
+    <div class="review-card">
+
+    <!-- Task Category Section -->
+    <section class="product-details-section">
+      <div class="review-rating">
+        <span class="author-name"># {{ task.category }}</span>
+      </div>
+    </section>
+
+    <!-- Task Info Section -->
+    <section class="product-details-section">
+      <div class="product-info-column">
+        <div class="product-title-price">
+          <h1 class="product-name">{{ task.name }}</h1>
+          <div class="price-section">
+            <span class="price-tag">per 1 lb</span>
+          </div>
+        </div>
+        <div class="product-description">{{ task.comment }}
+        </div>
+        <div class="review-rating">
+          <span class="author-name">{{ task.date }}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Subtasks -->
+    <section class="accordion-section">
+      <div class="accordion-item">
+        <div class="accordion-title">
+          <h3>Subtasks</h3>
+          <i class="fa-solid fa-chevron-down accordion-icon"></i>
+        </div>
+        <div class="accordion-content">
+
+        </div>
+      </div>
+    </section>
+
+    </div>
+  </div>
+</main>
+
+{% endblock %}

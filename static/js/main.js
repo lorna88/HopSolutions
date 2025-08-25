@@ -15,14 +15,14 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             localStorage.setItem('isLoggedIn', 'true');
             const nextUrl = new URLSearchParams(window.location.search).get('next');
-            window.location.href = nextUrl || '/users/home';
+            window.location.href = nextUrl || '/home';
         });
     }
     if (logoutButton) {
         logoutButton.addEventListener('click', function(e) {
             e.preventDefault();
             localStorage.removeItem('isLoggedIn');
-            window.location.href = '/users/home';
+            window.location.href = '/home';
         });
     }
     checkLoginStatus();

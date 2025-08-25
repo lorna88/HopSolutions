@@ -9,8 +9,5 @@ class UserCreateView(CreateView):
     template_name = 'users/register.html'
     success_url = reverse_lazy('users:login')
 
-class HomeView(TemplateView):
-    template_name = 'users/home.html'
-
 class AccountView(TemplateView):
     template_name = 'users/account.html'

@@ -1,18 +1,24 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.urls import reverse
 from django.utils.text import slugify
 
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True, blank=True)
 
     class Meta:
         verbose_name = 'category'
         verbose_name_plural = 'categories'
 
     def get_absolute_url(self):
-        return f'tasks/category/{self.slug}/'
+        return reverse('tasks:category', kwargs={'slug':self.slug})
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -32,7 +38,7 @@ class Task(models.Model):
         verbose_name_plural = 'tasks'
 
     def get_absolute_url(self):
-        return f'tasks/{self.slug}/'
+        return reverse('tasks:task-detail', kwargs={'slug':self.slug})
 
     def save(self, *args, **kwargs):
         if not self.slug:

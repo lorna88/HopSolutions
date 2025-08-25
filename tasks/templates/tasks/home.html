@@ -68,21 +68,25 @@
             </div>
 
             <div class="pagination">
-                <a href="#" class="pagination__link pagination__link--prev">
+                {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}" class="pagination__link pagination__link--prev">
                     <i class="fa-solid fa-arrow-left"></i>
                     <span>Previous</span>
                 </a>
+                {% endif %}
                 <div class="pagination-list">
-                    <a href="#" class="pagination__link active">1</a>
-                    <a href="#" class="pagination__link">2</a>
-                    <a href="#" class="pagination__link">3</a>
-                    <span class="pagination__dots">...</span>
-                    <a href="#" class="pagination__link">20</a>
+                    <a href="#" class="pagination__link active">{{ page_obj.number }}</a>
+<!--                    <a href="#" class="pagination__link">2</a>-->
+<!--                    <a href="#" class="pagination__link">3</a>-->
+<!--                    <span class="pagination__dots">...</span>-->
+<!--                    <a href="#" class="pagination__link">20</a>-->
                 </div>
-                <a href="#" class="pagination__link pagination__link--next">
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="pagination__link pagination__link--next">
                     <span>Next</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </a>
+                {% endif %}
             </div>
         </section>
     </div>

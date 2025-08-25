@@ -88,3 +88,8 @@ MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+TASKS_QUERY_MAP = {
+    'date_asc': 'date',
+    'date_desc': '-date',
+}

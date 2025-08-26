@@ -31,12 +31,65 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Logic for the Main Page (home.html) ---
     const homePageContent = document.querySelector('.main-content-grid');
     if (homePageContent) {
+        const keywordsList = document.querySelector('.keywords-list');
+        const checkboxes = document.querySelectorAll('.checkbox-group input[type="checkbox"]');
+
+        function checkboxChangeHandler(event) {
+            const keyword = this.dataset.keyword;
+            if (this.checked) {
+                if (!document.querySelector(`.keyword-tag[data-keyword="${keyword}"]`)) {
+                    const newTag = document.createElement('span');
+                    newTag.className = 'keyword-tag';
+                    newTag.setAttribute('data-keyword', keyword);
+                    newTag.innerHTML = `${keyword} <i class="fa-solid fa-xmark remove-keyword-icon"></i>`;
+                    keywordsList.appendChild(newTag);
+                }
+            } else {
+                const tagToRemove = document.querySelector(`.keyword-tag[data-keyword="${keyword}"]`);
+                if (tagToRemove) {
+                    tagToRemove.remove();
+                }
+            }
+        }
+
+        function updateHomePageContent() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const categories = urlParams.get('categories');
+            const q = urlParams.get('q');
+            const sort = urlParams.get('sort');
+
+            checkboxes.forEach(checkbox => {
+                if (categories && categories.includes(checkbox.dataset.keyword)) {
+                    checkbox.checked = true;
+                    checkboxChangeHandler.call(checkbox)
+                }
+            });
+
+            if (q) {
+                const searchInput = document.querySelector('.search-input');
+                if (searchInput) {
+                    searchInput.value = q
+                }
+            }
+
+            if (sort) {
+                const activeSortButton = document.querySelector(`.sort-options .sort-button[data-sort="${sort}"]`);
+                if (activeSortButton) {
+                    activeSortButton.classList.add('active-sort');
+                }
+            }
+        }
+        updateHomePageContent();
+
         // 1. Sort Options Logic
         const sortButtons = document.querySelectorAll('.sort-options .sort-button');
         sortButtons.forEach(button => {
             button.addEventListener('click', function() {
                 sortButtons.forEach(btn => btn.classList.remove('active-sort'));
-                this.classList.add('active-sort');
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.set('sort', this.dataset.sort);
+                urlParams.set('page', 1);
+                window.location.href = `${window.location.pathname}?` + urlParams.toString();
             });
         });
 
@@ -54,29 +107,26 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // 3. Filter Logic (Keywords and Checkboxes)
-        const keywordsList = document.querySelector('.keywords-list');
-        const checkboxes = document.querySelectorAll('.checkbox-group input[type="checkbox"]');
-
-        if (keywordsList && checkboxes.length > 0) {
-
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    const keyword = this.dataset.keyword;
-                    if (this.checked) {
-                        if (!document.querySelector(`.keyword-tag[data-keyword="${keyword}"]`)) {
-                            const newTag = document.createElement('span');
-                            newTag.className = 'keyword-tag';
-                            newTag.setAttribute('data-keyword', keyword);
-                            newTag.innerHTML = `${keyword} <i class="fa-solid fa-xmark remove-keyword-icon"></i>`;
-                            keywordsList.appendChild(newTag);
-                        }
-                    } else {
-                        const tagToRemove = document.querySelector(`.keyword-tag[data-keyword="${keyword}"]`);
-                        if (tagToRemove) {
-                            tagToRemove.remove();
-                        }
+        const filterButton = document.querySelector('#filter-button');
+        if (filterButton) {
+            filterButton.addEventListener('click', function() {
+                const cats = [];
+                checkboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        cats.push(checkbox.dataset.keyword);
                     }
                 });
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has('page')) {urlParams.delete('page');}
+                urlParams.set('categories', cats);
+
+                window.location.href = `${window.location.pathname}?` + urlParams.toString();
+            });
+        }
+
+        if (keywordsList && checkboxes.length > 0) {
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', checkboxChangeHandler);
             });
 
             keywordsList.addEventListener('click', function(event) {
@@ -90,6 +140,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     keywordTag.remove();
                 }
+            });
+        }
+
+        // 4. Search Logic
+        const searchInput = document.querySelector('.search-input');
+        if (searchInput) {
+            const searchButton = document.querySelector('.search-button');
+            searchButton.addEventListener('click', function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.set('q', searchInput.value);
+                urlParams.set('page', 1);
+                window.location.href = `${window.location.pathname}?` + urlParams.toString();
             });
         }
     }

@@ -1,14 +1,15 @@
 from django.db.models import Q
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, UpdateView
 
 from config.settings import TASKS_QUERY_MAP
+from .forms import TaskForm
 from .models import Task, Category
 
-
-class TaskDetailView(DetailView):
+class TaskDetailView(UpdateView):
     model = Task
     template_name = 'tasks/task-details.html'
     slug_field = 'slug'
+    form_class = TaskForm
 
 class TaskListView(ListView):
     template_name = 'tasks/home.html'

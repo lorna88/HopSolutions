@@ -268,7 +268,26 @@ header {
     user-select: none;
 }
 
+.checkbox-task {
+    display: block;
+    position: relative;
+    padding-left: 28px;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1.4;
+    color: var(--black-main);
+    user-select: none;
+}
+
 .checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkbox-task-input {
     position: absolute;
     opacity: 0;
     cursor: pointer;
@@ -293,6 +312,15 @@ header {
     border-color: var(--green);
 }
 
+.checkbox-task-input:checked ~ .checkmark {
+    background-color: var(--green);
+    border-color: var(--green);
+}
+
+.checkbox-task-input ~ .checkmark {
+    top: 10px;
+}
+
 .checkmark:after {
     font-family: "Font Awesome 6 Free";
     font-weight: 900;
@@ -307,6 +335,10 @@ header {
 }
 
 .checkbox-container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.checkbox-task-input:checked ~ .checkmark:after {
     display: block;
 }
 
@@ -659,6 +691,14 @@ footer {
     box-shadow: 0 0 0 3px rgba(2, 84, 45, 0.2);
 }
 
+.InputTask {
+    background-color: var(--background-default);
+    border: none;
+}
+
+.InputTask:focus {
+    outline: none;
+}
 
 .CheckboxField {
     width: 100%;
@@ -883,7 +923,7 @@ body.user-logged-in .header__user-actions {
     color: var(--black-main);
 }
 
-.price-section {
+.tag-section {
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -939,6 +979,8 @@ body.user-logged-in .header__user-actions {
 
 /* --- Accordion Section  --- */
 .accordion-section {
+    margin-top: 24px;
+    margin-bottom: 24px;
 }
 
 .accordion-item {
@@ -1021,7 +1063,10 @@ body.user-logged-in .header__user-actions {
     border-radius: 8px;
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 24px;
+    width: 800px;
+    margin-left: 250px;
 }
 
 .review-rating {

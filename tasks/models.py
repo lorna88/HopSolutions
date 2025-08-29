@@ -26,12 +26,12 @@ class Category(models.Model):
 class Task(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True, blank=True)
+    description = models.TextField(null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     date = models.DateField(null=True, blank=True)
     is_completed = models.BooleanField(default=False)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    comment = models.TextField(null=True, blank=True)
 
     class Meta:
         verbose_name = 'task'

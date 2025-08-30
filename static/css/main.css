@@ -692,11 +692,21 @@ footer {
 }
 
 .InputTask {
+    background-color: var(--background-grey);
+    border: none;
+    width: 355px;
+}
+
+.InputTask:focus {
+    outline: none;
+}
+
+.InputTaskCard {
     background-color: var(--background-default);
     border: none;
 }
 
-.InputTask:focus {
+.InputTaskCard:focus {
     outline: none;
 }
 
@@ -1261,7 +1271,7 @@ body.user-logged-in .header__user-actions {
 }
 
 .cart-item__quantity-selector {
-    width: 102px;
+    width: 402px;
     height: 40px;
     padding: 12px;
     background-color: var(--background-grey);

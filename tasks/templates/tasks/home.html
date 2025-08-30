@@ -57,18 +57,30 @@
             </div>
 
             <div class="product-grid">
-                {% for task in tasks %}
-                <a href="{% url 'tasks:task-detail' task.slug %}" class="product-card-link">
-                    <div class="product-card">
-                        <div class="product-card__info">
-                            <h4 class="product-card__name">{{ task.name }}</h4>
-                            <p class="product-card__price">{{ task.date }}</p>
-                            <p class="product-card__description">{{ task.comment|truncatechars:70 }}</p>
+                {% for category in categories %}
+                <div class="product-card">
+                    <h3 class="section-title">{{ category.name }}</h3>
+                    {% for task in category.tasks.all %}
+                    <a href="{% url 'tasks:task-detail' task.slug %}" class="product-card-link">
+                        <div class="product-card">
+                            <div class="product-card__info">
+                                <h4 class="product-card__name">{{ task.name }}</h4>
+                                <p class="product-card__price">{{ task.date }}</p>
+                                <p class="product-card__description">{{ task.description|truncatechars:70 }}</p>
+                            </div>
                         </div>
-                    </div>
-                </a>
+                    </a>
+                    {% endfor %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="cart-item__quantity-selector">
+                            {{ form.name }}
+                            <button type="submit" class="quantity-btn-cart"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                    </form>
+                </div>
                 {% empty %}
-                    <p>No tasks found.</p>
+                    <p>No categories found.</p>
                 {% endfor %}
             </div>
 

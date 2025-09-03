@@ -1,10 +1,13 @@
 from django.db.models import Q
+from django.shortcuts import redirect
 from django.template.context_processors import request
 from django.views import View
-from django.views.generic import DetailView, ListView, UpdateView, CreateView
+from django.views.generic import DetailView, ListView, UpdateView, CreateView, TemplateView
 from rest_framework.reverse import reverse_lazy
+from traitlets import Undefined
 
 from config.settings import TASKS_QUERY_MAP
+from users.models import User
 from .forms import TaskUpdateForm, TaskCreateForm
 from .models import Task, Category
 
@@ -59,15 +62,41 @@ class TaskDetailView(UpdateView):
     slug_field = 'slug'
     form_class = TaskUpdateForm
 
+#
+# class TaskCreateView(CreateView):
+#     model = Task
+#     template_name = 'tasks/home.html'
+#     form_class = TaskCreateForm
+#     success_url = reverse_lazy('tasks:home')
 
-class TaskCreateView(CreateView):
-    model = Task
+
+class TaskCreateView(TemplateView):
     template_name = 'tasks/home.html'
-    form_class = TaskCreateForm
     success_url = reverse_lazy('tasks:home')
+
+    def post(self, request, *args, **kwargs):
+        name = request.POST.get("name", "New task")
+
+        category_slug = request.POST.get("category", Undefined)
+        category = Category.objects.get(slug=category_slug)
+
+        user_email = request.POST.get("user", Undefined)
+        # user = User.objects.get(email=user_email)
+        user = request.user
+        task = Task(name=name, category=category, user=user)
+
+        # category = Category.objects.get(slug='today')
+        # task.category = category
+        # user = User.objects.get(id=1)
+        # task.user = user
+
+        task.save()
+        return redirect('tasks:home')
+
 
 class TaskView(View):
     def get(self, request, *args, **kwargs):
+        print(request.user)
         view = TaskListView.as_view()
         return view(request, *args, **kwargs)
 

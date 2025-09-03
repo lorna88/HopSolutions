@@ -74,7 +74,9 @@
                     <form method="post">
                         {% csrf_token %}
                         <div class="cart-item__quantity-selector">
-                            {{ form.name }}
+                            <input type="text" name="name" class="InputTask" placeholder="Add new task">
+                            <input type="hidden" name="category" value="{{ category.slug }}">
+                            <input type="hidden" name="user" value="{{ user.email }}">
                             <button type="submit" class="quantity-btn-cart"><i class="fa-solid fa-plus"></i></button>
                         </div>
                     </form>

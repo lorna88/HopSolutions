@@ -12,17 +12,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     if (loginForm) {
         loginForm.addEventListener('submit', function(e) {
-            e.preventDefault();
+//            e.preventDefault();
             localStorage.setItem('isLoggedIn', 'true');
-            const nextUrl = new URLSearchParams(window.location.search).get('next');
-            window.location.href = nextUrl || '/home';
+//            const nextUrl = new URLSearchParams(window.location.search).get('next');
+//            window.location.href = nextUrl || '/home';
         });
     }
     if (logoutButton) {
         logoutButton.addEventListener('click', function(e) {
-            e.preventDefault();
+//            e.preventDefault();
             localStorage.removeItem('isLoggedIn');
-            window.location.href = '/home';
+//            window.location.href = '/home';
         });
     }
     checkLoginStatus();

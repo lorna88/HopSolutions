@@ -71,12 +71,11 @@
                         </div>
                     </a>
                     {% endfor %}
-                    <form method="post">
+                    <form action="{% url 'tasks:task-create' %}" method="post">
                         {% csrf_token %}
                         <div class="cart-item__quantity-selector">
                             <input type="text" name="name" class="InputTask" placeholder="Add new task">
                             <input type="hidden" name="category" value="{{ category.slug }}">
-                            <input type="hidden" name="user" value="{{ user.email }}">
                             <button type="submit" class="quantity-btn-cart"><i class="fa-solid fa-plus"></i></button>
                         </div>
                     </form>

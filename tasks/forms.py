@@ -1,6 +1,5 @@
 from django import forms
 
-from users.models import User
 from .models import Task, Category
 
 
@@ -20,28 +19,3 @@ class TaskUpdateForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'rows': 6, 'placeholder': 'Description', 'class': 'InputTaskCard product-description'}),
             'date': TaskDateInput(attrs={'class': 'InputTaskCard form-control author-name'}),
         }
-
-class TaskCreateForm(forms.ModelForm):
-    # def __init__(self, category, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-    #     self.category = category
-
-    class Meta:
-        model = Task
-        fields = ('name',)
-
-        widgets = {
-            'name': forms.TextInput(attrs={'class': 'InputTask', 'placeholder': 'Add new task'}),
-            # 'category': forms.HiddenInput(),
-            # 'user': forms.HiddenInput(),
-        }
-
-    def save(self, commit=True):
-        task = super().save(commit=False)
-        category = Category.objects.get(slug='tomorrow')
-        task.category = category
-        user = User.objects.get(id=1)
-        task.user = user
-        if commit:
-            task.save()
-        return task

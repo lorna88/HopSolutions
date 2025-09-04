@@ -19,3 +19,12 @@ class TaskUpdateForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'rows': 6, 'placeholder': 'Description', 'class': 'InputTaskCard product-description'}),
             'date': TaskDateInput(attrs={'class': 'InputTaskCard form-control author-name'}),
         }
+
+class CategoryCreateForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ('name',)
+
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'InputTask', 'placeholder': 'Add category'}),
+        }

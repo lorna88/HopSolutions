@@ -1271,7 +1271,7 @@ body.user-logged-in .header__user-actions {
 }
 
 .cart-item__quantity-selector {
-    width: 402px;
+    width: 100%;
     height: 40px;
     padding: 12px;
     background-color: var(--background-grey);

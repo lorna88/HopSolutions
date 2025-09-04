@@ -37,6 +37,16 @@
             <div class="sidebar__section">
                 <button class="button button--primary" id="filter-button">Filter</button>
             </div>
+
+            <div class="sidebar__section">
+                <form action="{% url 'tasks:category-create' %}" method="post">
+                    {% csrf_token %}
+                    <div class="cart-item__quantity-selector">
+                        {{ form.name }}
+                        <button type="submit" class="quantity-btn-cart"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </form>
+            </div>
         </aside>
 
         <section class="products-area product-grid-section">
@@ -47,6 +57,11 @@
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </button>
                 </div>
+<!--                <div>-->
+<!--                    <form method="post">-->
+<!--                        <button type="submit" class="button button&#45;&#45;secondary button&#45;&#45;full-width" id="logout-button">Logout</button>-->
+<!--                    </form>-->
+<!--                </div>-->
                 <div class="sort-options">
                     {% for item in sort_options %}
                     <button class="sort-button" data-sort="{{ item.key }}">

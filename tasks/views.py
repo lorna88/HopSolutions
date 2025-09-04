@@ -2,12 +2,12 @@ from django.db.models import Q
 from django.shortcuts import redirect
 from django.template.context_processors import request
 from django.views import View
-from django.views.generic import ListView, UpdateView
+from django.views.generic import ListView, UpdateView, CreateView
 from rest_framework.reverse import reverse_lazy
 from traitlets import Undefined
 
 from config.settings import TASKS_QUERY_MAP
-from .forms import TaskUpdateForm
+from .forms import TaskUpdateForm, CategoryCreateForm
 from .models import Task, Category
 
 
@@ -15,7 +15,7 @@ class TaskListView(ListView):
     template_name = 'tasks/home.html'
     model = Category
     context_object_name = 'categories'
-    paginate_by = 2
+    paginate_by = 3
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -25,6 +25,8 @@ class TaskListView(ListView):
             {'key': 'date_asc', 'label': 'Date ascending'},
             {'key': 'date_desc', 'label': 'Date descending'},
         ]
+
+        context['form'] = CategoryCreateForm()
 
         return context
 
@@ -67,3 +69,8 @@ class TaskCreateView(View):
         task = Task(name=name, category=category, user=user)
         task.save()
         return redirect('tasks:home')
+
+class CategoryCreateView(CreateView):
+    model = Category
+    form_class = CategoryCreateForm
+    success_url = reverse_lazy('tasks:home')

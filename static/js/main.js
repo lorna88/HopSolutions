@@ -154,6 +154,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.location.href = `${window.location.pathname}?` + urlParams.toString();
             });
         }
+
+        // Setting the status of completed tasks
+        const complete_checkboxes = document.querySelectorAll('.checkbox-task-complete')
+        complete_checkboxes.forEach(checkbox => {
+            checkbox.checked = checkbox.value === 'True';
+            checkbox.addEventListener('click', function(event) {
+                event.stopPropagation();
+            });
+            checkbox.addEventListener('change', function(event) {
+                this.form.submit();
+            });
+        });
     }
 
     // --- Logic for Product Detail Pages (product-*.html) ---

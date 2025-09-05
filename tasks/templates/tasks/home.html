@@ -57,11 +57,6 @@
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </button>
                 </div>
-<!--                <div>-->
-<!--                    <form method="post">-->
-<!--                        <button type="submit" class="button button&#45;&#45;secondary button&#45;&#45;full-width" id="logout-button">Logout</button>-->
-<!--                    </form>-->
-<!--                </div>-->
                 <div class="sort-options">
                     {% for item in sort_options %}
                     <button class="sort-button" data-sort="{{ item.key }}">
@@ -79,7 +74,17 @@
                     <a href="{% url 'tasks:task-detail' task.slug %}" class="product-card-link">
                         <div class="product-card">
                             <div class="product-card__info">
-                                <h4 class="product-card__name">{{ task.name }}</h4>
+                                <form action="{% url 'tasks:task-complete' task.slug %}" method="post">
+                                  {% csrf_token %}
+                                  <div class="CheckboxField">
+                                    <label class="checkbox-task">
+                                        <input type="checkbox" name="is_completed" class="checkbox-task-input checkbox-task-complete" value="{{ task.is_completed }}">
+                                        <h4 class="product-card__name">{{ task.name }}</h4>
+                                        <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                  <button type="submit" hidden></button>
+                                </form>
                                 <p class="product-card__price">{{ task.date }}</p>
                                 <p class="product-card__description">{{ task.description|truncatechars:70 }}</p>
                             </div>

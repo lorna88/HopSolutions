@@ -1,6 +1,5 @@
 from django.db.models import Q
 from django.shortcuts import redirect
-from django.template.context_processors import request
 from django.views import View
 from django.views.generic import ListView, UpdateView, CreateView
 from rest_framework.reverse import reverse_lazy
@@ -57,6 +56,16 @@ class TaskDetailView(UpdateView):
     template_name = 'tasks/task-details.html'
     slug_field = 'slug'
     form_class = TaskUpdateForm
+
+
+class TaskCompleteView(View):
+    def post(self, request, slug, *args, **kwargs):
+        task = Task.objects.get(slug=slug)
+        is_completed = request.POST.get("is_completed") is not None
+
+        task.is_completed = is_completed
+        task.save()
+        return redirect('tasks:home')
 
 
 class TaskCreateView(View):

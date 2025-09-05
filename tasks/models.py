@@ -7,6 +7,7 @@ from django.utils.text import slugify
 class Category(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True, blank=True)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'category'

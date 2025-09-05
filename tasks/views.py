@@ -74,3 +74,7 @@ class CategoryCreateView(CreateView):
     model = Category
     form_class = CategoryCreateForm
     success_url = reverse_lazy('tasks:home')
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)

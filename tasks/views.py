@@ -79,6 +79,13 @@ class TaskCreateView(View):
         task.save()
         return redirect('tasks:home')
 
+
+class TaskDeleteView(DeleteView):
+    model = Task
+    slug_field = 'slug'
+    success_url = reverse_lazy("tasks:home")
+
+
 class CategoryCreateView(CreateView):
     model = Category
     form_class = CategoryCreateForm

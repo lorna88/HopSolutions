@@ -7,8 +7,9 @@
 <main class="page-product">
   <div class="container">
     <div class="review-card">
-    <form id="task-form" method="post">
-      {% csrf_token %}
+      <div class="task-info">
+        <form id="task-form" method="post">
+        {% csrf_token %}
 
     <!-- Task Category Section -->
     <section class="product-details-section">
@@ -56,8 +57,15 @@
     <div class="ButtonGroup">
       <button type="submit" class="button button--primary">Save</button>
     </div>
-    </form>
+      </form>
+    </div>
 
+    <div class="task-delete">
+      <form action="{% url 'tasks:task-delete' task.slug %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="quantity-btn-cart"><i class="fa-solid fa-times fa-2x"></i></button>
+      </form>
+    </div>
     </div>
   </div>
 </main>

@@ -100,3 +100,12 @@ class CategoryDeleteView(DeleteView):
     model = Category
     slug_field = 'slug'
     success_url = reverse_lazy("tasks:home")
+
+
+class DeleteCompletedView(View):
+    def post(self, request, *args, **kwargs):
+        tasks = Task.objects.filter(is_completed=True)
+        for task in tasks:
+            task.delete()
+        return redirect('tasks:home')
+

@@ -57,6 +57,12 @@
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </button>
                 </div>
+                <div>
+                  <form action="{% url 'tasks:delete-completed' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="button button--secondary">Delete completed</button>
+                  </form>
+                </div>
                 <div class="sort-options">
                     {% for item in sort_options %}
                     <button class="sort-button" data-sort="{{ item.key }}">

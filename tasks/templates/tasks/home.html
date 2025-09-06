@@ -69,7 +69,13 @@
             <div class="product-grid">
                 {% for category in categories %}
                 <div class="product-card">
-                    <h3 class="section-title">{{ category.name }}</h3>
+                    <form action="{% url 'tasks:category-delete' category.slug %}" method="post">
+                        {% csrf_token %}
+                        <div class="category_name_menu">
+                            <h3 class="section-title">{{ category.name }}</h3>
+                            <button type="submit" class="quantity-btn-cart"><i class="fa-solid fa-times"></i></button>
+                        </div>
+                    </form>
                     {% for task in category.tasks.all %}
                     <a href="{% url 'tasks:task-detail' task.slug %}" class="product-card-link">
                         <div class="product-card">

@@ -1282,6 +1282,17 @@ body.user-logged-in .header__user-actions {
     align-items: center;
 }
 
+.category_name_menu {
+    width: 100%;
+    height: 40px;
+    padding: 12px;
+    background-color: var(--background-default);
+    border: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .quantity-btn-cart {
     background: none;
     border: none;

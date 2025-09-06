@@ -1,7 +1,7 @@
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.views import View
-from django.views.generic import ListView, UpdateView, CreateView
+from django.views.generic import ListView, UpdateView, CreateView, DeleteView
 from rest_framework.reverse import reverse_lazy
 from traitlets import Undefined
 
@@ -87,3 +87,9 @@ class CategoryCreateView(CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
+
+
+class CategoryDeleteView(DeleteView):
+    model = Category
+    slug_field = 'slug'
+    success_url = reverse_lazy("tasks:home")

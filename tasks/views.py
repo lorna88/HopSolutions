@@ -1,9 +1,10 @@
+from datetime import datetime
+
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.views import View
 from django.views.generic import ListView, UpdateView, CreateView, DeleteView
 from rest_framework.reverse import reverse_lazy
-from traitlets import Undefined
 
 from config.settings import TASKS_QUERY_MAP
 from .forms import TaskUpdateForm, CategoryCreateForm
@@ -65,18 +66,34 @@ class TaskCompleteView(View):
 
         task.is_completed = is_completed
         task.save()
+        if request.GET.get('next'):
+            return redirect(request.GET.get('next'))
         return redirect('tasks:home')
 
 
 class TaskCreateView(View):
     def post(self, request, *args, **kwargs):
         name = request.POST.get("name", "New task")
-        category_slug = request.POST.get("category", Undefined)
-        category = Category.objects.get(slug=category_slug)
+
+        category_slug = request.POST.get("category")
+        if category_slug:
+            category = Category.objects.get(slug=category_slug)
+        else:
+            category = Category.objects.first()
+
         user = request.user
 
         task = Task(name=name, category=category, user=user)
+
+        date = request.POST.get("date")
+        if date:
+            date_object = datetime.strptime(date, "%b %d, %Y").date()
+            task.date = date_object
+
         task.save()
+
+        if request.GET.get('next'):
+            return redirect(request.GET.get('next'))
         return redirect('tasks:home')
 
 

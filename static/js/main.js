@@ -204,6 +204,21 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    const taskCalendarContent = document.querySelector('.task-card');
+    if (taskCalendarContent) {
+        // Setting the status of completed tasks
+        const complete_checkboxes = document.querySelectorAll('.checkbox-task-complete')
+        complete_checkboxes.forEach(checkbox => {
+            checkbox.checked = checkbox.value === 'True';
+            checkbox.addEventListener('click', function(event) {
+                event.stopPropagation();
+            });
+            checkbox.addEventListener('change', function(event) {
+                this.form.submit();
+            });
+        });
+    }
+
     // --- Logic for Cart Page (cart.html) ---
     const cartPageContent = document.querySelector('.cart-page-wrapper');
     if (cartPageContent) {

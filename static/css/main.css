@@ -410,6 +410,20 @@ header {
     color: var(--white-text);
 }
 
+.task-card {
+    width: 800px;
+    padding: 16px;
+    margin-left: 900px;
+    background-color: var(--background-default);
+    border-radius: 8px;
+    border: 1px solid var(--border-default);
+    box-shadow: 0 2px 5px var(--black-100);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
 /* Product Grid */
 .product-grid {
     width: 100%;
@@ -454,6 +468,7 @@ header {
     line-height: 1.4;
     color: var(--black-main);
     font-weight: 600;
+    margin-left: 30px;
 }
 
 .product-card__price {

@@ -12,8 +12,9 @@
         </div>
         {% for task in tasks %}
             <a href="{% url 'tasks:task-detail' task.slug %}" class="product-card-link">
-                <div class="product-card">
+                <div class="calendar-task-card">
                     <div class="product-card__info">
+                        <p class="product-card__description">{{ task.category }}</p>
                         <form action="{% url 'tasks:task-complete' task.slug %}?next={{ request.path }}" method="post">
                             {% csrf_token %}
                             <div class="CheckboxField">
@@ -25,7 +26,12 @@
                             </div>
                             <button type="submit" hidden></button>
                         </form>
-                        <p class="product-card__description">{{ task.description|truncatechars:70 }}</p>
+                    </div>
+                    <div>
+                        <form action="{% url 'tasks:task-delete' task.slug %}?next={{ request.path }}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="quantity-btn-cart"><i class="fa-solid fa-times"></i></button>
+                        </form>
                     </div>
                 </div>
             </a>

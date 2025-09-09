@@ -444,6 +444,17 @@ header {
     gap: 16px;
 }
 
+.calendar-task-card {
+    padding: 16px;
+    background-color: var(--background-default);
+    border-radius: 8px;
+    border: 1px solid var(--border-default);
+    box-shadow: 0 2px 5px var(--black-100);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    gap: 16px;
+}
+
 .product-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 15px var(--black-200);

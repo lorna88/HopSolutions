@@ -102,6 +102,11 @@ class TaskDeleteView(DeleteView):
     slug_field = 'slug'
     success_url = reverse_lazy("tasks:home")
 
+    def get_success_url(self):
+        if self.request.GET.get('next'):
+            return self.request.GET.get('next')
+        return super().get_success_url()
+
 
 class CategoryCreateView(CreateView):
     model = Category

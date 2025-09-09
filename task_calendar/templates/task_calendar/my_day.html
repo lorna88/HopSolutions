@@ -5,7 +5,6 @@
 
 <!-- Main Content -->
 <main class="task-calendar">
-<!--    <div class="product-grid">-->
     <div class="task-card">
         <div class="category_name_menu">
             <h3 class="section-title">{{ date|date:"M d, Y" }}</h3>
@@ -45,7 +44,33 @@
             </div>
         </form>
     </div>
-<!--    </div>-->
+
+
+    <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCalendar" aria-controls="offcanvasCalendar">
+        Choose date
+    </button>
+
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasCalendar" aria-labelledby="offcanvasCalendarLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasCalendarLabel">Calendar</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
+    </div>
+    <div class="offcanvas-body">
+        <!-- Calendar 1 - Bootstrap Brain Component -->
+        <div class="py-3 py-md-5">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col">
+                        <div class="card widget-card border-light shadow-sm">
+                            <div class="card-body p-4">
+                                <div id="bsb-calendar-1" class="fc fc-media-screen fc-direction-ltr fc-theme-bootstrap5 bsb-calendar-theme"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
 
 {% endblock %}

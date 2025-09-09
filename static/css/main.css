@@ -444,6 +444,11 @@ header {
     gap: 16px;
 }
 
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px var(--black-200);
+}
+
 .calendar-task-card {
     padding: 16px;
     background-color: var(--background-default);
@@ -455,7 +460,7 @@ header {
     gap: 16px;
 }
 
-.product-card:hover {
+.calendar-task-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 15px var(--black-200);
 }
@@ -2078,4 +2083,39 @@ body.user-logged-in .header__user-actions {
 .static-page-content .button {
     height: 44px;
     padding: 0 32px;
+}
+
+.offcanvas {
+    width: 800px !important;
+}
+
+.offcanvas-backdrop {
+    display: none
+}
+
+.btn-primary {
+    background-color: var(--green);
+    border: 1px solid var(--green);
+    color: var(--white-text);
+}
+
+.btn-primary:hover {
+    background-color: var(--dark-green);
+    border-color: var(--dark-green);
+}
+
+.fc-day:hover {
+    background-color: var(--background-green) !important;
+}
+
+.fc-daygrid-day-frame:hover{
+    background-color: var(--background-green) !important;
+}
+
+.fc-day-active {
+    background-color: var(--green) !important;
+}
+
+.fc-day-active:hover {
+    background-color: var(--green) !important;
 }

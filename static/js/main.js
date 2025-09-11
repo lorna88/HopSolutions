@@ -219,18 +219,11 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
+        // Highlighting chosen days in calendar
         const days = document.querySelectorAll('.fc-day');
         days.forEach(day => {
             day.addEventListener('click', function() {
                 days.forEach(d => d.classList.remove('fc-day-active'));
-                this.classList.add('fc-day-active');
-            });
-        });
-
-        const dayFrames = document.querySelectorAll('.fc-daygrid-day-frame');
-        dayFrames.forEach(day => {
-            day.addEventListener('click', function() {
-                dayFrames.forEach(d => d.classList.remove('fc-day-active'));
                 this.classList.add('fc-day-active');
             });
         });

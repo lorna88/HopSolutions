@@ -2108,14 +2108,26 @@ body.user-logged-in .header__user-actions {
     background-color: var(--background-green) !important;
 }
 
-.fc-daygrid-day-frame:hover{
+.fc-day:hover .fc-daygrid-day-frame{
     background-color: var(--background-green) !important;
 }
 
 .fc-day-active {
     background-color: var(--green) !important;
+    color: var(--white-text);
+}
+
+.fc-day-active .fc-daygrid-day-frame {
+    background-color: var(--green) !important;
+    color: var(--white-text);
 }
 
 .fc-day-active:hover {
     background-color: var(--green) !important;
+    color: var(--white-text);
+}
+
+fc-day-active .fc-daygrid-day-frame:hover {
+    background-color: var(--green) !important;
+    color: var(--white-text);
 }

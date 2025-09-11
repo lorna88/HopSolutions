@@ -226,15 +226,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 day.addEventListener('click', function() {
                     days.forEach(d => d.classList.remove('fc-day-active'));
                     this.classList.add('fc-day-active');
+                    date = this.getAttribute('data-date');
+                    const urlParams = new URLSearchParams(window.location.search);
+                    urlParams.set('date', date);
+                    window.location.href = `${window.location.pathname}?` + urlParams.toString();
                 });
             });
         }
 
-        chooseDate()
+        chooseDate();
 
-        const calendar = document.getElementById('bsb-calendar-1')
+        const calendar = document.getElementById('bsb-calendar-1');
         const buttonGroup = calendar.querySelector('.btn-group');
-        const calendarButtons = buttonGroup.querySelectorAll('button')
+        const calendarButtons = buttonGroup.querySelectorAll('button');
         calendarButtons.forEach(button => {
                 button.addEventListener('click', chooseDate)
         });

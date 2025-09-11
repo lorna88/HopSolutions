@@ -220,12 +220,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Highlighting chosen days in calendar
-        const days = document.querySelectorAll('.fc-day');
-        days.forEach(day => {
-            day.addEventListener('click', function() {
-                days.forEach(d => d.classList.remove('fc-day-active'));
-                this.classList.add('fc-day-active');
+        function chooseDate() {
+            const days = document.querySelectorAll('.fc-day');
+            days.forEach(day => {
+                day.addEventListener('click', function() {
+                    days.forEach(d => d.classList.remove('fc-day-active'));
+                    this.classList.add('fc-day-active');
+                });
             });
+        }
+
+        chooseDate()
+
+        const calendar = document.getElementById('bsb-calendar-1')
+        const buttonGroup = calendar.querySelector('.btn-group');
+        const calendarButtons = buttonGroup.querySelectorAll('button')
+        calendarButtons.forEach(button => {
+                button.addEventListener('click', chooseDate)
         });
     }
 

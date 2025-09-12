@@ -7,14 +7,14 @@
 <main class="page-product">
   <div class="container">
     <div class="review-card">
-      <div class="task-info">
+    <div class="task-info">
         <form id="task-form" method="post">
         {% csrf_token %}
 
     <!-- Task Category Section -->
     <section class="product-details-section">
       <div class="review-rating">
-        <span class="author-name"># Today</span>
+        <span class="author-name"># {{ task.category }}</span>
       </div>
     </section>
 

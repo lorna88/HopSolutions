@@ -410,6 +410,20 @@ header {
     color: var(--white-text);
 }
 
+.task-card {
+    width: 800px;
+    padding: 16px;
+    margin-left: 900px;
+    background-color: var(--background-default);
+    border-radius: 8px;
+    border: 1px solid var(--border-default);
+    box-shadow: 0 2px 5px var(--black-100);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
 /* Product Grid */
 .product-grid {
     width: 100%;
@@ -435,6 +449,22 @@ header {
     box-shadow: 0 5px 15px var(--black-200);
 }
 
+.calendar-task-card {
+    padding: 16px;
+    background-color: var(--background-default);
+    border-radius: 8px;
+    border: 1px solid var(--border-default);
+    box-shadow: 0 2px 5px var(--black-100);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    gap: 16px;
+}
+
+.calendar-task-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px var(--black-200);
+}
+
 .product-card__image {
     width: 100%;
     height: 247px;
@@ -454,6 +484,7 @@ header {
     line-height: 1.4;
     color: var(--black-main);
     font-weight: 600;
+    margin-left: 30px;
 }
 
 .product-card__price {
@@ -2052,4 +2083,34 @@ body.user-logged-in .header__user-actions {
 .static-page-content .button {
     height: 44px;
     padding: 0 32px;
+}
+
+.offcanvas {
+    width: 800px !important;
+}
+
+.offcanvas-backdrop {
+    display: none
+}
+
+.btn-primary {
+    background-color: var(--green);
+    border: 1px solid var(--green);
+    color: var(--white-text);
+}
+
+.btn-primary:hover {
+    background-color: var(--dark-green);
+    border-color: var(--dark-green);
+}
+
+td.fc-day:hover:not(.fc-day-active),
+td.fc-day:hover:not(.fc-day-active) .fc-daygrid-day-frame {
+    background-color: var(--background-green) !important;
+}
+
+td.fc-day-active,
+td.fc-day-active .fc-daygrid-day-frame {
+    background-color: var(--green) !important;
+    color: var(--white-text);
 }

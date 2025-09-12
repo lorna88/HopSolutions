@@ -204,6 +204,46 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // --- Logic for Calendar Page (my_day.html) ---
+    const taskCalendarContent = document.querySelector('.task-card');
+    if (taskCalendarContent) {
+        // Setting the status of completed tasks
+        const complete_checkboxes = document.querySelectorAll('.checkbox-task-complete')
+        complete_checkboxes.forEach(checkbox => {
+            checkbox.checked = checkbox.value === 'True';
+            checkbox.addEventListener('click', function(event) {
+                event.stopPropagation();
+            });
+            checkbox.addEventListener('change', function(event) {
+                this.form.submit();
+            });
+        });
+
+        // Highlighting chosen days in calendar
+        function chooseDate() {
+            const days = document.querySelectorAll('.fc-day');
+            days.forEach(day => {
+                day.addEventListener('click', function() {
+                    days.forEach(d => d.classList.remove('fc-day-active'));
+                    this.classList.add('fc-day-active');
+                    date = this.getAttribute('data-date');
+                    const urlParams = new URLSearchParams(window.location.search);
+                    urlParams.set('date', date);
+                    window.location.href = `${window.location.pathname}?` + urlParams.toString();
+                });
+            });
+        }
+
+        chooseDate();
+
+        const calendar = document.getElementById('bsb-calendar-1');
+        const buttonGroup = calendar.querySelector('.btn-group');
+        const calendarButtons = buttonGroup.querySelectorAll('button');
+        calendarButtons.forEach(button => {
+                button.addEventListener('click', chooseDate)
+        });
+    }
+
     // --- Logic for Cart Page (cart.html) ---
     const cartPageContent = document.querySelector('.cart-page-wrapper');
     if (cartPageContent) {

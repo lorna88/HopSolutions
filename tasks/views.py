@@ -1,9 +1,10 @@
-from django.db.models import Q
+from datetime import datetime
+
+from django.db.models import Q, Prefetch
 from django.shortcuts import redirect
 from django.views import View
 from django.views.generic import ListView, UpdateView, CreateView, DeleteView
 from rest_framework.reverse import reverse_lazy
-from traitlets import Undefined
 
 from config.settings import TASKS_QUERY_MAP
 from .forms import TaskUpdateForm, CategoryCreateForm
@@ -18,7 +19,7 @@ class TaskListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # context['categories'] = Category.objects.all()
+        context['all_categories'] = Category.objects.all()
 
         context['sort_options'] = [
             {'key': 'date_asc', 'label': 'Date ascending'},
@@ -30,7 +31,8 @@ class TaskListView(ListView):
         return context
 
     def get_queryset(self):
-        qs = Category.objects.all().prefetch_related('tasks')
+        qs = Category.objects.all()
+        qs_tasks = Task.objects.all()
 
         # filter by category
         categories = self.request.GET.get('categories', None)
@@ -43,11 +45,16 @@ class TaskListView(ListView):
             qs = qs.filter(
                 Q(tasks__name__icontains=to_search) | Q(tasks__description__icontains=to_search)
             )
+            qs_tasks = qs_tasks.filter(
+                Q(name__icontains=to_search) | Q(description__icontains=to_search)
+            )
 
         # sort
-        # qs_key = self.request.GET.get('sort', 'date_asc')
+        qs_key = self.request.GET.get('sort', 'date_asc')
         # qs = qs.order_by(TASKS_QUERY_MAP[qs_key])
+        qs_tasks = qs_tasks.order_by(TASKS_QUERY_MAP[qs_key])
 
+        qs = qs.prefetch_related(Prefetch('tasks', queryset=qs_tasks))
         return list(qs)
 
 
@@ -65,18 +72,34 @@ class TaskCompleteView(View):
 
         task.is_completed = is_completed
         task.save()
+        if request.GET.get('next'):
+            return redirect(request.GET.get('next'))
         return redirect('tasks:home')
 
 
 class TaskCreateView(View):
     def post(self, request, *args, **kwargs):
         name = request.POST.get("name", "New task")
-        category_slug = request.POST.get("category", Undefined)
-        category = Category.objects.get(slug=category_slug)
+
+        category_slug = request.POST.get("category")
+        if category_slug:
+            category = Category.objects.get(slug=category_slug)
+        else:
+            category = Category.objects.first()
+
         user = request.user
 
         task = Task(name=name, category=category, user=user)
+
+        date = request.POST.get("date")
+        if date:
+            date_object = datetime.strptime(date, "%b %d, %Y").date()
+            task.date = date_object
+
         task.save()
+
+        if request.GET.get('next'):
+            return redirect(request.GET.get('next'))
         return redirect('tasks:home')
 
 
@@ -84,6 +107,11 @@ class TaskDeleteView(DeleteView):
     model = Task
     slug_field = 'slug'
     success_url = reverse_lazy("tasks:home")
+
+    def get_success_url(self):
+        if self.request.GET.get('next'):
+            return self.request.GET.get('next')
+        return super().get_success_url()
 
 
 class CategoryCreateView(CreateView):

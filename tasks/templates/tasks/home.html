@@ -23,7 +23,7 @@
             <div class="sidebar__section">
                 <h3 class="section-title">Categories</h3>
                 <div class="checkbox-group">
-                    {% for category in categories %}
+                    {% for category in all_categories %}
                         <label class="checkbox-container">{{ category.name }}
                             <input type="checkbox" data-keyword="{{ category.slug }}">
                             <span class="checkmark"></span>
@@ -65,7 +65,7 @@
                 </div>
                 <div class="sort-options">
                     {% for item in sort_options %}
-                    <button class="sort-button" data-sort="{{ item.key }}">
+                    <button class="sort-button {% if item.key == 'date_asc' %}active-sort{% endif %}" data-sort="{{ item.key }}">
                         <span>{{ item.label }}</span>
                     </button>
                     {% endfor %}

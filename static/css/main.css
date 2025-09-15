@@ -2114,3 +2114,9 @@ td.fc-day-active .fc-daygrid-day-frame {
     background-color: var(--green) !important;
     color: var(--white-text);
 }
+
+select {
+    background-color: var(--background-default);
+    border: none;
+    margin-bottom: 10px;
+}

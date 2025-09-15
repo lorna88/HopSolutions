@@ -10,10 +10,10 @@ class TaskDateInput(forms.DateInput):
 class TaskUpdateForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ('is_completed', 'name', 'description', 'date')
+        fields = ('category', 'is_completed', 'name', 'description', 'date')
 
         widgets = {
-            # 'category': forms.TextInput(attrs={'class': 'Input'}),
+            'category': forms.Select(attrs={'class': 'author-name'}),
             'is_completed': forms.CheckboxInput(attrs={'class': 'checkbox-task-input'}),
             'name': forms.TextInput(attrs={'class': 'InputTaskCard product-name'}),
             'description': forms.Textarea(attrs={'rows': 6, 'placeholder': 'Description', 'class': 'InputTaskCard product-description'}),

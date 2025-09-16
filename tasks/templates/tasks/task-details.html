@@ -30,7 +30,10 @@
         </div>
         <div class="product-title-price">
           <div class="tag-section">
-            <span class="price-tag">per 1 lb</span>
+            {% for tag in task.tags.all %}
+              <span class="price-tag">{{ tag.name }}</span>
+            {% endfor %}
+            <a href="{% url 'tags:tag-list' task.id %}" class="button button--secondary">Tags</a>
           </div>
         </div>
         <div class="product-description">{{ form.description }}

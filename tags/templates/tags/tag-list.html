@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block content %}
+
+<!-- Main Content -->
+<main class="tag-list">
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            {% for tag in tags %}
+                <div class="CheckboxField">
+                    <label class="checkbox-task">
+                        <input type="checkbox" name="{{ tag.name }}" class="checkbox-task-input checkbox-task-complete" value="{% if tag in task.tags %}True{% endif %}">
+                        {{ tag.name }}
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+            {% endfor %}
+        </div>
+        <button type="submit" class="button button--primary">Save</button>
+    </form>
+</main>
+
+{% endblock %}

@@ -244,6 +244,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // --- Logic for Tags Page (tag-list.html) ---
+    const tagsContent = document.querySelector('.tag-list');
+    if (tagsContent) {
+        // Setting the status of tags for the task
+        const complete_checkboxes = document.querySelectorAll('.checkbox-task-complete')
+        complete_checkboxes.forEach(checkbox => {
+            checkbox.checked = checkbox.value === 'True';
+        });
+    }
+
     // --- Logic for Cart Page (cart.html) ---
     const cartPageContent = document.querySelector('.cart-page-wrapper');
     if (cartPageContent) {

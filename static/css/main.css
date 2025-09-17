@@ -15,6 +15,8 @@
     --green: #02542d;
     --background-green: #cff7d3;
     --background-header: #fff;
+    --background-yellow: #fff3cd;
+    --background-pink: #f8d7da;
 
     --font-family: "Inter", sans-serif;
 }
@@ -953,7 +955,7 @@ body.user-logged-in .header__user-actions {
 
 .product-title-price {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 16px;
 }
 
@@ -966,7 +968,7 @@ body.user-logged-in .header__user-actions {
 
 .tag-section {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 4px;
 }
 
@@ -2120,3 +2122,11 @@ select {
     border: none;
     margin-bottom: 10px;
 }
+
+.tag-line {
+  border-bottom: 5px solid black;
+  border-radius: 10px;
+  align-self: flex-start;
+  width: 20%;
+}
+

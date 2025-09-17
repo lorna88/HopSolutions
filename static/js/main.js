@@ -166,11 +166,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.form.submit();
             });
         });
+
+        // Tags
+        const tags = document.querySelectorAll('.tag-line');
+        tags.forEach(tag => {
+            const color = tag.getAttribute('data-color');
+            const colorValue = getComputedStyle(document.documentElement).getPropertyValue(color);
+            tag.style.borderColor = colorValue;
+        });
     }
 
     // --- Logic for Product Detail Pages (product-*.html) ---
     const productPageContent = document.querySelector('.page-product');
     if (productPageContent) {
+        // Tags
+        const tags = document.querySelectorAll('.price-tag');
+        tags.forEach(tag => {
+            const color = tag.getAttribute('data-color');
+            const colorValue = getComputedStyle(document.documentElement).getPropertyValue(color);
+            tag.style.backgroundColor = colorValue;
+        });
+
         // Accordion
         const accordionTitle = document.querySelector('.accordion-title');
         if (accordionTitle) {
@@ -201,6 +217,33 @@ document.addEventListener('DOMContentLoaded', function() {
             decreaseBtn.addEventListener('click', function() { if (quantity > 0) { quantity--; updateView(); } });
             increaseBtn.addEventListener('click', function() { quantity++; updateView(); });
             updateView();
+        }
+
+        const tagsButton = document.getElementById('showTags');
+        if (tagsButton) {
+            tagsButton.addEventListener('click', function() {
+                fetch(this.getAttribute('href'))
+                  .then(response => {
+                    if (!response.ok) {
+                      throw new Error('Сетевая ошибка ' + response.status);
+                    }
+                    return response.text();
+                  })
+                  .then(data => {
+                    console.log('Данные получены:', data);
+                    const modal = document.getElementById('tagsModal');
+                    const modalBody = modal.querySelector('.modal-body');
+                    modalBody.innerHTML = data;
+                    // Setting the status of tags for the task
+                    const complete_checkboxes = modal.querySelectorAll('.checkbox-task-complete')
+                    complete_checkboxes.forEach(checkbox => {
+                        checkbox.checked = checkbox.value === 'True';
+                    });
+                  })
+                  .catch(error => {
+                    console.error('Произошла ошибка при запросе:', error);
+                  });
+            });
         }
     }
 
@@ -242,15 +285,13 @@ document.addEventListener('DOMContentLoaded', function() {
         calendarButtons.forEach(button => {
                 button.addEventListener('click', chooseDate)
         });
-    }
 
-    // --- Logic for Tags Page (tag-list.html) ---
-    const tagsContent = document.querySelector('.tag-list');
-    if (tagsContent) {
-        // Setting the status of tags for the task
-        const complete_checkboxes = document.querySelectorAll('.checkbox-task-complete')
-        complete_checkboxes.forEach(checkbox => {
-            checkbox.checked = checkbox.value === 'True';
+        // Tags
+        const tags = document.querySelectorAll('.tag-line');
+        tags.forEach(tag => {
+            const color = tag.getAttribute('data-color');
+            const colorValue = getComputedStyle(document.documentElement).getPropertyValue(color);
+            tag.style.borderColor = colorValue;
         });
     }
 

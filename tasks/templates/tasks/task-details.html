@@ -3,6 +3,27 @@
 {% load static %}
 {% block content %}
 
+<div class="modal fade" id="tagsModal" tabindex="-1" aria-labelledby="tagsModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="{% url 'tags:tag-list' task.id %}" method="post">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="tagsModalLabel">Tags</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          {% include 'tags/tag-list.html' %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="button button--secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="button button--primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <!-- Main Content -->
 <main class="page-product">
   <div class="container">
@@ -31,10 +52,10 @@
         <div class="product-title-price">
           <div class="tag-section">
             {% for tag in task.tags.all %}
-              <span class="price-tag">{{ tag.name }}</span>
+              <span class="price-tag" data-color="{{ tag.color }}">{{ tag.name }}</span>
             {% endfor %}
-            <a href="{% url 'tags:tag-list' task.id %}" class="button button--secondary">Tags</a>
           </div>
+          <a id="showTags" href="{% url 'tags:tag-list' task.id %}" class="fa-plus" data-bs-toggle="modal" data-bs-target="#tagsModal"></a>
         </div>
         <div class="product-description">{{ form.description }}
         </div>

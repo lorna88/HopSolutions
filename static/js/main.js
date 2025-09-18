@@ -32,7 +32,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const homePageContent = document.querySelector('.main-content-grid');
     if (homePageContent) {
         const keywordsList = document.querySelector('.keywords-list');
-        const checkboxes = document.querySelectorAll('.checkbox-group input[type="checkbox"]');
+//        const checkboxes = document.querySelectorAll('.checkbox-group input[type="checkbox"]');
+        const category_checkboxes = document.querySelectorAll('.category-checkbox');
+        const tag_checkboxes = document.querySelectorAll('.tag-checkbox');
 
         function checkboxChangeHandler(event) {
             const keyword = this.dataset.keyword;
@@ -55,11 +57,18 @@ document.addEventListener('DOMContentLoaded', function() {
         function updateHomePageContent() {
             const urlParams = new URLSearchParams(window.location.search);
             const categories = urlParams.get('categories');
+            const tags = urlParams.get('tags');
             const q = urlParams.get('q');
             const sort = urlParams.get('sort');
 
-            checkboxes.forEach(checkbox => {
+            category_checkboxes.forEach(checkbox => {
                 if (categories && categories.includes(checkbox.dataset.keyword)) {
+                    checkbox.checked = true;
+                    checkboxChangeHandler.call(checkbox)
+                }
+            });
+            tag_checkboxes.forEach(checkbox => {
+                if (tags && tags.includes(checkbox.dataset.keyword)) {
                     checkbox.checked = true;
                     checkboxChangeHandler.call(checkbox)
                 }
@@ -111,21 +120,31 @@ document.addEventListener('DOMContentLoaded', function() {
         if (filterButton) {
             filterButton.addEventListener('click', function() {
                 const cats = [];
-                checkboxes.forEach(checkbox => {
+                category_checkboxes.forEach(checkbox => {
                     if (checkbox.checked) {
                         cats.push(checkbox.dataset.keyword);
+                    }
+                });
+                const tags = [];
+                tag_checkboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        tags.push(checkbox.dataset.keyword);
                     }
                 });
                 const urlParams = new URLSearchParams(window.location.search);
                 if (urlParams.has('page')) {urlParams.delete('page');}
                 urlParams.set('categories', cats);
+                urlParams.set('tags', tags);
 
                 window.location.href = `${window.location.pathname}?` + urlParams.toString();
             });
         }
 
-        if (keywordsList && checkboxes.length > 0) {
-            checkboxes.forEach(checkbox => {
+        if (keywordsList && (category_checkboxes.length > 0 || tag_checkboxes.length > 0)) {
+            category_checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', checkboxChangeHandler);
+            });
+            tag_checkboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', checkboxChangeHandler);
             });
 

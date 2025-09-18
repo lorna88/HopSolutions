@@ -25,11 +25,25 @@
                 <div class="checkbox-group">
                     {% for category in all_categories %}
                         <label class="checkbox-container">{{ category.name }}
-                            <input type="checkbox" data-keyword="{{ category.slug }}">
+                            <input type="checkbox" class="category-checkbox" data-keyword="{{ category.slug }}">
                             <span class="checkmark"></span>
                         </label>
                     {% empty %}
                         <p>No categories found.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="sidebar__section">
+                <h3 class="section-title">Tags</h3>
+                <div class="checkbox-group">
+                    {% for tag in tags %}
+                        <label class="checkbox-container">{{ tag.name }}
+                            <input type="checkbox" class="tag-checkbox" data-keyword="{{ tag.name }}">
+                            <span class="checkmark"></span>
+                        </label>
+                    {% empty %}
+                        <p>No tags found.</p>
                     {% endfor %}
                 </div>
             </div>

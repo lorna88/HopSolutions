@@ -7,6 +7,7 @@ from django.views.generic import ListView, UpdateView, CreateView, DeleteView
 from rest_framework.reverse import reverse_lazy
 
 from config.settings import TASKS_QUERY_MAP
+from tags.models import Tag
 from .forms import TaskUpdateForm, CategoryCreateForm
 from .models import Task, Category
 
@@ -20,6 +21,7 @@ class TaskListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['all_categories'] = Category.objects.all()
+        context['tags'] = Tag.objects.all()
 
         context['sort_options'] = [
             {'key': 'date_asc', 'label': 'Date ascending'},
@@ -38,6 +40,11 @@ class TaskListView(ListView):
         categories = self.request.GET.get('categories', None)
         if categories:
             qs = qs.filter(slug__in=categories.split(','))
+
+        # filter by tag
+        tags = self.request.GET.get('tags', None)
+        if tags:
+            qs_tasks = qs_tasks.filter(tags__name__in=tags.split(','))
 
         # search
         to_search = self.request.GET.get('q', None)

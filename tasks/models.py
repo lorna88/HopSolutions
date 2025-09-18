@@ -31,7 +31,6 @@ class Task(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='tasks')
     date = models.DateField(null=True, blank=True)
     is_completed = models.BooleanField(default=False)
-    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
 
     class Meta:

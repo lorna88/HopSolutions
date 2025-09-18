@@ -73,7 +73,29 @@
           <i class="fa-solid fa-chevron-down accordion-icon"></i>
         </div>
         <div class="accordion-content">
-
+          {% for subtask in task.subtasks.all %}
+                <div class="calendar-task-card">
+                    <div class="product-card__info">
+                        <form action="{% url 'tasks:subtask-complete' subtask.id %}?next={{ request.path }}" method="post">
+                            {% csrf_token %}
+                            <div class="CheckboxField">
+                                <label class="checkbox-task">
+                                    <input type="checkbox" name="is_completed" class="checkbox-task-input checkbox-task-complete" value="{{ subtask.is_completed }}">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <h4 class="product-card__name">{{ subtask.name }}</h4>
+                            </div>
+                            <button type="submit" hidden></button>
+                        </form>
+                    </div>
+                    <div>
+                        <form action="{% url 'tasks:subtask-delete' subtask.id %}?next={{ request.path }}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="quantity-btn-cart"><i class="fa-solid fa-times"></i></button>
+                        </form>
+                    </div>
+                </div>
+          {% endfor %}
         </div>
       </div>
     </section>

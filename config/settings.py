@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'tasks',
     'task_calendar',
     'tags',
+    'subtasks',
 ]
 
 MIDDLEWARE = [

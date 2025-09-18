@@ -1,0 +1,9 @@
+<div class="sidebar__section">
+    <form action="{% url 'tasks:category-create' %}" method="post">
+        {% csrf_token %}
+        <div class="cart-item__quantity-selector">
+            {{ form.name }}
+            <button type="submit" class="quantity-btn-cart"><i class="fa-solid fa-plus"></i></button>
+        </div>
+    </form>
+</div>

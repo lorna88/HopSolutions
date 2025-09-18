@@ -26,5 +26,5 @@ class CategoryCreateForm(forms.ModelForm):
         fields = ('name',)
 
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'InputTask', 'placeholder': 'Add category'}),
+            'name': forms.TextInput(attrs={'class': 'InputTask', 'placeholder': 'Category name'}),
         }

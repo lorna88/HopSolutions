@@ -125,6 +125,7 @@ class CategoryCreateView(CreateView):
     model = Category
     form_class = CategoryCreateForm
     success_url = reverse_lazy('tasks:home')
+    template_name = 'tasks/add-category.html'
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -138,7 +139,7 @@ class CategoryDeleteView(DeleteView):
 
 
 class DeleteCompletedView(View):
-    def post(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         tasks = Task.objects.filter(is_completed=True)
         for task in tasks:
             task.delete()

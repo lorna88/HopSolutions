@@ -128,6 +128,9 @@
                                 <p class="product-card__price">{{ task.date }}</p>
                                 <p class="product-card__description">{{ task.description|truncatechars:70 }}</p>
                             </div>
+                            <div>
+                                <p class="subtask-count">Subtasks: {{ task.subtasks_completed }}/{{ task.subtasks_total }}</p>
+                            </div>
                         </div>
                     </a>
                     {% endfor %}

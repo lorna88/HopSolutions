@@ -30,6 +30,7 @@
                             </div>
                             <button type="submit" hidden></button>
                         </form>
+                        <p class="subtask-count">Subtasks: {{ task.subtasks_completed }}/{{ task.subtasks_total }}</p>
                     </div>
                     <div>
                         <form action="{% url 'tasks:task-delete' task.slug %}?next={{ request.path }}" method="post">

@@ -40,6 +40,14 @@ class Task(models.Model):
     def get_absolute_url(self):
         return reverse('tasks:task-detail', kwargs={'slug':self.slug})
 
+    @property
+    def subtasks_total(self):
+        return self.subtasks.count()
+
+    @property
+    def subtasks_completed(self):
+        return self.subtasks.filter(is_completed=True).count()
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)

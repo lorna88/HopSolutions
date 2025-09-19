@@ -72,10 +72,15 @@
 
     <!-- Subtasks -->
     <section class="accordion-section">
-      <div class="accordion-item">
+      <div class="accordion-item active">
         <div class="accordion-title">
-          <h3>Subtasks</h3>
+          <h3>Subtasks
+              <span class="subtask-count-detail">{{ task.subtasks_completed }}/{{ task.subtasks_total }}</span>
+          </h3>
           <i class="fa-solid fa-chevron-down accordion-icon"></i>
+        </div>
+        <div class="subtask-progress-bar">
+            <div></div>
         </div>
         <div class="accordion-content">
           {% for subtask in task.subtasks.all %}

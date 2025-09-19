@@ -229,21 +229,26 @@ document.addEventListener('DOMContentLoaded', function() {
             tag.style.backgroundColor = colorValue;
         });
 
-        // Accordion
+        // Subtasks logic
         const accordionTitle = document.querySelector('.accordion-title');
         if (accordionTitle) {
             accordionTitle.addEventListener('click', function() {
                 this.closest('.accordion-item').classList.toggle('active');
             });
         }
-        // Setting the status of completed subtasks
         const complete_checkboxes = document.querySelectorAll('.checkbox-task-complete')
+        subtasks_total = complete_checkboxes.length;
+        subtasks_completed = 0;
         complete_checkboxes.forEach(checkbox => {
             checkbox.checked = checkbox.value === 'True';
+            if (checkbox.checked) {subtasks_completed++;}
             checkbox.addEventListener('change', function(event) {
                 this.form.submit();
             });
         });
+        progress_bar = document.querySelector('.subtask-progress-bar > div');
+        progress_bar_width = 100 / subtasks_total * subtasks_completed;
+        progress_bar.style.width = progress_bar_width + '%';
 
         // "Add to Cart" Button and Counter
         const cartControls = document.querySelector('.cart-controls');

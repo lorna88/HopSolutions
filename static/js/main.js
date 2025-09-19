@@ -236,6 +236,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.closest('.accordion-item').classList.toggle('active');
             });
         }
+        // Setting the status of completed subtasks
+        const complete_checkboxes = document.querySelectorAll('.checkbox-task-complete')
+        complete_checkboxes.forEach(checkbox => {
+            checkbox.checked = checkbox.value === 'True';
+            checkbox.addEventListener('change', function(event) {
+                this.form.submit();
+            });
+        });
+
         // "Add to Cart" Button and Counter
         const cartControls = document.querySelector('.cart-controls');
         if (cartControls) {

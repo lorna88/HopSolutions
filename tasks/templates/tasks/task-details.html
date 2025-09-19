@@ -65,6 +65,11 @@
       </div>
     </section>
 
+    <div class="ButtonGroup">
+      <button type="submit" class="button button--primary">Save</button>
+    </div>
+    </form>
+
     <!-- Subtasks -->
     <section class="accordion-section">
       <div class="accordion-item">
@@ -76,7 +81,7 @@
           {% for subtask in task.subtasks.all %}
                 <div class="calendar-task-card">
                     <div class="product-card__info">
-                        <form action="{% url 'tasks:subtask-complete' subtask.id %}?next={{ request.path }}" method="post">
+                        <form action="{% url 'subtasks:complete' task.slug subtask.id %}" method="post">
                             {% csrf_token %}
                             <div class="CheckboxField">
                                 <label class="checkbox-task">
@@ -89,21 +94,25 @@
                         </form>
                     </div>
                     <div>
-                        <form action="{% url 'tasks:subtask-delete' subtask.id %}?next={{ request.path }}" method="post">
+                        <form action="{% url 'subtasks:delete' task.slug subtask.id %}" method="post">
                             {% csrf_token %}
                             <button type="submit" class="quantity-btn-cart"><i class="fa-solid fa-times"></i></button>
                         </form>
                     </div>
                 </div>
           {% endfor %}
+
+          <form action="{% url 'subtasks:create' task.slug %}" method="post">
+              {% csrf_token %}
+              <div class="cart-item__quantity-selector">
+                  <input type="text" name="name" class="InputTask" placeholder="Add subtask">
+                  <button type="submit" class="quantity-btn-cart"><i class="fa-solid fa-plus"></i></button>
+              </div>
+          </form>
         </div>
       </div>
     </section>
 
-    <div class="ButtonGroup">
-      <button type="submit" class="button button--primary">Save</button>
-    </div>
-      </form>
     </div>
 
     <div class="task-delete">

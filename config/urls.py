@@ -26,6 +26,7 @@ urlpatterns = [
     path('', include('tasks.urls', namespace='tasks')),
     path('calendar/', include('task_calendar.urls', namespace='calendar')),
     path('tags/', include('tags.urls', namespace='tags')),
+    path('subtasks/', include('subtasks.urls', namespace='subtasks')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

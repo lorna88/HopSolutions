@@ -40,3 +40,25 @@ class UserRegistrationForm(UserCreationForm):
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError('Passwords are not match.')
         return cleaned_data
+
+
+class UserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('email', 'username', 'first_name', 'last_name', 'phone')
+
+        widgets = {
+            'email': forms.EmailInput(attrs={'placeholder': 'example.gmail.com', 'class': 'Input'}),
+            'username': forms.TextInput(attrs={'placeholder': 'Your username', 'class': 'Input'}),
+            'first_name': forms.TextInput(attrs={'placeholder': 'John', 'class': 'Input'}),
+            'last_name': forms.TextInput(attrs={'placeholder': 'Doe', 'class': 'Input'}),
+            'phone': forms.TextInput(attrs={'placeholder': '+(7)1234567890', 'class': 'Input'}),
+        }
+
+        labels = {
+            'email': 'Email',
+            'username': 'Username',
+            'first_name': 'First name',
+            'last_name': 'Last name',
+            'phone': 'Phone',
+        }

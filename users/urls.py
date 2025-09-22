@@ -13,4 +13,5 @@ urlpatterns = [
     ), name='login'),
     path('logout/', LogoutView.as_view(next_page=reverse_lazy('users:login')), name='logout'),
     path('account/', views.AccountView.as_view(), name='account'),
+    path('update/<int:pk>/', views.UserUpdateView.as_view(), name='update'),
 ]

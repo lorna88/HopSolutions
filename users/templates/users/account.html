@@ -12,28 +12,15 @@
       <div id="account-info">
         <div class="account-form-container">
           <h2 class="account-form-title">Personal Info</h2>
-          <form id="account-info-form" method="post">
+          <form id="account-info-form" action="{% url 'users:update' user.id %}" method="post">
             {% csrf_token %}
+            {% for field in form %}
             <div class="checkout-form-group">
-              <label for="acc-full-name">Full Name</label>
-              <input type="text" id="acc-full-name" name="full_name" class="Input" placeholder="Value" required>
+              {{ field.errors }}
+              {{ field.label }}
+              {{ field }}
             </div>
-            <div class="checkout-form-group">
-              <label for="acc-phone">Phone number</label>
-              <input type="tel" id="acc-phone" name="phone" class="Input" placeholder="Value" required>
-            </div>
-            <div class="checkout-form-group">
-              <label for="acc-email">Email</label>
-              <input type="email" id="acc-email" name="email" class="Input" placeholder="example@mail.com" required>
-            </div>
-            <div class="checkout-form-group">
-              <label for="acc-city">City</label>
-              <input type="text" id="acc-city" name="city" class="Input" placeholder="Value" required>
-            </div>
-            <div class="checkout-form-group">
-              <label for="acc-address">Shipping address</label>
-              <textarea id="acc-address" name="address" class="Textarea" placeholder="Value" rows="3" required></textarea>
-            </div>
+            {% endfor %}
             <button type="submit" class="button button--primary button--full-width">Save</button>
           </form>
 

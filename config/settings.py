@@ -103,3 +103,5 @@ TASKS_QUERY_MAP = {
     'date_asc': 'date',
     'date_desc': '-date',
 }
+
+LOGIN_URL = '/users/login/'

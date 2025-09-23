@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, Prefetch
 from django.shortcuts import redirect
 from django.views import View
@@ -12,7 +13,7 @@ from .forms import TaskUpdateForm, CategoryCreateForm
 from .models import Task, Category
 
 
-class TaskListView(ListView):
+class TaskListView(LoginRequiredMixin, ListView):
     template_name = 'tasks/home.html'
     model = Category
     context_object_name = 'categories'
@@ -20,8 +21,8 @@ class TaskListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['all_categories'] = Category.objects.all()
-        context['tags'] = Tag.objects.all()
+        context['all_categories'] = Category.objects.filter(user=self.request.user)
+        context['tags'] = Tag.objects.filter(user=self.request.user)
 
         context['sort_options'] = [
             {'key': 'date_asc', 'label': 'Date ascending'},
@@ -33,8 +34,8 @@ class TaskListView(ListView):
         return context
 
     def get_queryset(self):
-        qs = Category.objects.all()
-        qs_tasks = Task.objects.all()
+        qs = Category.objects.filter(user=self.request.user)
+        qs_tasks = Task.objects.filter(user=self.request.user)
 
         # filter by category
         categories = self.request.GET.get('categories', None)
@@ -65,14 +66,14 @@ class TaskListView(ListView):
         return list(qs)
 
 
-class TaskDetailView(UpdateView):
+class TaskDetailView(LoginRequiredMixin, UpdateView):
     model = Task
     template_name = 'tasks/task-details.html'
     slug_field = 'slug'
     form_class = TaskUpdateForm
 
 
-class TaskCompleteView(View):
+class TaskCompleteView(LoginRequiredMixin, View):
     def post(self, request, slug, *args, **kwargs):
         task = Task.objects.get(slug=slug)
         is_completed = request.POST.get("is_completed") is not None
@@ -84,7 +85,7 @@ class TaskCompleteView(View):
         return redirect('tasks:home')
 
 
-class TaskCreateView(View):
+class TaskCreateView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         name = request.POST.get("name", "New task")
 
@@ -94,9 +95,7 @@ class TaskCreateView(View):
         else:
             category = Category.objects.first()
 
-        user = request.user
-
-        task = Task(name=name, category=category, user=user)
+        task = Task(name=name, category=category, user=request.user)
 
         date = request.POST.get("date")
         if date:
@@ -110,7 +109,7 @@ class TaskCreateView(View):
         return redirect('tasks:home')
 
 
-class TaskDeleteView(DeleteView):
+class TaskDeleteView(LoginRequiredMixin, DeleteView):
     model = Task
     slug_field = 'slug'
     success_url = reverse_lazy("tasks:home")
@@ -121,7 +120,7 @@ class TaskDeleteView(DeleteView):
         return super().get_success_url()
 
 
-class CategoryCreateView(CreateView):
+class CategoryCreateView(LoginRequiredMixin, CreateView):
     model = Category
     form_class = CategoryCreateForm
     success_url = reverse_lazy('tasks:home')
@@ -132,15 +131,15 @@ class CategoryCreateView(CreateView):
         return super().form_valid(form)
 
 
-class CategoryDeleteView(DeleteView):
+class CategoryDeleteView(LoginRequiredMixin, DeleteView):
     model = Category
     slug_field = 'slug'
     success_url = reverse_lazy("tasks:home")
 
 
-class DeleteCompletedView(View):
+class DeleteCompletedView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        tasks = Task.objects.filter(is_completed=True)
+        tasks = Task.objects.filter(is_completed=True, user=self.request.user)
         for task in tasks:
             task.delete()
         return redirect('tasks:home')

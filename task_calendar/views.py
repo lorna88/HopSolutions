@@ -1,11 +1,12 @@
 import datetime
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView
 
 from tasks.models import Task
 
 
-class MyDayView(ListView):
+class MyDayView(LoginRequiredMixin, ListView):
     template_name = 'task_calendar/my_day.html'
     model = Task
     context_object_name = 'tasks'
@@ -28,5 +29,5 @@ class MyDayView(ListView):
         return context
 
     def get_queryset(self):
-        qs = Task.objects.filter(date=self.task_date)
+        qs = Task.objects.filter(date=self.task_date, user=self.request.user)
         return list(qs)

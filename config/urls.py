@@ -16,10 +16,10 @@ Including another URLconf
 """
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.contrib.auth import views as auth_views
-from django.urls import path, include, reverse_lazy
+from django.urls import path, include
 
 from config import settings
+from users.views import ConfirmPasswordView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,10 +28,7 @@ urlpatterns = [
     path('calendar/', include('task_calendar.urls', namespace='calendar')),
     path('tags/', include('tags.urls', namespace='tags')),
     path('subtasks/', include('subtasks.urls', namespace='subtasks')),
-    path('password-reset-confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
-        template_name='users/password_reset_confirm.html',
-        success_url=reverse_lazy('users:login'),
-    ), name='password_reset_confirm'),
+    path('password-reset-confirm/<uidb64>/<token>/', ConfirmPasswordView.as_view(), name='password_reset_confirm'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

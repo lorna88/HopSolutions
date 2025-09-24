@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import RegexValidator
 from django.db import models
 
 class User(AbstractUser):
@@ -7,7 +8,12 @@ class User(AbstractUser):
 
     email = models.EmailField(unique=True)
 
-    phone = models.CharField(max_length=20, null=True, blank=True)
+    phone = models.CharField(max_length=20, null=True, blank=True, validators=[
+            RegexValidator(
+                r'^\+?1?\d{9,15}$',
+                'Введите корректный номер телефона.'
+            )
+        ])
 
     image = models.ImageField(upload_to='profile_images',
                               null=True,

@@ -27,7 +27,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     checkLoginStatus();
 
-
     // --- Logic for the Main Page (home.html) ---
     const homePageContent = document.querySelector('.main-content-grid');
     if (homePageContent) {
@@ -389,6 +388,15 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         updateCartTotal();
+    }
+
+    // --- Logic for Authorization Pages ---
+    const authPageContent = document.querySelector('.auth-page-wrapper');
+    if (authPageContent) {
+        const inputFields = document.querySelectorAll('input');
+        inputFields.forEach(input => {
+            input.classList.add('Input');
+        })
     }
 
     // --- Logic for Account and Admin Pages ---

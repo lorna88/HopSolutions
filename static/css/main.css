@@ -17,6 +17,7 @@
     --background-header: #fff;
     --background-yellow: #fff3cd;
     --background-pink: #f8d7da;
+    --border-red: #dc3545;
 
     --font-family: "Inter", sans-serif;
 }
@@ -704,6 +705,15 @@ footer {
     line-height: 1.4;
     color: var(--black-main);
     font-weight: 500;
+}
+
+
+.InputField:has(.error-message) input {
+    border-color: var(--border-red);
+}
+
+.error-message {
+    color: var(--border-red);
 }
 
 .Input {
@@ -2159,4 +2169,10 @@ select {
     font-size: 20px;
     font-weight: bold;
     text-align: center;
+}
+
+.alert {
+    width: 20%;
+    position: absolute;
+    z-index: 3;
 }

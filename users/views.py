@@ -69,6 +69,13 @@ class AccountView(LoginRequiredMixin, TemplateView):
         context['form'] = UserUpdateForm(instance=self.request.user)
         return context
 
+
+class UserUpdateView(LoginRequiredMixin, UpdateView):
+    model = User
+    form_class = UserUpdateForm
+    success_url = reverse_lazy('users:account')
+    template_name = 'users/account.html'
+
     def form_valid(self, form):
         messages.success(self.request, 'Your profile was updated!')
         return super().form_valid(form)
@@ -76,10 +83,3 @@ class AccountView(LoginRequiredMixin, TemplateView):
     def form_invalid(self, form):
         messages.warning(self.request, 'The form contains errors. Please check the entered data.')
         return super().form_invalid(form)
-
-
-class UserUpdateView(LoginRequiredMixin, UpdateView):
-    model = User
-    form_class = UserUpdateForm
-    success_url = reverse_lazy('users:account')
-    template_name = 'users/account.html'

@@ -8,10 +8,21 @@ class User(AbstractUser):
 
     email = models.EmailField(unique=True)
 
+    username = models.CharField(max_length=20, unique=True,
+                                help_text="Required. 20 characters or fewer. Latin letters, digits and -/_ only.",
+                                validators=[RegexValidator(
+                                    r"^[a-zA-Z0-9_-]+\Z",
+                                    "Enter a valid username. This value may contain only latin letters, numbers, and -/_ characters."
+                                )],
+                                error_messages={
+                                    "unique": "A user with that username already exists.",
+                                },
+    )
+
     phone = models.CharField(max_length=20, null=True, blank=True, validators=[
             RegexValidator(
                 r'^\+?1?\d{9,15}$',
-                'Введите корректный номер телефона.'
+                'Enter a valid phone number please.'
             )
         ])
 

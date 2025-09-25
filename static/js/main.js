@@ -27,11 +27,24 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     checkLoginStatus();
 
+    // --- User Messages ---
+    const messages = document.querySelectorAll('.alert');
+    messages.forEach(message => {
+        const icon_ref = message.querySelector('use');
+        let icon_id = 'exclamation-triangle-fill';
+        if (message.classList.contains('alert-info')) {
+            icon_id = 'info-fill';
+        }
+        if (message.classList.contains('alert-success')) {
+            icon_id = 'check-circle-fill';
+        }
+        icon_ref.setAttribute('xlink:href', '#' + icon_id);
+    });
+
     // --- Logic for the Main Page (home.html) ---
     const homePageContent = document.querySelector('.main-content-grid');
     if (homePageContent) {
         const keywordsList = document.querySelector('.keywords-list');
-//        const checkboxes = document.querySelectorAll('.checkbox-group input[type="checkbox"]');
         const category_checkboxes = document.querySelectorAll('.category-checkbox');
         const tag_checkboxes = document.querySelectorAll('.tag-checkbox');
 

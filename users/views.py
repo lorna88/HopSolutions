@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetConfirmView
+from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetConfirmView, LogoutView
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, TemplateView, UpdateView
 
@@ -14,11 +14,11 @@ class UserCreateView(CreateView):
     success_url = reverse_lazy('users:login')
 
     def form_valid(self, form):
-        messages.success(self.request, 'Registration was successful!')
+        messages.success(self.request, 'You have successfully registered in the system!')
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.warning(self.request, 'The form contains errors. Please check the entered data.')
+        messages.error(self.request, 'The form contains errors. Please check the entered data.')
         return super().form_invalid(form)
 
 
@@ -27,12 +27,25 @@ class UserLoginView(LoginView):
     next_page = reverse_lazy('tasks:home')
 
     def form_valid(self, form):
-        messages.success(self.request, 'Welcome!')
+        user = form.get_user()
+        if user.first_name:
+            username = user.first_name
+        else:
+            username = user.username
+        messages.success(self.request, f'Welcome, {username}!')
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.warning(self.request, 'Incorrect email or password. Please try again.')
+        messages.error(self.request, 'Incorrect email or password. Please try again.')
         return super().form_invalid(form)
+
+
+class UserLogoutView(LogoutView):
+    next_page = reverse_lazy('users:login')
+
+    def get_success_url(self):
+        messages.warning(self.request, 'You have logged out of your account.')
+        return super().get_success_url()
 
 
 class ForgotPasswordView(PasswordResetView):
@@ -45,7 +58,7 @@ class ForgotPasswordView(PasswordResetView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.warning(self.request, 'Error: Message not sent. Please try again.')
+        messages.error(self.request, 'Error: Message not sent. Please try again.')
         return super().form_invalid(form)
 
 class ConfirmPasswordView(PasswordResetConfirmView):
@@ -57,7 +70,7 @@ class ConfirmPasswordView(PasswordResetConfirmView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.warning(self.request, 'There are errors when entering a password. Please try again.')
+        messages.error(self.request, 'There are errors when entering a password. Please try again.')
         return super().form_invalid(form)
 
 
@@ -81,5 +94,5 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.warning(self.request, 'The form contains errors. Please check the entered data.')
+        messages.error(self.request, 'The form contains errors. Please check the entered data.')
         return super().form_invalid(form)

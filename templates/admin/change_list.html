@@ -1,5 +1,6 @@
 {% extends "admin/base_site.html" %}
 {% load i18n admin_urls static admin_list %}
+{% load admin_tags %}
 
 {% block title %}{% if cl.formset and cl.formset.errors %}{% translate "Error:" %} {% endif %}{{ block.super }}{% endblock %}
 {% block extrastyle %}
@@ -41,9 +42,12 @@
 
 {% block content %}
 
+<main class="admin-page-wrapper">
+  <div class="admin-container">
+
   <!-- Content Area -->
   <div class="admin-content">
-    <h1 class="admin-content__title">{{ opts.app_label }}</h1>
+    <h1 class="admin-content__title">Admin - {{ opts.app_label }}</h1>
     {% block object-tools %}
       <div class="admin-actions">
         {% block object-tools-items %}
@@ -83,7 +87,7 @@
 
           {% block result_list %}
 <!--            {% if action_form and actions_on_top and cl.show_admin_actions %}{% admin_actions %}{% endif %}-->
-            {% result_list cl %}
+            {% result_list_ext cl %}
             {% if action_form and actions_on_bottom and cl.show_admin_actions %}{% admin_actions %}{% endif %}
           {% endblock %}
 
@@ -99,4 +103,6 @@
       </div>
     </div>
   </div>
+  </div>
+</main>
 {% endblock %}

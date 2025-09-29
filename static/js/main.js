@@ -413,23 +413,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- Logic for Account and Admin Pages ---
-    const accountAdminWrapper = document.querySelector('.account-page-wrapper, .admin-page-wrapper');
-    if (accountAdminWrapper) {
-        // Account Page Tabs
-        const accountTabs = document.querySelectorAll('.account-tab');
-        const tabPanes = document.querySelectorAll('.tab-pane');
-        if (accountTabs.length > 0 && tabPanes.length > 0) {
-            accountTabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    accountTabs.forEach(item => item.classList.remove('active'));
-                    tabPanes.forEach(pane => pane.classList.remove('active'));
-                    const targetPane = document.querySelector(this.dataset.tabTarget);
-                    this.classList.add('active');
-                    if (targetPane) targetPane.classList.add('active');
-                });
-            });
-        }
+//    const accountAdminWrapper = document.querySelector('.account-page-wrapper, .admin-page-wrapper');
+//    if (accountAdminWrapper) {
+//        // Account Page Tabs
+//        const accountTabs = document.querySelectorAll('.account-tab');
+//        const tabPanes = document.querySelectorAll('.tab-pane');
+//        if (accountTabs.length > 0 && tabPanes.length > 0) {
+//            accountTabs.forEach(tab => {
+//                tab.addEventListener('click', function() {
+//                    accountTabs.forEach(item => item.classList.remove('active'));
+//                    tabPanes.forEach(pane => pane.classList.remove('active'));
+//                    const targetPane = document.querySelector(this.dataset.tabTarget);
+//                    this.classList.add('active');
+//                    if (targetPane) targetPane.classList.add('active');
+//                });
+//            });
+//        }
 
+    const adminContent = document.querySelector('.admin-content');
+    if (adminContent) {
         // Admin Panel - Category Tags
         const categoryTagsContainer = document.querySelector('.category-tags');
         if (categoryTagsContainer) {
@@ -442,30 +444,66 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
+        const inputFields = document.querySelectorAll('input');
+        inputFields.forEach(input => {
+            input.classList.add('Input');
+        })
+
+        const textareaFields = document.querySelectorAll('textarea');
+        textareaFields.forEach(textarea => {
+            textarea.classList.add('Textarea');
+        })
+
+        const selectFields = document.querySelectorAll('select');
+        selectFields.forEach(select => {
+            select.classList.add('select');
+        })
+
+        const objectsTable = document.querySelector('table');
+        const actionCheckboxInputs = objectsTable.querySelectorAll('input');
+        actionCheckboxInputs.forEach(checkbox => {
+            if (checkbox.getAttribute('type') === 'checkbox') {
+                const parentNode = checkbox.parentNode;
+
+                const checkmark = document.createElement('span');
+                checkmark.classList.add('checkmark');
+
+                const label = document.createElement('label');
+                label.classList.add('checkbox-container');
+                label.appendChild(checkbox);
+                label.appendChild(checkmark);
+
+                const checkboxField = document.createElement('div');
+                checkboxField.classList.add('CheckboxField');
+                checkboxField.appendChild(label);
+                parentNode.appendChild(checkboxField);
+            }
+        })
+
         // Image Upload Simulation
-        const uploadButton = document.getElementById('upload-image-btn');
-        const fileInput = document.getElementById('image-upload-input');
-
-        if (uploadButton && fileInput) {
-            uploadButton.addEventListener('click', function() {
-                fileInput.click();
-            });
-
-            fileInput.addEventListener('change', function(event) {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    const placeholder = document.querySelector('.image-upload-placeholder');
-
-                    reader.onload = function(e) {
-                        placeholder.innerHTML = '';
-                        placeholder.style.backgroundImage = `url('${e.target.result}')`;
-                        placeholder.style.backgroundSize = 'cover';
-                        placeholder.style.backgroundPosition = 'center';
-                    }
-                    reader.readAsDataURL(file);
-                }
-            });
-        }
+//        const uploadButton = document.getElementById('upload-image-btn');
+//        const fileInput = document.getElementById('image-upload-input');
+//
+//        if (uploadButton && fileInput) {
+//            uploadButton.addEventListener('click', function() {
+//                fileInput.click();
+//            });
+//
+//            fileInput.addEventListener('change', function(event) {
+//                const file = event.target.files[0];
+//                if (file) {
+//                    const reader = new FileReader();
+//                    const placeholder = document.querySelector('.image-upload-placeholder');
+//
+//                    reader.onload = function(e) {
+//                        placeholder.innerHTML = '';
+//                        placeholder.style.backgroundImage = `url('${e.target.result}')`;
+//                        placeholder.style.backgroundSize = 'cover';
+//                        placeholder.style.backgroundPosition = 'center';
+//                    }
+//                    reader.readAsDataURL(file);
+//                }
+//            });
+//        }
     }
 });

@@ -1668,7 +1668,7 @@ body.user-logged-in .header__user-actions {
     border: 1px solid var(--border-default);
     border-radius: 16px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
 }
 
@@ -1929,6 +1929,12 @@ body.user-logged-in .header__user-actions {
     width: 100%;
 }
 
+fieldset {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
 /* Сategory */
 .category-tags {
     display: flex;
@@ -2175,4 +2181,9 @@ select {
     width: 20%;
     position: absolute;
     z-index: 3;
+}
+
+td img {
+    width: 20px;
+    height: 20px;
 }

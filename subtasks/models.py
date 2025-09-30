@@ -17,8 +17,10 @@ class Subtask(models.Model):
         verbose_name_plural = 'subtasks'
 
     def save(self, *args, **kwargs):
+        user = self.task.user
+        self.user = user
         if not self.slug:
-            self.slug = slugify(self.name) + '-' + self.user.username
+            self.slug = slugify(self.name) + '-' + user.username
         super().save(*args, **kwargs)
 
     def __str__(self):

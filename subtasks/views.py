@@ -21,7 +21,7 @@ class SubtaskCreateView(LoginRequiredMixin, View):
         name = request.POST.get("name", "New subtask")
         task = Task.objects.get(slug=task_slug)
 
-        subtask = Subtask(name=name, task=task, user=request.user)
+        subtask = Subtask(name=name, task=task)
         subtask.save()
 
         return redirect('tasks:task-detail', slug=task_slug)

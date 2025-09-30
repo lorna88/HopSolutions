@@ -1935,6 +1935,12 @@ fieldset {
     gap: 24px;
 }
 
+.fielset_container {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+}
+
 /* Сategory */
 .category-tags {
     display: flex;
@@ -2186,4 +2192,43 @@ select {
 td img {
     width: 20px;
     height: 20px;
+}
+
+.admin-inline-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-inline-table th,
+.admin-inline-table td {
+    padding-right: 60px;
+    text-align: left;
+    font-size: 16px;
+}
+
+.admin-inline-table tr:last-child td {
+    border-bottom: none;
+}
+
+.admin-inline-table thead {
+    background-color: var(--background-green);
+}
+
+.admin-inline-table th {
+    font-weight: 700;
+    color: var(--black-main);
+}
+
+.admin-inline-table td {
+    color: var(--black-main);
+    vertical-align: middle;
+}
+
+.addlink {
+    padding-left: 16px;
+    background: url(../img/icons/addlink.svg) 0 1px no-repeat;
+}
+
+.form-row.empty-form {
+    display: none;
 }

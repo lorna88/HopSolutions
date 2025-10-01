@@ -16,6 +16,7 @@ class SubtaskInline(admin.TabularInline):
 class TaskAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'category', 'date', 'user', 'is_completed')
     list_per_page = 10
+    readonly_fields = ('user',)
 
     formfield_overrides = {
         models.DateField: {'widget': TaskDateInput},
@@ -25,5 +26,11 @@ class TaskAdmin(admin.ModelAdmin):
     inlines = [SubtaskInline]
 
 
-admin.site.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'user')
+    list_per_page = 10
+    readonly_fields = ('user',)
+
+
+admin.site.register(Category, CategoryAdmin)
 admin.site.register(Task, TaskAdmin)

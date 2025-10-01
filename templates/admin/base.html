@@ -34,11 +34,12 @@
         </a>
         <nav class="header__nav">
             <ul>
-                <li><a href="{% url 'tasks:home' %}">Tasks</a></li>
-                <li><a href="{% url 'calendar:my_day' %}">My day</a></li>
-                <li><a href="#">Community</a></li>
-                <li><a href="#">Resources</a></li>
-                <li><a href="#">Contact</a></li>
+                <li><a href="{% url 'admin:index' %}">Home</a></li>
+                <li><a href="{% url 'admin:tasks_task_changelist' %}">Tasks</a></li>
+                <li><a href="{% url 'admin:tasks_category_changelist' %}">Categories</a></li>
+                <li><a href="{% url 'admin:tags_tag_changelist' %}">Tags</a></li>
+                <li><a href="{% url 'admin:subtasks_subtask_changelist' %}">Subtasks</a></li>
+                <li><a href="{% url 'admin:users_user_changelist' %}">Users</a></li>
             </ul>
         </nav>
 

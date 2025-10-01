@@ -2,4 +2,10 @@ from django.contrib import admin
 
 from .models import Subtask
 
-admin.site.register(Subtask)
+
+class SubtaskAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'task', 'user', 'is_completed')
+    list_per_page = 10
+    readonly_fields = ('user', 'task')
+
+admin.site.register(Subtask, SubtaskAdmin)

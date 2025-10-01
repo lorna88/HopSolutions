@@ -3,24 +3,25 @@
 <!-- Main Content -->
 <main class="admin-page-wrapper">
   <div class="admin-container">
+    <h2>Welcome to Admin page!</h2>
     <!-- Tabs Navigation -->
-    <div class="admin-tabs">
-      {% if app_list %}
-        {% for app in app_list %}
-          {% for model in app.models %}
-            {% with model_name=model.object_name|lower %}
-              {% if model.admin_url %}
-                <a href="{{ model.admin_url }}" class="admin-tab">{{ model.name }}</a>
-              {% else %}
-                {{ model.name }}
-              {% endif %}
-            {% endwith %}
-          {% endfor %}
-        {% endfor %}
-      {% else %}
-        <p>{% translate 'You don’t have permission to view or edit anything.' %}</p>
-      {% endif %}
-    </div>
+<!--    <div class="admin-tabs">-->
+<!--      {% if app_list %}-->
+<!--        {% for app in app_list %}-->
+<!--          {% for model in app.models %}-->
+<!--            {% with model_name=model.object_name|lower %}-->
+<!--              {% if model.admin_url %}-->
+<!--                <a href="{{ model.admin_url }}" class="admin-tab">{{ model.name }}</a>-->
+<!--              {% else %}-->
+<!--                {{ model.name }}-->
+<!--              {% endif %}-->
+<!--            {% endwith %}-->
+<!--          {% endfor %}-->
+<!--        {% endfor %}-->
+<!--      {% else %}-->
+<!--        <p>{% translate 'You don’t have permission to view or edit anything.' %}</p>-->
+<!--      {% endif %}-->
+<!--    </div>-->
   </div>
 </main>
 

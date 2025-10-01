@@ -1966,7 +1966,7 @@ fieldset {
 
 .category-tag.active {
     background-color: var(--black-main);
-    color: var(--white-text);
+    color: var(--green);
     border-color: var(--black-main);
 }
 
@@ -2230,5 +2230,9 @@ td img {
 }
 
 .form-row.empty-form {
+    display: none;
+}
+
+#id_tags_helptext {
     display: none;
 }

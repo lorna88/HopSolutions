@@ -4,6 +4,8 @@ from django.db import models
 from subtasks.models import Subtask
 from .forms import TaskDateInput
 from .models import Category, Task
+from .widgets import TagSelectMultiple
+
 
 class SubtaskInline(admin.TabularInline):
     model = Subtask
@@ -17,18 +19,10 @@ class TaskAdmin(admin.ModelAdmin):
 
     formfield_overrides = {
         models.DateField: {'widget': TaskDateInput},
+        models.ManyToManyField: {'widget': TagSelectMultiple},
     }
 
     inlines = [SubtaskInline]
-
-    # def save_model(self, request, obj, form, change):
-    #     super().save_model(request, obj, form, change)
-
-    @admin.display(description="Display_tags")
-    def display_tags(self, obj: Task) -> str:
-        """Отображает теги статьи в списке."""
-        # return " %s" % (", ".join(tag.name for tag in obj.tags.all()[:5]))# Ограничиваем для производительности
-        return 'dsfsdffg'
 
 
 admin.site.register(Category)

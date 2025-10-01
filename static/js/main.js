@@ -433,14 +433,45 @@ document.addEventListener('DOMContentLoaded', function() {
     const adminContent = document.querySelector('.admin-content');
     if (adminContent) {
         // Admin Panel - Category Tags
-        const categoryTagsContainer = document.querySelector('.category-tags');
-        if (categoryTagsContainer) {
-            categoryTagsContainer.addEventListener('click', function(e) {
-                const clickedTag = e.target.closest('.category-tag');
-                if (clickedTag) {
-                    categoryTagsContainer.querySelectorAll('.category-tag').forEach(t => t.classList.remove('active'));
-                    clickedTag.classList.add('active');
+        const tagsSelector = document.getElementById('id_tags');
+        if (tagsSelector) {
+            const tagsParent = tagsSelector.parentNode.parentNode;
+            const tagButtonsContainer = document.createElement('div');
+            tagButtonsContainer.classList.add('category-tags');
+            tagsParent.appendChild(tagButtonsContainer);
+            tagsSelector.parentNode.hidden = true;
+
+            Array.from(tagsSelector.children).forEach(option => {
+                const tagButton = document.createElement('button');
+                tagButton.classList.add('category-tag');
+                tagButton.setAttribute('type', 'button');
+                tagButton.setAttribute('value', option.getAttribute('value'));
+                tagButton.setAttribute('data-color', option.getAttribute('data-color'));
+                tagButton.textContent = option.textContent;
+                if (option.hasAttribute('selected')) {
+                    tagButton.classList.add('active');
+                    const color = tagButton.getAttribute('data-color');
+                    const colorValue = getComputedStyle(document.documentElement).getPropertyValue(color);
+                    tagButton.style.backgroundColor = colorValue;
                 }
+
+                tagButton.addEventListener('click', function() {
+                    if (this.classList.contains('active')) {
+                        this.classList.remove('active');
+                        const colorValue = getComputedStyle(document.documentElement).getPropertyValue('--slate-200');
+                        this.style.backgroundColor = colorValue;
+                        option.removeAttribute('selected');
+                    }
+                    else {
+                        this.classList.add('active');
+                        const color = this.getAttribute('data-color');
+                        const colorValue = getComputedStyle(document.documentElement).getPropertyValue(color);
+                        this.style.backgroundColor = colorValue;
+                        option.setAttribute('selected', '');
+                    }
+                });
+
+                tagButtonsContainer.appendChild(tagButton);
             });
         }
 

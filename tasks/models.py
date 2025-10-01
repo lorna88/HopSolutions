@@ -3,6 +3,8 @@ from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
 
+from tags.models import Tag
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -32,6 +34,7 @@ class Task(models.Model):
     date = models.DateField(null=True, blank=True)
     is_completed = models.BooleanField(default=False)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    tags = models.ManyToManyField(Tag, related_name='tasks', blank=True)
 
     class Meta:
         verbose_name = 'task'

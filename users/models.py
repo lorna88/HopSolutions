@@ -26,11 +26,11 @@ class User(AbstractUser):
             )
         ])
 
-    image = models.ImageField(upload_to='profile_images',
-                              null=True,
-                              blank=True,
-                              default='profile_images/default.png'
-                              )
+    # image = models.ImageField(upload_to='profile_images',
+    #                           null=True,
+    #                           blank=True,
+    #                           default='profile_images/default.png'
+    #                           )
 
     class Meta:
         verbose_name = 'User'

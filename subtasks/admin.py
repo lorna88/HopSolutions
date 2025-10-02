@@ -8,4 +8,7 @@ class SubtaskAdmin(admin.ModelAdmin):
     list_per_page = 10
     readonly_fields = ('user', 'task')
 
+    def has_add_permission(self, request):
+        return False
+
 admin.site.register(Subtask, SubtaskAdmin)

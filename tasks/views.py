@@ -75,6 +75,14 @@ class TaskDetailView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     form_class = TaskUpdateForm
     success_message = "Task was updated successfully: %(name)s"
 
+    def get_context_data(self, **kwargs):
+        kwargs['form'] = TaskUpdateForm(instance=self.object, user=self.request.user)
+        context = super().get_context_data(**kwargs)
+
+        if self.request.GET.get('next'):
+            context['next'] = self.request.GET.get('next')
+        return context
+
 
 class TaskCompleteView(LoginRequiredMixin, View):
     def post(self, request, slug, *args, **kwargs):

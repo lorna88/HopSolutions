@@ -106,7 +106,7 @@
                         </div>
                     </form>
                     {% for task in category.tasks.all %}
-                    <a href="{% url 'tasks:task-detail' task.slug %}" class="product-card-link">
+                    <a href="{% url 'tasks:task-detail' task.slug %}?next={{ request.get_full_path }}" class="product-card-link">
                         <div class="product-card">
                             <div class="tag-section">
                                 {% for tag in task.tags.all %}
@@ -114,7 +114,7 @@
                                 {% endfor %}
                             </div>
                             <div class="product-card__info">
-                                <form action="{% url 'tasks:task-complete' task.slug %}?next={{ request.path }}" method="post">
+                                <form action="{% url 'tasks:task-complete' task.slug %}?next={{ request.get_full_path }}" method="post">
                                   {% csrf_token %}
                                   <div class="CheckboxField">
                                     <label class="checkbox-task">
@@ -125,8 +125,12 @@
                                   </div>
                                   <button type="submit" hidden></button>
                                 </form>
-                                <p class="product-card__price">{{ task.date }}</p>
-                                <p class="product-card__description">{{ task.description|truncatechars:70 }}</p>
+                                {% if task.date %}
+                                    <p class="product-card__price">{{ task.date }}</p>
+                                {% endif %}
+                                {% if task.description %}
+                                    <p class="product-card__description">{{ task.description|truncatechars:70 }}</p>
+                                {% endif %}
                             </div>
                             <div>
                                 <p class="subtask-count">Subtasks: {{ task.subtasks_completed }}/{{ task.subtasks_total }}</p>
@@ -134,10 +138,10 @@
                         </div>
                     </a>
                     {% endfor %}
-                    <form action="{% url 'tasks:task-create' %}?next={{ request.path }}" method="post">
+                    <form action="{% url 'tasks:task-create' %}?next={{ request.get_full_path }}" method="post">
                         {% csrf_token %}
                         <div class="cart-item__quantity-selector">
-                            <input type="text" name="name" class="InputTask" placeholder="Add new task">
+                            <input type="text" name="name" class="InputTask" placeholder="Add new task" required>
                             <input type="hidden" name="category" value="{{ category.slug }}">
                             <button type="submit" class="quantity-btn-cart"><i class="fa-solid fa-plus"></i></button>
                         </div>
@@ -156,11 +160,33 @@
                 </a>
                 {% endif %}
                 <div class="pagination-list">
+
+                    {% if page_obj.has_previous %}
+                        {% if page_obj.number < 5 %}
+                            {% for number in page_obj.previous_page_number|create_range %}
+                                <a href="?{% update_query_string request number %}" class="pagination__link">{{ number }}</a>
+                            {% endfor %}
+                        {% else %}
+                            <a href="?{% update_query_string request 1 %}" class="pagination__link">1</a>
+                            <span class="pagination__dots">...</span>
+                            <a href="?{% update_query_string request page_obj.previous_page_number %}" class="pagination__link">{{ page_obj.previous_page_number }}</a>
+                        {% endif %}
+                    {% endif %}
+
                     <a href="#" class="pagination__link active">{{ page_obj.number }}</a>
-<!--                    <a href="#" class="pagination__link">2</a>-->
-<!--                    <a href="#" class="pagination__link">3</a>-->
-<!--                    <span class="pagination__dots">...</span>-->
-<!--                    <a href="#" class="pagination__link">20</a>-->
+
+                    {% if page_obj.has_next %}
+                        {% if page_obj.number > page_obj.paginator.num_pages|subtract:4 %}
+                            {% for number in page_obj.paginator.num_pages|create_range:page_obj.next_page_number %}
+                                <a href="?{% update_query_string request number %}" class="pagination__link">{{ number }}</a>
+                            {% endfor %}
+                        {% else %}
+                            <a href="?{% update_query_string request page_obj.next_page_number %}" class="pagination__link">{{ page_obj.next_page_number }}</a>
+                            <span class="pagination__dots">...</span>
+                            <a href="?{% update_query_string request page_obj.paginator.num_pages %}" class="pagination__link">{{ page_obj.paginator.num_pages }}</a>
+                        {% endif %}
+                    {% endif %}
+
                 </div>
                 {% if page_obj.has_next %}
                 <a href="?{% update_query_string request page_obj.next_page_number %}" class="pagination__link pagination__link--next">

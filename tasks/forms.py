@@ -8,6 +8,14 @@ class TaskDateInput(forms.DateInput):
     format = '%Y-%m-%d'
 
 class TaskUpdateForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)  # Извлекаем пользователя из аргументов
+        super().__init__(*args, **kwargs)
+        if user:
+            self.fields["category"].queryset = Category.objects.filter(user=self.instance.user)
+            self.fields["category"].empty_label = None
+
     class Meta:
         model = Task
         fields = ('category', 'is_completed', 'name', 'description', 'date')

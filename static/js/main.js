@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const paginationLinks = paginationList.querySelectorAll('.pagination__link');
             paginationLinks.forEach(link => {
                 link.addEventListener('click', function(event) {
-                    event.preventDefault();
+//                    event.preventDefault();
                     paginationLinks.forEach(lnk => lnk.classList.remove('active'));
                     this.classList.add('active');
                 });
@@ -413,23 +413,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- Logic for Account and Admin Pages ---
-//    const accountAdminWrapper = document.querySelector('.account-page-wrapper, .admin-page-wrapper');
-//    if (accountAdminWrapper) {
-//        // Account Page Tabs
-//        const accountTabs = document.querySelectorAll('.account-tab');
-//        const tabPanes = document.querySelectorAll('.tab-pane');
-//        if (accountTabs.length > 0 && tabPanes.length > 0) {
-//            accountTabs.forEach(tab => {
-//                tab.addEventListener('click', function() {
-//                    accountTabs.forEach(item => item.classList.remove('active'));
-//                    tabPanes.forEach(pane => pane.classList.remove('active'));
-//                    const targetPane = document.querySelector(this.dataset.tabTarget);
-//                    this.classList.add('active');
-//                    if (targetPane) targetPane.classList.add('active');
-//                });
-//            });
-//        }
-
     const adminContent = document.querySelector('.admin-content');
     if (adminContent) {
         // Admin Panel - Category Tags

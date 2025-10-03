@@ -110,7 +110,7 @@
           <form action="{% url 'subtasks:create' task.slug %}" method="post">
               {% csrf_token %}
               <div class="cart-item__quantity-selector">
-                  <input type="text" name="name" class="InputTask" placeholder="Add subtask">
+                  <input type="text" name="name" class="InputTask" placeholder="Add subtask" required>
                   <button type="submit" class="quantity-btn-cart"><i class="fa-solid fa-plus"></i></button>
               </div>
           </form>
@@ -121,7 +121,7 @@
     </div>
 
     <div class="task-delete">
-      <form action="{% url 'tasks:task-delete' task.slug %}" method="post">
+      <form action="{% url 'tasks:task-delete' task.slug %}?next={{ next }}" method="post">
         {% csrf_token %}
         <button type="submit" class="quantity-btn-cart"><i class="fa-solid fa-times fa-2x"></i></button>
       </form>

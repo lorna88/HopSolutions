@@ -43,19 +43,10 @@
             </ul>
         </nav>
 
-        <!-- Block for unauthorized user -->
-        <div class="header__auth-buttons" id="auth-guest">
-            <a href="{% url 'users:login' %}" class="button button--secondary">Sign in</a>
-            <a href="{% url 'users:register' %}" class="button button--primary">Register</a>
-        </div>
-
-        <!-- Block for authorized user -->
-        <div class="header__user-actions" id="auth-user">
-            <a href="{% url 'users:account' %}" class="user-icon" aria-label="My Account">
-                <img src="{% static 'img/icons/User_alt.svg' %}" alt="User Account">
-            </a>
-
-        </div>
+        <form id="logout-form" method="post" action="{% url 'admin:logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="button button--secondary">Log out</button>
+        </form>
     </div>
 </header>
 

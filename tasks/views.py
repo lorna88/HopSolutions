@@ -47,7 +47,7 @@ class TaskListView(LoginRequiredMixin, ListView):
         # filter by tag
         tags = self.request.GET.get('tags', None)
         if tags:
-            qs_tasks = qs_tasks.filter(tags__name__in=tags.split(','))
+            qs_tasks = qs_tasks.filter(tags__name__in=tags.split(',')).distinct()
 
         # search
         to_search = self.request.GET.get('q', None)

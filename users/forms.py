@@ -1,6 +1,5 @@
 from django.contrib.auth.forms import UserCreationForm, PasswordResetForm
 from django import forms
-from django.core.validators import RegexValidator
 
 from .models import User
 

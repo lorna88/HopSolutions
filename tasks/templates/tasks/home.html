@@ -176,7 +176,7 @@
                     <a href="#" class="pagination__link active">{{ page_obj.number }}</a>
 
                     {% if page_obj.has_next %}
-                        {% if page_obj.number > page_obj.paginator.num_pages|subtract:4 %}
+                        {% if page_obj.number > page_obj.paginator.num_pages|add:-4 %}
                             {% for number in page_obj.paginator.num_pages|create_range:page_obj.next_page_number %}
                                 <a href="?{% update_query_string request number %}" class="pagination__link">{{ number }}</a>
                             {% endfor %}

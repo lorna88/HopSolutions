@@ -97,7 +97,7 @@ header {
     margin: 0;
     padding: 0;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
 }
 
@@ -203,6 +203,15 @@ header {
     padding-bottom: 64px;
 }
 
+.main-content-calendar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding-bottom: 64px;
+    margin-top: 32px;
+    margin-left: 32px;
+}
+
 /* Sidebar */
 .sidebar {
     padding: 16px;
@@ -211,6 +220,18 @@ header {
     border: 1px solid var(--border-default);
     display: flex;
     flex-direction: column;
+    gap: 24px;
+}
+
+.sidebar--vertical {
+    height: 700px;
+    padding: 16px;
+    background-color: var(--background-default);
+    border-radius: 8px;
+    border: 1px solid var(--border-default);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     gap: 24px;
 }
 
@@ -416,7 +437,6 @@ header {
 .task-card {
     width: 800px;
     padding: 16px;
-    margin-left: 900px;
     background-color: var(--background-default);
     border-radius: 8px;
     border: 1px solid var(--border-default);

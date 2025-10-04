@@ -96,3 +96,7 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
     def form_invalid(self, form):
         messages.error(self.request, 'The form contains errors. Please check the entered data.')
         return super().form_invalid(form)
+
+
+class HelpView(TemplateView):
+    template_name = 'help.html'

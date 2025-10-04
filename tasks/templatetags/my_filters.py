@@ -11,7 +11,3 @@ def update_query_string(request, value, key='page'):
 @register.filter
 def create_range(value, start_index=1):
     return range(start_index, value+1)
-
-@register.filter
-def subtract(value1, value2):
-    return value1 - value2

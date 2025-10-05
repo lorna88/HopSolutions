@@ -24,108 +24,115 @@
   </div>
 </div>
 
+<div class="modal fade delete-task" id="deleteTaskModal" tabindex="-1" aria-labelledby="deleteTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="deleteTaskForm" action="{% url 'tasks:task-delete' task.slug %}" method="post">
+                {% csrf_token %}
+                {% include 'tasks/task_confirm_delete.html' %}
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Main Content -->
 <main class="page-product">
   <div class="container">
     <div class="review-card">
-    <div class="task-info">
-        <form id="task-form" method="post">
-        {% csrf_token %}
+        <div class="task-info">
+            <form id="task-form" method="post">
+            {% csrf_token %}
 
-    <!-- Task Category Section -->
-    <section class="product-details-section">
-      <div class="review-rating">
-        <span class="author-name"># {{ form.category }}</span>
-      </div>
-    </section>
-
-    <!-- Task Info Section -->
-    <section class="product-details-section">
-      <div class="product-info-column">
-        <div class="CheckboxField">
-          <label class="checkbox-task">
-            {{ form.is_completed }}
-            {{ form.name }}
-            <span class="checkmark"></span>
-          </label>
-        </div>
-        <div class="product-title-price">
-          <div class="tag-section">
-            {% for tag in task.tags.all %}
-              <span class="price-tag" data-color="{{ tag.color }}">{{ tag.name }}</span>
-            {% endfor %}
-          </div>
-          <a id="showTags" href="{% url 'tags:tag-list' task.id %}" class="fa-plus" data-bs-toggle="modal" data-bs-target="#tagsModal"></a>
-        </div>
-        <div class="product-description">{{ form.description }}
-        </div>
-        <div class="review-rating">
-          <span>{{ form.date }}</span>
-        </div>
-      </div>
-    </section>
-
-    <div class="ButtonGroup">
-      <button type="submit" class="button button--primary">Save</button>
-    </div>
-    </form>
-
-    <!-- Subtasks -->
-    <section class="accordion-section">
-      <div class="accordion-item active">
-        <div class="accordion-title">
-          <h3>Subtasks
-              <span class="subtask-count-detail">{{ task.subtasks_completed }}/{{ task.subtasks_total }}</span>
-          </h3>
-          <i class="fa-solid fa-chevron-down accordion-icon"></i>
-        </div>
-        <div class="subtask-progress-bar">
-            <div></div>
-        </div>
-        <div class="accordion-content">
-          {% for subtask in task.subtasks.all %}
-                <div class="calendar-task-card">
-                    <div class="product-card__info">
-                        <form action="{% url 'subtasks:complete' task.slug subtask.id %}" method="post">
-                            {% csrf_token %}
-                            <div class="CheckboxField">
-                                <label class="checkbox-task">
-                                    <input type="checkbox" name="is_completed" class="checkbox-task-input checkbox-task-complete" value="{{ subtask.is_completed }}">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <h4 class="product-card__name">{{ subtask.name }}</h4>
-                            </div>
-                            <button type="submit" hidden></button>
-                        </form>
-                    </div>
-                    <div>
-                        <form action="{% url 'subtasks:delete' task.slug subtask.id %}" method="post">
-                            {% csrf_token %}
-                            <button type="submit" class="quantity-btn-cart"><i class="fa-solid fa-times"></i></button>
-                        </form>
-                    </div>
-                </div>
-          {% endfor %}
-
-          <form action="{% url 'subtasks:create' task.slug %}" method="post">
-              {% csrf_token %}
-              <div class="cart-item__quantity-selector">
-                  <input type="text" name="name" class="InputTask" placeholder="Add subtask" required>
-                  <button type="submit" class="quantity-btn-cart"><i class="fa-solid fa-plus"></i></button>
+            `<!-- Task Category Section -->
+            <section class="product-details-section">
+              <div class="review-rating">
+                <span class="author-name"># {{ form.category }}</span>
               </div>
-          </form>
+              <a id="deleteTaskButton" href="{% url 'tasks:task-delete' task.slug %}" class="quantity-btn-cart delete-task" data-bs-toggle="modal" data-bs-target="#deleteTaskModal">
+                  <i class="fa fa-times"></i>
+              </a>
+            </section>
+
+            <!-- Task Info Section -->
+            <section class="product-details-section">
+              <div class="product-info-column">
+                <div class="CheckboxField">
+                  <label class="checkbox-task">
+                    {{ form.is_completed }}
+                    {{ form.name }}
+                    <span class="checkmark"></span>
+                  </label>
+                </div>
+                <div class="product-title-price">
+                  <div class="tag-section">
+                    {% for tag in task.tags.all %}
+                      <span class="price-tag" data-color="{{ tag.color }}">{{ tag.name }}</span>
+                    {% endfor %}
+                  </div>
+                  <a id="showTags" href="{% url 'tags:tag-list' task.id %}" class="button--add" data-bs-toggle="modal" data-bs-target="#tagsModal">+ Add Tag</a>
+                </div>
+                <div class="product-description">{{ form.description }}
+                </div>
+                <div class="review-rating">
+                  <span>{{ form.date }}</span>
+                </div>
+              </div>
+            </section>
+
+            <div class="ButtonGroup">
+              <button type="submit" class="button button--primary">Save</button>
+            </div>
+            </form>
+
+            <!-- Subtasks -->
+            <section class="accordion-section">
+              <div class="accordion-item active">
+                <div class="accordion-title">
+                  <h3>Subtasks
+                      <span class="subtask-count-detail">{{ task.subtasks_completed }}/{{ task.subtasks_total }}</span>
+                  </h3>
+                  <i class="fa-solid fa-chevron-down accordion-icon"></i>
+                </div>
+                <div class="subtask-progress-bar">
+                    <div></div>
+                </div>
+                <div class="accordion-content">
+                  {% for subtask in task.subtasks.all %}
+                        <div class="calendar-task-card">
+                            <div class="product-card__info">
+                                <form action="{% url 'subtasks:complete' task.slug subtask.id %}" method="post">
+                                    {% csrf_token %}
+                                    <div class="CheckboxField">
+                                        <label class="checkbox-task">
+                                            <input type="checkbox" name="is_completed" class="checkbox-task-input checkbox-task-complete" value="{{ subtask.is_completed }}">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                        <h4 class="product-card__name">{{ subtask.name }}</h4>
+                                    </div>
+                                    <button type="submit" hidden></button>
+                                </form>
+                            </div>
+                            <div>
+                                <form action="{% url 'subtasks:delete' task.slug subtask.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="quantity-btn-cart"><i class="fa-solid fa-times"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                  {% endfor %}
+
+                  <form action="{% url 'subtasks:create' task.slug %}" method="post">
+                      {% csrf_token %}
+                      <div class="cart-item__quantity-selector">
+                          <input type="text" name="name" class="InputTask" placeholder="Add subtask" required>
+                          <button type="submit" class="quantity-btn-cart"><i class="fa-solid fa-plus"></i></button>
+                      </div>
+                  </form>
+                </div>
+              </div>
+            </section>
+
         </div>
-      </div>
-    </section>
-
-    </div>
-
-    <div class="task-delete">
-      <form action="{% url 'tasks:task-delete' task.slug %}?next={{ next }}" method="post">
-        {% csrf_token %}
-        <button type="submit" class="quantity-btn-cart"><i class="fa-solid fa-times fa-2x"></i></button>
-      </form>
-    </div>
     </div>
   </div>
 </main>

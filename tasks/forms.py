@@ -24,7 +24,7 @@ class TaskUpdateForm(forms.ModelForm):
             'category': forms.Select(attrs={'class': 'author-name'}),
             'is_completed': forms.CheckboxInput(attrs={'class': 'checkbox-task-input'}),
             'name': forms.TextInput(attrs={'class': 'InputTaskCard product-name'}),
-            'description': forms.Textarea(attrs={'rows': 6, 'placeholder': 'Description', 'class': 'InputTaskCard product-description'}),
+            'description': forms.Textarea(attrs={'rows': 6, 'placeholder': 'Insert your description here...', 'class': 'InputTaskCard product-description'}),
             'date': TaskDateInput(attrs={'class': 'InputTaskCard form-control author-name'}),
         }
 

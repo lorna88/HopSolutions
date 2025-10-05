@@ -27,7 +27,7 @@ class TaskAdminForm(forms.ModelForm):
 
 
 class TaskAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'category', 'date', 'user', 'is_completed')
+    list_display = ('id', 'name', 'slug', 'category', 'date', 'user', 'is_completed')
     fields = ('name', 'slug', 'description', 'category', 'date', 'is_completed', 'tags')
     list_per_page = 10
     # readonly_fields = ('user',)
@@ -61,7 +61,7 @@ class TaskAdmin(admin.ModelAdmin):
 
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'user')
+    list_display = ('id', 'name', 'slug', 'user')
     list_per_page = 10
     # readonly_fields = ('user',)
     exclude = ('user',)

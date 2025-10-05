@@ -1,9 +1,16 @@
-<div class="sidebar__section">
-    <form action="{% url 'tasks:category-create' %}" method="post">
-        {% csrf_token %}
-        <div class="cart-item__quantity-selector">
-            {{ form.name }}
-            <button type="submit" class="quantity-btn-cart"><i class="fa-solid fa-plus"></i></button>
-        </div>
-    </form>
+<div class="modal-header">
+    <h5 class="modal-title" id="addCategoryModalLabel">Add category</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
+<div class="modal-body">
+    <div class="sidebar__section">
+        <form action="{% url 'tasks:category-create' %}" method="post">
+            {% csrf_token %}
+            <div class="cart-item__quantity-selector">
+                {{ form.name }}
+                <button type="submit" class="quantity-btn-cart"><i class="fa-solid fa-plus"></i></button>
+            </div>
+        </form>
+    </div>
+</div>
+

@@ -210,29 +210,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const colorValue = getComputedStyle(document.documentElement).getPropertyValue(color);
             tag.style.borderColor = colorValue;
         });
-
-        // Add category
-        const addCategoryButton = document.getElementById('addCategory');
-        if (addCategoryButton) {
-            addCategoryButton.addEventListener('click', function() {
-                fetch(this.getAttribute('href'))
-                  .then(response => {
-                    if (!response.ok) {
-                      throw new Error('Сетевая ошибка ' + response.status);
-                    }
-                    return response.text();
-                  })
-                  .then(data => {
-                    console.log('Данные получены:', data);
-                    const modal = document.getElementById('addCategoryModal');
-                    const modalBody = modal.querySelector('.modal-body');
-                    modalBody.innerHTML = data;
-                  })
-                  .catch(error => {
-                    console.error('Произошла ошибка при запросе:', error);
-                  });
-            });
-        }
     }
 
     // --- Logic for Product Detail Pages (product-*.html) ---

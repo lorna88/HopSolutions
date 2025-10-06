@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block head %}
+<!-- Link to CSS file for calendar -->
+<link rel="stylesheet" href="{% static 'css/calendar-1.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Main Content -->
+<main class="task-calendar">
+    <div class="main-content-calendar">
+
+        <!-- Filter and search panel -->
+        <aside class="sidebar sidebar-calendar filter-menu">
+            <div class="sidebar__section">
+                <h3 class="section-title">Keywords</h3>
+                <div class="keywords-list">
+                </div>
+            </div>
+
+            <div class="sidebar__section">
+                <h3 class="section-title">Categories</h3>
+                <div class="checkbox-group">
+                    {% for category in all_categories %}
+                    <label class="checkbox-container">{{ category.name }}
+                        <input type="checkbox" class="category-checkbox" data-keyword="{{ category.slug }}">
+                        <span class="checkmark"></span>
+                    </label>
+                    {% empty %}
+                    <p>No categories found.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="sidebar__section">
+                <h3 class="section-title">Tags</h3>
+                <div class="checkbox-group">
+                    {% for tag in tags %}
+                    <label class="checkbox-container">{{ tag.name }}
+                        <input type="checkbox" class="tag-checkbox" data-keyword="{{ tag.name }}">
+                        <span class="checkmark"></span>
+                    </label>
+                    {% empty %}
+                    <p>No tags found.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="sidebar__section">
+                <button class="button button--primary" id="filter-button">Filter</button>
+            </div>
+
+            <div class="search-input-wrapper">
+                <input type="text" placeholder="Search" class="search-input">
+                <button class="search-button" aria-label="Search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Task list -->
+        <div class="task-card">
+
+            <!-- Date -->
+            <div class="category_name_menu">
+                <h3 class="section-title">{{ date|date:"M d, Y" }}</h3>
+            </div>
+            {% for task in tasks %}
+                <a href="{% url 'tasks:task-detail' task.slug %}?next={{ request.get_full_path }}" class="product-card-link">
+
+                    <!-- Task card -->
+                    <div class="calendar-task-card">
+                        <div class="product-card__info">
+                            <div class="tag-section">
+                                {% for tag in task.tags.all %}
+                                    <div class="tag-line" data-color="{{ tag.color }}"></div>
+                                {% endfor %}
+                            </div>
+                            <p class="product-card__description">{{ task.category }}</p>
+                            <form action="{% url 'tasks:task-complete' task.slug %}?next={{ request.get_full_path }}" method="post">
+                                {% csrf_token %}
+                                <div class="CheckboxField">
+                                    <label class="checkbox-task">
+                                        <input type="checkbox" name="is_completed" class="checkbox-task-input checkbox-task-complete" value="{{ task.is_completed }}">
+                                        <span class="checkmark"></span>
+                                    </label>
+                                    <h4 class="product-card__name">{{ task.name }}</h4>
+                                </div>
+                                <button type="submit" hidden></button>
+                            </form>
+                            <p class="subtask-count">Subtasks: {{ task.subtasks_completed }}/{{ task.subtasks_total }}</p>
+                        </div>
+                        <div>
+                            <form action="{% url 'tasks:task-delete' task.slug %}?next={{ request.get_full_path }}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="quantity-btn-cart"><i class="fa-solid fa-times"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+
+            <!-- Add task input field -->
+            <form action="{% url 'tasks:task-create' %}?next={{ request.get_full_path }}" method="post">
+                {% csrf_token %}
+                <div class="cart-item__quantity-selector">
+                    <input type="text" name="name" class="InputTask" placeholder="Add new task">
+                    <input type="hidden" name="date" value="{{ date|date:'M d, Y' }}">
+                    <button type="submit" class="quantity-btn-cart"><i class="fa-solid fa-plus"></i></button>
+                </div>
+            </form>
+        </div>
+
+<!--        <div class="hero-banner">-->
+<!--            <img src="{% static 'img/background/hopfen-fields.jpg' %}" alt="Beautiful hops on a dark background" class="hero-banner__image">-->
+<!--        </div>-->
+
+        <!-- Button for show hidden sidebar -->
+        <aside class="sidebar--vertical">
+            <button class="button" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCalendar" aria-controls="offcanvasCalendar">
+                <i class="fa-solid fa-angle-double-left"></i>
+            </button>
+        </aside>
+
+    </div>
+
+    <!-- Hidden sidebar with calendar -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasCalendar" aria-labelledby="offcanvasCalendarLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasCalendarLabel">Calendar</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
+    </div>
+    <div class="offcanvas-body">
+        <!-- Calendar 1 - Bootstrap Brain Component -->
+        <div class="py-3 py-md-5">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col">
+                        <div class="card widget-card border-light shadow-sm">
+                            <div class="card-body p-4">
+                                <div id="bsb-calendar-1" class="fc fc-media-screen fc-direction-ltr fc-theme-bootstrap5 bsb-calendar-theme"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<!-- Link to JavaScript file for calendar -->
+<script src="{% static 'js/calendar-1.js' %}"></script>
+{% endblock %}

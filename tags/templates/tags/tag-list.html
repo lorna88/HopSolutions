@@ -1,0 +1,11 @@
+{% for tag in tags %}
+<div class="CheckboxField">
+    <label class="checkbox-task">
+        <input type="checkbox" name="{{ tag.name }}" class="checkbox-task-input checkbox-task-complete" value="{% if tag in task.tags.all %}True{% endif %}">
+        {{ tag.name }}
+        <span class="checkmark"></span>
+    </label>
+</div>
+{% empty %}
+    <p>No tags found.</p>
+{% endfor %}

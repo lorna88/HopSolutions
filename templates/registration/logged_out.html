@@ -1,0 +1,18 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="{% url 'admin:index' %}">{% translate 'Home' %}</a></div>{% endblock %}
+
+{% block nav-sidebar %}{% endblock %}
+
+{% block content %}
+<main class="auth-page-wrapper">
+  <div class="auth-form-container">
+      <div class="auth-container auth-container--login">
+        <p>{% translate "Thanks for spending some quality time with the web site today." %}</p>
+        <p><a href="{% url 'admin:index' %}" class="button button--primary">{% translate 'Log in again' %}</a></p>
+      </div>
+  </div>
+</main>
+
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block content %}
+
+<!-- Main Content -->
+<main class="account-page-wrapper">
+  <div class="account-container">
+
+
+      <!-- Account Information Panel -->
+      <div id="account-info">
+        <div class="account-form-container">
+          <h2 class="account-form-title">Personal Info</h2>
+          <form id="account-info-form" action="{% url 'users:update' user.id %}" method="post">
+            {% csrf_token %}
+            {% for field in form %}
+              <div class="InputField">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% for error in field.errors %}
+                  <div class="error-message">{{ error }}</div>
+                {% endfor %}
+              </div>
+            {% endfor %}
+
+            <button type="submit" class="button button--primary button--full-width">Save</button>
+          </form>
+
+          <form action="{% url 'users:logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="button button--secondary button--full-width" id="logout-button">Logout</button>
+          </form>
+        </div>
+
+    </div>
+  </div>
+</main>
+
+{% endblock %}

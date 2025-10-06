@@ -1,0 +1,14 @@
+{% load admin_list %}
+{% load i18n %}
+
+
+<nav class="paginator" aria-labelledby="pagination">
+    <h2 id="pagination" class="visually-hidden">{% blocktranslate with name=cl.opts.verbose_name_plural %}Pagination {{ name }}{% endblocktranslate %}</h2>
+    {% if pagination_required %}
+
+      {% for i in page_range %}
+        <a href="#" class="pagination-link-account disabled">{% paginator_number cl i %}</a>
+      {% endfor %}
+
+    {% endif %}
+</nav>

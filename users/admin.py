@@ -9,6 +9,10 @@ class UserAdmin(admin.ModelAdmin):
     exclude = ('groups', )
 
     def has_add_permission(self, request):
+        """
+        Adding new users is impossible
+        It is better to do it on registration form
+        """
         return False
 
 admin.site.register(User, UserAdmin)

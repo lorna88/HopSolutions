@@ -5,6 +5,10 @@ class TagSelectMultiple(SelectMultiple):
     def create_option(
         self, name, value, label, selected, index, subindex=None, attrs=None
     ):
+        """
+        Overrides method to add option attribute - color - for tags. Used on task
+        change view in the admin page.
+        """
         index = str(index) if subindex is None else "%s_%s" % (index, subindex)
         option_attrs = (
             self.build_attrs(self.attrs, attrs) if self.option_inherits_attrs else {}
@@ -17,8 +21,8 @@ class TagSelectMultiple(SelectMultiple):
         try:
             obj = self.choices.queryset.get(pk=value.value)
             option_attrs['data-color'] = obj.color
-        except:
-            pass  # Обработайте случай, если объект не найден
+        except self.choices.queryset.model.DoesNotExist:
+            pass
 
         return {
             "name": name,

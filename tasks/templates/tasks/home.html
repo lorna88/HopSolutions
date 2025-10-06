@@ -5,6 +5,7 @@
 
 {% block content %}
 
+<!-- Modal form for category add -->
 <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -21,6 +22,8 @@
 <!--    </section>-->
 
     <div class="main-content-grid">
+
+        <!-- Filter panel -->
         <aside class="sidebar filter-menu">
             <div class="sidebar__section">
                 <h3 class="section-title">Keywords</h3>
@@ -62,6 +65,8 @@
         </aside>
 
         <section class="products-area product-grid-section">
+
+            <!-- Search, sort and menu panel -->
             <div class="search-sort-bar">
                 <div class="search-input-wrapper">
                     <input type="text" placeholder="Search" class="search-input">
@@ -91,8 +96,11 @@
                 </div>
             </div>
 
+            <!-- Categories and tasks list -->
             <div class="product-grid">
                 {% for category in categories %}
+
+                    <!-- Modal form for category delete -->
                     <div class="modal fade delete-category" id="deleteCategoryModal{{ category.id }}" tabindex="-1" aria-labelledby="deleteCategoryModal{{ category.id }}Label" aria-hidden="true">
                           <div class="modal-dialog">
                               <div class="modal-content">
@@ -104,6 +112,7 @@
                           </div>
                     </div>
 
+                    <!-- Card for category and its tasks -->
                     <div class="product-card">
                         <div class="category_name_menu">
                             <h3 class="section-title">{{ category.name }}</h3>
@@ -157,6 +166,7 @@
                 {% endfor %}
             </div>
 
+            <!-- Pagination panel -->
             <div class="pagination">
                 {% if page_obj.has_previous %}
                 <a href="?{% update_query_string request page_obj.previous_page_number %}" class="pagination__link pagination__link--prev">

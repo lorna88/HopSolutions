@@ -3,5 +3,4 @@
 .env.local
 db.sqlite3
 __pycache__
-tasks/migrations/__pycache__
 media/*

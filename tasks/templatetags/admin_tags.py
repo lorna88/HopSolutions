@@ -6,6 +6,9 @@ from django.contrib.admin.templatetags.base import InclusionAdminNode
 register = template.Library()
 
 def results(cl):
+    """
+    Additionally receive an instance of the object (res) to result
+    """
     if cl.formset:
         for res, form in zip(cl.result_list, cl.formset.forms):
             yield (res, ResultList(form, items_for_result(cl, res, form)))
@@ -16,6 +19,7 @@ def results(cl):
 def result_list(cl):
     """
     Display the headers and data list together.
+    Also get URL for change object form
     """
     headers = list(result_headers(cl))
     num_sorted_fields = 0

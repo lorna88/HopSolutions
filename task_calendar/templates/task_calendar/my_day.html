@@ -1,11 +1,18 @@
 {% extends 'base.html' %}
 
 {% load static %}
-{% block content %}
 
+{% block head %}
+<!-- Link to CSS file for calendar -->
+<link rel="stylesheet" href="{% static 'css/calendar-1.css' %}">
+{% endblock %}
+
+{% block content %}
 <!-- Main Content -->
 <main class="task-calendar">
     <div class="main-content-calendar">
+
+        <!-- Filter and search panel -->
         <aside class="sidebar sidebar-calendar filter-menu">
             <div class="sidebar__section">
                 <h3 class="section-title">Keywords</h3>
@@ -53,12 +60,17 @@
             </div>
         </aside>
 
+        <!-- Task list -->
         <div class="task-card">
+
+            <!-- Date -->
             <div class="category_name_menu">
                 <h3 class="section-title">{{ date|date:"M d, Y" }}</h3>
             </div>
             {% for task in tasks %}
                 <a href="{% url 'tasks:task-detail' task.slug %}?next={{ request.get_full_path }}" class="product-card-link">
+
+                    <!-- Task card -->
                     <div class="calendar-task-card">
                         <div class="product-card__info">
                             <div class="tag-section">
@@ -89,6 +101,8 @@
                     </div>
                 </a>
             {% endfor %}
+
+            <!-- Add task input field -->
             <form action="{% url 'tasks:task-create' %}?next={{ request.get_full_path }}" method="post">
                 {% csrf_token %}
                 <div class="cart-item__quantity-selector">
@@ -103,6 +117,7 @@
 <!--            <img src="{% static 'img/background/hopfen-fields.jpg' %}" alt="Beautiful hops on a dark background" class="hero-banner__image">-->
 <!--        </div>-->
 
+        <!-- Button for show hidden sidebar -->
         <aside class="sidebar--vertical">
             <button class="button" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCalendar" aria-controls="offcanvasCalendar">
                 <i class="fa-solid fa-angle-double-left"></i>
@@ -111,7 +126,7 @@
 
     </div>
 
-
+    <!-- Hidden sidebar with calendar -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasCalendar" aria-labelledby="offcanvasCalendarLabel">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasCalendarLabel">Calendar</h5>
@@ -135,5 +150,9 @@
     </div>
     </div>
 </main>
+{% endblock %}
 
+{% block scripts %}
+<!-- Link to JavaScript file for calendar -->
+<script src="{% static 'js/calendar-1.js' %}"></script>
 {% endblock %}

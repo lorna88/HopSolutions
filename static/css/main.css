@@ -925,20 +925,13 @@ footer {
 ========================================
 */
 
-body:not(.user-logged-in) .header__user-actions {
-    display: none;
-}
-body:not(.user-logged-in) .header__auth-buttons {
+.header__auth-buttons {
     display: flex;
 }
 
-body.user-logged-in .header__auth-buttons {
-    display: none;
-}
-body.user-logged-in .header__user-actions {
+.header__user-actions {
     display: flex;
 }
-
 
 /*
 ========================================
@@ -1147,10 +1140,6 @@ body.user-logged-in .header__user-actions {
     flex-direction: column;
     gap: 24px;
 }
-
-/*.task-delete {
-    padding-top: 60px;
-}*/
 
 .review-rating {
     display: flex;
@@ -1865,6 +1854,54 @@ body.user-logged-in .header__user-actions {
     border-radius: 8px;
 }
 
+td img {
+    width: 20px;
+    height: 20px;
+}
+
+.admin-inline-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-inline-table th,
+.admin-inline-table td {
+    padding-right: 60px;
+    text-align: left;
+    font-size: 16px;
+}
+
+.admin-inline-table tr:last-child td {
+    border-bottom: none;
+}
+
+.admin-inline-table thead {
+    background-color: var(--background-green);
+}
+
+.admin-inline-table th {
+    font-weight: 700;
+    color: var(--black-main);
+}
+
+.admin-inline-table td {
+    color: var(--black-main);
+    vertical-align: middle;
+}
+
+.addlink {
+    padding-left: 16px;
+    background: url(../img/icons/addlink.svg) 0 1px no-repeat;
+}
+
+.form-row.empty-form {
+    display: none;
+}
+
+#id_tags_helptext {
+    display: none;
+}
+
 /*
 ========================================
     Admin Add/Edit Product Page Styles
@@ -2132,6 +2169,12 @@ fieldset {
     padding: 0 32px;
 }
 
+/*
+========================================
+    Calendar Page Styles
+========================================
+*/
+
 .offcanvas {
     width: 800px !important;
 }
@@ -2162,18 +2205,15 @@ td.fc-day-active .fc-daygrid-day-frame {
     color: var(--white-text);
 }
 
-select {
-    background-color: var(--background-default);
-    border: none;
-    margin-bottom: 10px;
+.sidebar-calendar {
+    margin-left: 10%;
 }
 
-.tag-line {
-  border-bottom: 5px solid black;
-  border-radius: 10px;
-  align-self: flex-start;
-  width: 20%;
-}
+/*
+========================================
+    Subtasks Elements Styles
+========================================
+*/
 
 .subtask-progress-bar {
   width: 100%;
@@ -2200,11 +2240,11 @@ select {
     color: var(--grey-text);
 }
 
-.link-sent-text {
-    font-size: 20px;
-    font-weight: bold;
-    text-align: center;
-}
+/*
+========================================
+    User Messages Styles
+========================================
+*/
 
 .alert {
     width: 20%;
@@ -2212,53 +2252,11 @@ select {
     z-index: 3;
 }
 
-td img {
-    width: 20px;
-    height: 20px;
-}
-
-.admin-inline-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.admin-inline-table th,
-.admin-inline-table td {
-    padding-right: 60px;
-    text-align: left;
-    font-size: 16px;
-}
-
-.admin-inline-table tr:last-child td {
-    border-bottom: none;
-}
-
-.admin-inline-table thead {
-    background-color: var(--background-green);
-}
-
-.admin-inline-table th {
-    font-weight: 700;
-    color: var(--black-main);
-}
-
-.admin-inline-table td {
-    color: var(--black-main);
-    vertical-align: middle;
-}
-
-.addlink {
-    padding-left: 16px;
-    background: url(../img/icons/addlink.svg) 0 1px no-repeat;
-}
-
-.form-row.empty-form {
-    display: none;
-}
-
-#id_tags_helptext {
-    display: none;
-}
+/*
+========================================
+    Other Styles
+========================================
+*/
 
 .button--ellipsis {
     color: var(--grey-text);
@@ -2276,6 +2274,21 @@ td img {
     color: var(--grey-text);
 }
 
-.sidebar-calendar {
-    margin-left: 10%;
+select {
+    background-color: var(--background-default);
+    border: none;
+    margin-bottom: 10px;
+}
+
+.tag-line {
+  border-bottom: 5px solid black;
+  border-radius: 10px;
+  align-self: flex-start;
+  width: 20%;
+}
+
+.link-sent-text {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
 }

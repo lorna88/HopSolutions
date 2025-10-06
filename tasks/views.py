@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q, Prefetch
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.views import View
 from django.views.generic import ListView, UpdateView, CreateView, DeleteView
 from rest_framework.reverse import reverse_lazy
@@ -86,7 +86,7 @@ class TaskDetailView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 
 class TaskCompleteView(LoginRequiredMixin, View):
     def post(self, request, slug, *args, **kwargs):
-        task = Task.objects.get(slug=slug)
+        task = get_object_or_404(Task, slug=slug)
         is_completed = request.POST.get("is_completed") is not None
 
         task.is_completed = is_completed
@@ -157,8 +157,13 @@ class CategoryDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
 class DeleteCompletedView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         tasks = Task.objects.filter(is_completed=True, user=self.request.user)
+        total_count = tasks.count()
         for task in tasks:
             task.delete()
-        messages.success(self.request, 'All completed tasks were deleted')
+
+        if total_count > 0:
+            messages.success(self.request, f'{total_count} completed tasks were deleted')
+        else:
+            messages.info(self.request, 'No completed tasks found')
         return redirect('tasks:home')
 

@@ -1,31 +1,29 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    // --- General logic for all pages (Login/Logout Simulation) ---
-    const loginForm = document.getElementById('login-form');
-    const logoutButton = document.getElementById('logout-button');
-    function checkLoginStatus() {
-        if (localStorage.getItem('isLoggedIn') === 'true') {
-            document.body.classList.add('user-logged-in');
-        } else {
-            document.body.classList .remove('user-logged-in');
-        }
-    }
-    if (loginForm) {
-        loginForm.addEventListener('submit', function(e) {
-//            e.preventDefault();
-            localStorage.setItem('isLoggedIn', 'true');
-//            const nextUrl = new URLSearchParams(window.location.search).get('next');
-//            window.location.href = nextUrl || '/home';
+    // Setting the status of completed tasks
+    function setStatusOfCompletedTasks() {
+        const complete_checkboxes = document.querySelectorAll('.checkbox-task-complete')
+        complete_checkboxes.forEach(checkbox => {
+            checkbox.checked = checkbox.value === 'True';
+            checkbox.addEventListener('click', function(event) {
+                event.stopPropagation();
+            });
+            checkbox.addEventListener('change', function(event) {
+                this.form.submit();
+            });
         });
     }
-    if (logoutButton) {
-        logoutButton.addEventListener('click', function(e) {
-//            e.preventDefault();
-            localStorage.removeItem('isLoggedIn');
-//            window.location.href = '/home';
+
+    // Setting the color of tags
+    // Color comes from 'main.css' and is stored in model field
+    function setColorOfTags(elemClass, cssProp) {
+        const tags = document.querySelectorAll(elemClass);
+        tags.forEach(tag => {
+            const color = tag.getAttribute('data-color');
+            const colorValue = getComputedStyle(document.documentElement).getPropertyValue(color);
+            tag.style[cssProp] = colorValue;
         });
     }
-    checkLoginStatus();
 
     // --- User Messages ---
     const messages = document.querySelectorAll('.alert');
@@ -189,39 +187,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- Logic for the Main Page (home.html) ---
-//    const homePageContent = document.querySelector('.main-content-grid');
     if (homePageContent) {
-        // Setting the status of completed tasks
-        const complete_checkboxes = document.querySelectorAll('.checkbox-task-complete')
-        complete_checkboxes.forEach(checkbox => {
-            checkbox.checked = checkbox.value === 'True';
-            checkbox.addEventListener('click', function(event) {
-                event.stopPropagation();
-            });
-            checkbox.addEventListener('change', function(event) {
-                this.form.submit();
-            });
-        });
-
-        // Tags
-        const tags = document.querySelectorAll('.tag-line');
-        tags.forEach(tag => {
-            const color = tag.getAttribute('data-color');
-            const colorValue = getComputedStyle(document.documentElement).getPropertyValue(color);
-            tag.style.borderColor = colorValue;
-        });
+        setStatusOfCompletedTasks();
+        setColorOfTags('.tag-line', 'border-color');
     }
 
-    // --- Logic for Product Detail Pages (product-*.html) ---
-    const productPageContent = document.querySelector('.page-product');
-    if (productPageContent) {
-        // Tags
-        const tags = document.querySelectorAll('.price-tag');
-        tags.forEach(tag => {
-            const color = tag.getAttribute('data-color');
-            const colorValue = getComputedStyle(document.documentElement).getPropertyValue(color);
-            tag.style.backgroundColor = colorValue;
-        });
+    // --- Logic for Task Detail Page (task-detail.html) ---
+    const TaskDetailPageContent = document.querySelector('.page-product');
+    if (TaskDetailPageContent) {
+        setColorOfTags('.price-tag', 'background-color');
 
         // Subtasks logic
         const accordionTitle = document.querySelector('.accordion-title');
@@ -244,31 +218,7 @@ document.addEventListener('DOMContentLoaded', function() {
         progress_bar_width = 100 / subtasks_total * subtasks_completed;
         progress_bar.style.width = progress_bar_width + '%';
 
-        // "Add to Cart" Button and Counter
-        const cartControls = document.querySelector('.cart-controls');
-        if (cartControls) {
-            const addToCartBtn = cartControls.querySelector('#add-to-cart-btn');
-            const quantityCounter = cartControls.querySelector('#quantity-counter');
-            const decreaseBtn = quantityCounter.querySelector('[data-action="decrease"]');
-            const increaseBtn = quantityCounter.querySelector('[data-action="increase"]');
-            const quantityValueSpan = quantityCounter.querySelector('.quantity-value');
-            let quantity = 0;
-            function updateView() {
-                if (quantity === 0) {
-                    addToCartBtn.classList.remove('is-hidden');
-                    quantityCounter.classList.add('is-hidden');
-                } else {
-                    addToCartBtn.classList.add('is-hidden');
-                    quantityCounter.classList.remove('is-hidden');
-                    quantityValueSpan.textContent = `${quantity} in cart`;
-                }
-            }
-            addToCartBtn.addEventListener('click', function() { quantity = 1; updateView(); });
-            decreaseBtn.addEventListener('click', function() { if (quantity > 0) { quantity--; updateView(); } });
-            increaseBtn.addEventListener('click', function() { quantity++; updateView(); });
-            updateView();
-        }
-
+        // Filling in tags list on modal form with response data from server
         const tagsButton = document.getElementById('showTags');
         if (tagsButton) {
             tagsButton.addEventListener('click', function() {
@@ -280,7 +230,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     return response.text();
                   })
                   .then(data => {
-                    console.log('Данные получены:', data);
+//                    console.log('Данные получены:', data);
                     const modal = document.getElementById('tagsModal');
                     const modalBody = modal.querySelector('.modal-body');
                     modalBody.innerHTML = data;
@@ -298,23 +248,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- Logic for Calendar Page (my_day.html) ---
-    const taskCalendarContent = document.querySelector('.task-card');
-    if (taskCalendarContent) {
-        const keywordsList = document.querySelector('.keywords-list');
-        const category_checkboxes = document.querySelectorAll('.category-checkbox');
-        const tag_checkboxes = document.querySelectorAll('.tag-checkbox');
-
-        // Setting the status of completed tasks
-        const complete_checkboxes = document.querySelectorAll('.checkbox-task-complete')
-        complete_checkboxes.forEach(checkbox => {
-            checkbox.checked = checkbox.value === 'True';
-            checkbox.addEventListener('click', function(event) {
-                event.stopPropagation();
-            });
-            checkbox.addEventListener('change', function(event) {
-                this.form.submit();
-            });
-        });
+    if (calendarPageContent) {
+        setStatusOfCompletedTasks();
+        setColorOfTags('.tag-line', 'border-color');
 
         // Highlighting chosen days in calendar
         function chooseDate() {
@@ -331,8 +267,10 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
+        // For the current calendar page
         chooseDate();
 
+        // For other calendar pages
         const calendar = document.getElementById('bsb-calendar-1');
         const buttonGroup = calendar.querySelector('.btn-group');
         const calendarButtons = buttonGroup.querySelectorAll('button');
@@ -340,28 +278,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 button.addEventListener('click', chooseDate)
         });
 
-        // Tags
-        const tags = document.querySelectorAll('.tag-line');
-        tags.forEach(tag => {
-            const color = tag.getAttribute('data-color');
-            const colorValue = getComputedStyle(document.documentElement).getPropertyValue(color);
-            tag.style.borderColor = colorValue;
-        });
+        setColorOfTags('.tag-line', 'border-color');
     }
 
     // --- Logic for Authorization Pages ---
     const authPageContent = document.querySelector('.auth-page-wrapper');
     if (authPageContent) {
+        // Styling input fields
         const inputFields = document.querySelectorAll('input');
         inputFields.forEach(input => {
             input.classList.add('Input');
         })
     }
 
-    // --- Logic for Account and Admin Pages ---
+    // --- Logic for Admin Pages ---
     const adminContent = document.querySelector('.admin-content');
     if (adminContent) {
-        // Admin Panel - Category Tags
+        // Replacement standard select field for tags choice with tags buttons
         const tagsSelector = document.getElementById('id_tags');
         if (tagsSelector) {
             const tagsParent = tagsSelector.parentNode.parentNode;
@@ -375,7 +308,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 tagButton.classList.add('category-tag');
                 tagButton.setAttribute('type', 'button');
                 tagButton.setAttribute('value', option.getAttribute('value'));
-                tagButton.setAttribute('data-color', option.getAttribute('data-color'));
+                if (option.hasAttribute('data-color')) {
+                    tagButton.setAttribute('data-color', option.getAttribute('data-color'));
+                }
+                else {
+                    tagButton.setAttribute('data-color', '--slate-200');
+                }
                 tagButton.textContent = option.textContent;
                 if (option.hasAttribute('selected')) {
                     tagButton.classList.add('active');
@@ -404,21 +342,25 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
+        // Styling input fields
         const inputFields = document.querySelectorAll('input');
         inputFields.forEach(input => {
             input.classList.add('Input');
         })
 
+        // Styling textarea fields
         const textareaFields = document.querySelectorAll('textarea');
         textareaFields.forEach(textarea => {
             textarea.classList.add('Textarea');
         })
 
+        // Styling select fields
         const selectFields = document.querySelectorAll('select');
         selectFields.forEach(select => {
             select.classList.add('select');
         })
 
+        // Styling chexbox input fields
         const objectsTable = document.querySelector('table');
         const actionCheckboxInputs = objectsTable.querySelectorAll('input');
         actionCheckboxInputs.forEach(checkbox => {
@@ -439,31 +381,5 @@ document.addEventListener('DOMContentLoaded', function() {
                 parentNode.appendChild(checkboxField);
             }
         })
-
-        // Image Upload Simulation
-//        const uploadButton = document.getElementById('upload-image-btn');
-//        const fileInput = document.getElementById('image-upload-input');
-//
-//        if (uploadButton && fileInput) {
-//            uploadButton.addEventListener('click', function() {
-//                fileInput.click();
-//            });
-//
-//            fileInput.addEventListener('change', function(event) {
-//                const file = event.target.files[0];
-//                if (file) {
-//                    const reader = new FileReader();
-//                    const placeholder = document.querySelector('.image-upload-placeholder');
-//
-//                    reader.onload = function(e) {
-//                        placeholder.innerHTML = '';
-//                        placeholder.style.backgroundImage = `url('${e.target.result}')`;
-//                        placeholder.style.backgroundSize = 'cover';
-//                        placeholder.style.backgroundPosition = 'center';
-//                    }
-//                    reader.readAsDataURL(file);
-//                }
-//            });
-//        }
     }
 });

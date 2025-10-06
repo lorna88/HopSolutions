@@ -17,6 +17,11 @@ class Subtask(models.Model):
         verbose_name_plural = 'subtasks'
 
     def save(self, *args, **kwargs):
+        """
+        Fills in the slug field for a new subtask.
+        The slug consists of name and username
+        (to comply with the unique constraint).
+        """
         user = self.task.user
         self.user = user
         if not self.slug:

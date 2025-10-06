@@ -15,10 +15,12 @@ class Category(models.Model):
         verbose_name = 'category'
         verbose_name_plural = 'categories'
 
-    def get_absolute_url(self):
-        return reverse('tasks:category', kwargs={'slug':self.slug})
-
     def save(self, *args, **kwargs):
+        """
+        Fills in the slug field for a new category.
+        The slug consists of name and username
+        (to comply with the unique constraint).
+        """
         if not self.slug:
             self.slug = slugify(self.name) + '-' + self.user.username
         super().save(*args, **kwargs)
@@ -45,13 +47,26 @@ class Task(models.Model):
 
     @property
     def subtasks_total(self):
+        """
+        Returns total subtasks count
+        Used on list pages
+        """
         return self.subtasks.count()
 
     @property
     def subtasks_completed(self):
+        """
+        Returns only completed subtasks count
+        Used on list pages
+        """
         return self.subtasks.filter(is_completed=True).count()
 
     def save(self, *args, **kwargs):
+        """
+        Fills in the slug field for a new task.
+        The slug consists of name and username
+        (to comply with the unique constraint).
+        """
         if not self.slug:
             self.slug = slugify(self.name) + '-' + self.user.username
         super().save(*args, **kwargs)

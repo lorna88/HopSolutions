@@ -10,6 +10,10 @@ class TagAdmin(admin.ModelAdmin):
     exclude = ('user',)
 
     def save_model(self, request, obj, form, change):
+        """
+        Fills in the user field for a new tag.
+        Used on add tag form.
+        """
         try:
             if not obj.user:
                 obj.user = request.user

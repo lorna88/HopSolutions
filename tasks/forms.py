@@ -8,9 +8,12 @@ class TaskDateInput(forms.DateInput):
     format = '%Y-%m-%d'
 
 class TaskUpdateForm(forms.ModelForm):
-
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)  # Извлекаем пользователя из аргументов
+        """
+        Filter categories by current user.
+        Used on task card form.
+        """
+        user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         if user:
             self.fields["category"].queryset = Category.objects.filter(user=self.instance.user)

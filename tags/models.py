@@ -14,6 +14,11 @@ class Tag(models.Model):
         verbose_name_plural = 'tags'
 
     def save(self, *args, **kwargs):
+        """
+        Fills in the slug field for a new tag.
+        The slug consists of name and username
+        (to comply with the unique constraint).
+        """
         if not self.slug:
             self.slug = slugify(self.name) + '-' + self.user.username
         super().save(*args, **kwargs)

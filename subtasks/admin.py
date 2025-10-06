@@ -9,6 +9,9 @@ class SubtaskAdmin(admin.ModelAdmin):
     readonly_fields = ('user', 'task')
 
     def has_add_permission(self, request):
+        """
+        Adding new subtasks is possible on task change page
+        """
         return False
 
 admin.site.register(Subtask, SubtaskAdmin)

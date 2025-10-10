@@ -1,7 +1,9 @@
 import datetime
+from typing import Any
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q
+from django.db.models import Q, QuerySet
+from django.http import HttpRequest, HttpResponse
 from django.views.generic import ListView
 
 from tags.models import Tag
@@ -9,30 +11,35 @@ from tasks.models import Task, Category
 
 
 class MyDayView(LoginRequiredMixin, ListView):
+    """Display the list of tasks by the specified date."""
     template_name = 'task_calendar/my_day.html'
     model = Task
     context_object_name = 'tasks'
 
     def __init__(self, **kwargs):
+        """Get the current date."""
         super().__init__(**kwargs)
         today = datetime.date.today()
         self.task_date = today
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        """Get the date chosen in the calendar."""
         task_date = request.GET.get('date')
         if task_date:
             date_object = datetime.datetime.strptime(task_date, "%Y-%m-%d")
             self.task_date = date_object
         return super().get(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
+        """Set parameters into template context"""
         context = super().get_context_data(**kwargs)
         context['date'] = self.task_date
         context['all_categories'] = Category.objects.filter(user=self.request.user)
         context['tags'] = Tag.objects.filter(user=self.request.user)
         return context
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
+        """Filter and search options implementation."""
         qs = Task.objects.filter(date=self.task_date, user=self.request.user)
 
         # filter by category
@@ -52,4 +59,4 @@ class MyDayView(LoginRequiredMixin, ListView):
                 Q(name__icontains=to_search) | Q(description__icontains=to_search)
             )
 
-        return list(qs)
+        return qs

@@ -5,6 +5,7 @@ from .models import User
 
 
 class UserRegistrationForm(UserCreationForm):
+    """A form that creates a user, with no privileges, from the given email and password."""
     class Meta(UserCreationForm.Meta):
         model = User
         fields = ('email', 'username', 'first_name', 'last_name', 'password1', 'password2')
@@ -25,7 +26,9 @@ class UserRegistrationForm(UserCreationForm):
 
 
 class ForgotPasswordForm(PasswordResetForm):
+    """A form to send a link on password reset to specified email"""
     def clean_email(self):
+        """User with specified email must be registered in the system"""
         email = self.cleaned_data.get('email')
         if not User.objects.filter(email=email).exists():
             raise forms.ValidationError("The user with this email is not registered.")
@@ -33,6 +36,7 @@ class ForgotPasswordForm(PasswordResetForm):
 
 
 class UserUpdateForm(forms.ModelForm):
+    """A form to update user information on the profile page"""
     class Meta:
         model = User
         fields = ('email', 'username', 'first_name', 'last_name', 'phone')

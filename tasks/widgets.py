@@ -1,10 +1,19 @@
+from typing import Any
+
 from django.forms import SelectMultiple
 
 
 class TagSelectMultiple(SelectMultiple):
+    """Widget to choose tags for a task on the admin view"""
     def create_option(
-        self, name, value, label, selected, index, subindex=None, attrs=None
-    ):
+            self,
+            name: str,
+            value: Any,
+            label: str,
+            selected: bool,
+            index, subindex: Any = None,
+            attrs: dict[str, Any] = None
+    ) -> dict[str, Any]:
         """
         Overrides method to add option attribute - color - for tags. Used on task
         change view in the admin page.

@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.db import models
 from django import forms
+from django.http import HttpRequest
 
 from subtasks.models import Subtask
 from tags.models import Tag
@@ -10,12 +11,14 @@ from .widgets import TagSelectMultiple
 
 
 class SubtaskInline(admin.TabularInline):
+    """Options for inline editing of Subtask instances."""
     model = Subtask
     extra = 1
     fields = ('name', 'is_completed')
 
 
 class TaskAdminForm(forms.ModelForm):
+    """Form class for use in the admin add and change view."""
     def __init__(self, *args, **kwargs):
         """
         Filter categories and tags by user, who created the task.
@@ -31,6 +34,7 @@ class TaskAdminForm(forms.ModelForm):
 
 
 class TaskAdmin(admin.ModelAdmin):
+    """Class for representing Task model in the admin area"""
     list_display = ('id', 'name', 'slug', 'category', 'date', 'user', 'is_completed')
     fields = ('name', 'slug', 'description', 'category', 'date', 'is_completed', 'tags')
     list_per_page = 10
@@ -44,7 +48,11 @@ class TaskAdmin(admin.ModelAdmin):
 
     inlines = [SubtaskInline]
 
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+    def formfield_for_foreignkey(
+            self,
+            db_field: str,
+            request: HttpRequest,
+            **kwargs) -> forms.Field:
         """
         Filter categories by current user.
         Used on add task form.
@@ -52,8 +60,12 @@ class TaskAdmin(admin.ModelAdmin):
         if db_field.name == "category":
             kwargs["queryset"] = Category.objects.filter(user=request.user)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
-    #
-    def formfield_for_manytomany(self, db_field, request, **kwargs):
+
+    def formfield_for_manytomany(
+            self,
+            db_field: str,
+            request: HttpRequest,
+            **kwargs) -> forms.Field:
         """
         Filter tags by current user.
         Used on add task form.
@@ -62,7 +74,12 @@ class TaskAdmin(admin.ModelAdmin):
             kwargs["queryset"] = Tag.objects.filter(user=request.user)
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
-    def save_model(self, request, obj, form, change):
+    def save_model(
+            self,
+            request: HttpRequest,
+            obj: Task,
+            form: TaskAdminForm,
+            change: bool) -> None:
         """
         Fills in the user field for a new task.
         Used on add task form.
@@ -77,12 +94,18 @@ class TaskAdmin(admin.ModelAdmin):
 
 
 class CategoryAdmin(admin.ModelAdmin):
+    """Class for representing Category model in the admin area"""
     list_display = ('id', 'name', 'slug', 'user')
     list_per_page = 10
     # readonly_fields = ('user',)
     exclude = ('user',)
 
-    def save_model(self, request, obj, form, change):
+    def save_model(
+            self,
+            request: HttpRequest,
+            obj: Category,
+            form: forms.ModelForm,
+            change: bool) -> None:
         """
         Fills in the user field for a new category.
         Used on add category form.
@@ -94,6 +117,7 @@ class CategoryAdmin(admin.ModelAdmin):
             obj.user = request.user
 
         super().save_model(request, obj, form, change)
+
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Task, TaskAdmin)

@@ -1,22 +1,26 @@
+from typing import Any, Generator
+
 from django import template
-from django.contrib.admin.templatetags.admin_list import result_headers, result_hidden_fields, items_for_result, \
-    ResultList
+from django.contrib.admin.templatetags.admin_list import result_headers, result_hidden_fields, \
+    items_for_result, ResultList
 from django.contrib.admin.templatetags.base import InclusionAdminNode
 
 register = template.Library()
 
-def results(cl):
+
+def results(cl: {Any}) -> Generator[Any, Any, None]:
     """
     Additionally receive an instance of the object (res) to result
     """
     if cl.formset:
         for res, form in zip(cl.result_list, cl.formset.forms):
-            yield (res, ResultList(form, items_for_result(cl, res, form)))
+            yield res, ResultList(form, items_for_result(cl, res, form))
     else:
         for res in cl.result_list:
-            yield (res, ResultList(None, items_for_result(cl, res, None)))
+            yield res, ResultList(None, items_for_result(cl, res, None))
 
-def result_list(cl):
+
+def result_list(cl: {Any}) -> dict[str, Any]:
     """
     Display the headers and data list together.
     Also get URL for change object form
@@ -37,7 +41,7 @@ def result_list(cl):
 
 
 @register.tag(name='result_list_ext')
-def result_list_tag(parser, token):
+def result_list_tag(parser, token: {Any}) -> InclusionAdminNode:
     return InclusionAdminNode(
         parser, token,
         func=result_list,

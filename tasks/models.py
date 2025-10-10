@@ -7,6 +7,7 @@ from tags.models import Tag
 
 
 class Category(models.Model):
+    """Model for categories"""
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True, blank=True)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
@@ -28,7 +29,9 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+
 class Task(models.Model):
+    """Model for tasks"""
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True, blank=True)
     description = models.TextField(null=True, blank=True)
@@ -43,7 +46,8 @@ class Task(models.Model):
         verbose_name_plural = 'tasks'
 
     def get_absolute_url(self):
-        return reverse('tasks:task-detail', kwargs={'slug':self.slug})
+        """returns URL on page with current task object"""
+        return reverse('tasks:task-detail', kwargs={'slug': self.slug})
 
     @property
     def subtasks_total(self):

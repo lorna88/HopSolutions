@@ -98,6 +98,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     activeSortButton.classList.add('active-sort');
                 }
             }
+            else {
+                const activeSortButton = document.querySelector(`.sort-options .sort-button[data-sort="date_asc"]`);
+                if (activeSortButton) {
+                    activeSortButton.classList.add('active-sort');
+                }
+            }
         }
         updateHomePageContent();
 

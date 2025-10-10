@@ -77,7 +77,7 @@
 
                 <div class="sort-options">
                     {% for item in sort_options %}
-                    <button class="sort-button {% if item.key == 'date_asc' %}active-sort{% endif %}" data-sort="{{ item.key }}">
+                    <button class="sort-button" data-sort="{{ item.key }}">
                         <span>{{ item.label }}</span>
                     </button>
                     {% endfor %}

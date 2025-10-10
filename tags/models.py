@@ -4,6 +4,7 @@ from django.utils.text import slugify
 
 
 class Tag(models.Model):
+    """Model for tags"""
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True, blank=True)
     color = models.CharField(max_length=100)

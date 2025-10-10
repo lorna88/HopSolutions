@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.views import View
 
@@ -7,7 +8,14 @@ from tasks.models import Task
 
 
 class SubtaskCompleteView(LoginRequiredMixin, View):
-    def post(self, request, task_slug, subtask_id, *args, **kwargs):
+    """Make a subtask completed or active"""
+    def post(
+            self,
+            request: HttpRequest,
+            task_slug: str,
+            subtask_id: int,
+            *args, **kwargs) -> HttpResponse:
+        """Update subtask status on form post"""
         subtask = get_object_or_404(Subtask, id=subtask_id)
         is_completed = request.POST.get("is_completed") is not None
 
@@ -17,7 +25,9 @@ class SubtaskCompleteView(LoginRequiredMixin, View):
 
 
 class SubtaskCreateView(LoginRequiredMixin, View):
-    def post(self, request, task_slug, *args, **kwargs):
+    """Create a new subtask"""
+    def post(self, request: HttpRequest, task_slug: str, *args, **kwargs) -> HttpResponse:
+        """Create a new task on form post"""
         name = request.POST.get("name")
         task = get_object_or_404(Task, slug=task_slug)
         Subtask.objects.create(name=name, task=task)
@@ -26,7 +36,14 @@ class SubtaskCreateView(LoginRequiredMixin, View):
 
 
 class SubtaskDeleteView(LoginRequiredMixin, View):
-    def post(self, request, task_slug, subtask_id, *args, **kwargs):
+    """Delete the subtask"""
+    def post(
+            self,
+            request: HttpRequest,
+            task_slug: str,
+            subtask_id: int,
+            *args, **kwargs) -> HttpResponse:
+        """Delete the subtask on form post"""
         subtask = get_object_or_404(Subtask, id=subtask_id)
         subtask.delete()
         return redirect('tasks:task-detail', slug=task_slug)

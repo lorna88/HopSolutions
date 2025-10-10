@@ -28,7 +28,8 @@ urlpatterns = [
     path('calendar/', include('task_calendar.urls', namespace='calendar')),
     path('tags/', include('tags.urls', namespace='tags')),
     path('subtasks/', include('subtasks.urls', namespace='subtasks')),
-    path('password-reset-confirm/<uidb64>/<token>/', ConfirmPasswordView.as_view(), name='password_reset_confirm'),
+    path('password-reset-confirm/<uidb64>/<token>/', ConfirmPasswordView.as_view(),
+         name='password_reset_confirm'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

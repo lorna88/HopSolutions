@@ -7,7 +7,10 @@ from users.models import User
 
 
 @receiver(post_save, sender=User)
-def create_default_settings(sender, instance, created, **kwargs):
+def create_default_settings(
+        sender: User.__class__,
+        instance: User,
+        created: bool, **kwargs) -> None:
     """
     Creates default tags and categories after a new user was registered.
     This is need because every user has his own tasks, categories and tags.
@@ -21,8 +24,20 @@ def create_default_settings(sender, instance, created, **kwargs):
         Category.objects.bulk_create(categories)
 
         tags = [
-            Tag(name="Important", slug=f"important-{instance.username}", color="--background-yellow", user=instance),
-            Tag(name="Deadline", slug=f"deadline-{instance.username}", color="--background-pink", user=instance),
-            Tag(name="Family", slug=f"family-{instance.username}", color="--background-green", user=instance),
+            Tag(
+                name="Important",
+                slug=f"important-{instance.username}",
+                color="--background-yellow",
+                user=instance),
+            Tag(
+                name="Deadline",
+                slug=f"deadline-{instance.username}",
+                color="--background-pink",
+                user=instance),
+            Tag(
+                name="Family",
+                slug=f"family-{instance.username}",
+                color="--background-green",
+                user=instance),
         ]
         Tag.objects.bulk_create(tags)

@@ -4,10 +4,13 @@ from .models import Task, Category
 
 
 class TaskDateInput(forms.DateInput):
+    """Widget for date input"""
     input_type = 'date'
     format = '%Y-%m-%d'
 
+
 class TaskUpdateForm(forms.ModelForm):
+    """A form to edit task attributes"""
     def __init__(self, *args, **kwargs):
         """
         Filter categories by current user.
@@ -27,11 +30,16 @@ class TaskUpdateForm(forms.ModelForm):
             'category': forms.Select(attrs={'class': 'author-name'}),
             'is_completed': forms.CheckboxInput(attrs={'class': 'checkbox-task-input'}),
             'name': forms.TextInput(attrs={'class': 'InputTaskCard product-name'}),
-            'description': forms.Textarea(attrs={'rows': 6, 'placeholder': 'Insert your description here...', 'class': 'InputTaskCard product-description'}),
+            'description': forms.Textarea(attrs={
+                'rows': 6,
+                'placeholder': 'Insert your description here...',
+                'class': 'InputTaskCard product-description'}),
             'date': TaskDateInput(attrs={'class': 'InputTaskCard form-control author-name'}),
         }
 
+
 class CategoryCreateForm(forms.ModelForm):
+    """A form to create new category"""
     class Meta:
         model = Category
         fields = ('name',)

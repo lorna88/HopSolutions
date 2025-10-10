@@ -6,6 +6,7 @@ from tasks.models import Task
 
 
 class Subtask(models.Model):
+    """Model for subtasks"""
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True, blank=True)
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='subtasks')

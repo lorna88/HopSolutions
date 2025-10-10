@@ -42,17 +42,13 @@ docker compose up --build
 В результате выполнения команды будут запущены два сервиса:
 - backend - содержит контейнер сервера Django-приложения
 - db - содержит контейнер с базой данных PostgreSQL
-2. В терминале Docker-контейнера в сервисе db сконфигурировать базу данных (создать базу,
-пользователей и задать им права)
-3. В терминале Docker-контейнера в сервисе backend создать и выполнить миграции базы данных 
-с помощью команд:
+2. Выполнить миграции базы данных с помощью команды:
 ```bash
-python manage.py makemigrations
-python manage.py migrate
+docker compose run backend python manage.py migrate
 ```
-4. Создать суперпользователя Django с помощью команды (в том же терминале):
+3. Создать суперпользователя Django с помощью команды:
 ```bash
-python manage.py createsuperuser
+docker compose run backend python manage.py createsuperuser
 ```
 ### Приложение будет доступно по адресу
 ### `http://localhost:8000/home`

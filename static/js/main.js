@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
 
     // Setting the status of completed tasks
-    function setStatusOfCompletedTasks() {
+    function setStatusOfCompletedTasks(task_card_class) {
         const complete_checkboxes = document.querySelectorAll('.checkbox-task-complete')
         complete_checkboxes.forEach(checkbox => {
             checkbox.checked = checkbox.value === 'True';
@@ -11,6 +11,19 @@ document.addEventListener('DOMContentLoaded', function() {
             checkbox.addEventListener('change', function(event) {
                 this.form.submit();
             });
+
+            const task_card = checkbox.closest(task_card_class);
+            const task_name = task_card.querySelector('.product-card__name');
+
+            if (checkbox.value === 'True') {
+                checkbox.checked = true;
+                task_card.classList.add('task-completed');
+                task_name.classList.add('task-completed-name');
+            } else {
+                checkbox.checked = false;
+                task_card.classList.remove('task-completed');
+                task_name.classList.remove('task-completed-name');
+            }
         });
     }
 
@@ -194,7 +207,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- Logic for the Main Page (home.html) ---
     if (homePageContent) {
-        setStatusOfCompletedTasks();
+        setStatusOfCompletedTasks('.product-card');
         setColorOfTags('.tag-line', 'border-color');
     }
 
@@ -202,6 +215,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const TaskDetailPageContent = document.querySelector('.page-product');
     if (TaskDetailPageContent) {
         setColorOfTags('.price-tag', 'background-color');
+
+        // Set styles to completed task
+        const checkbox = TaskDetailPageContent.querySelector('.checkbox-task-input');
+        if (checkbox.checked) {
+            const task_card = TaskDetailPageContent.querySelector('.task-info');
+            const task_name = task_card.querySelector('.product-name');
+            task_card.classList.add('task-completed');
+            task_name.classList.add('task-completed-name');
+        }
 
         // Subtasks logic
         const accordionTitle = document.querySelector('.accordion-title');
@@ -255,7 +277,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- Logic for Calendar Page (my_day.html) ---
     if (calendarPageContent) {
-        setStatusOfCompletedTasks();
+        setStatusOfCompletedTasks('.calendar-task-card');
         setColorOfTags('.tag-line', 'border-color');
 
         // Highlighting chosen days in calendar

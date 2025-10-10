@@ -113,7 +113,7 @@
                     </div>
 
                     <!-- Card for category and its tasks -->
-                    <div class="product-card">
+                    <div class="category-card">
                         <div class="category_name_menu">
                             <h3 class="section-title">{{ category.name }}</h3>
                             <a id="{{ category.id }}" href="{% url 'tasks:category-delete' category.slug %}" class="quantity-btn-cart deleteCategory" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal{{ category.id }}"><i class="fa-solid fa-times"></i></a>

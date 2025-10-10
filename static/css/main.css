@@ -470,6 +470,23 @@ header {
     box-shadow: 0 5px 15px var(--black-200);
 }
 
+.category-card {
+    padding: 16px;
+    background-color: var(--background-default);
+    border-radius: 8px;
+    border: 1px solid var(--border-default);
+    box-shadow: 0 2px 5px var(--black-100);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px var(--black-200);
+}
+
 .calendar-task-card {
     padding: 16px;
     background-color: var(--background-default);
@@ -2167,6 +2184,35 @@ fieldset {
 .static-page-content .button {
     height: 44px;
     padding: 0 32px;
+}
+
+/*
+========================================
+    Task Page Styles
+========================================
+*/
+
+.task-completed * {
+    color: var(--grey-text);
+}
+
+.task-completed .subtask-count {
+    color: var(--border-default);
+}
+
+.task-completed .checkmark {
+    background-color: var(--grey-text) !important;
+    border-color: var(--grey-text);
+}
+
+.task-completed .button--primary {
+    background-color: var(--border-default);
+    border: 1px solid var(--border-dark-grey);
+    color: var(--black-main);
+}
+
+.task-completed-name {
+    text-decoration: line-through;
 }
 
 /*

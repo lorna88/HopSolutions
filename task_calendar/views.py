@@ -2,7 +2,7 @@ import datetime
 from typing import Any
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q, QuerySet
+from django.db.models import Q
 from django.http import HttpRequest, HttpResponse
 from django.views.generic import ListView
 
@@ -38,7 +38,7 @@ class MyDayView(LoginRequiredMixin, ListView):
         context['tags'] = Tag.objects.filter(user=self.request.user)
         return context
 
-    def get_queryset(self) -> QuerySet:
+    def get_queryset(self) -> list[Task]:
         """Filter and search options implementation."""
         qs = Task.objects.filter(date=self.task_date, user=self.request.user)
 
@@ -59,4 +59,4 @@ class MyDayView(LoginRequiredMixin, ListView):
                 Q(name__icontains=to_search) | Q(description__icontains=to_search)
             )
 
-        return qs
+        return list(qs)

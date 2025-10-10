@@ -4,7 +4,7 @@ from typing import Any
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db.models import Q, Prefetch, QuerySet
+from django.db.models import Q, Prefetch
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
@@ -39,7 +39,7 @@ class TaskListView(LoginRequiredMixin, ListView):
 
         return context
 
-    def get_queryset(self) -> QuerySet:
+    def get_queryset(self) -> list[Category]:
         """Filter, search and sort options implementation."""
         qs = Category.objects.filter(user=self.request.user)
         qs_tasks = Task.objects.filter(user=self.request.user)
@@ -70,7 +70,7 @@ class TaskListView(LoginRequiredMixin, ListView):
         qs_tasks = qs_tasks.order_by(TASKS_QUERY_MAP[qs_key])
 
         qs = qs.prefetch_related(Prefetch('tasks', queryset=qs_tasks))
-        return qs
+        return list(qs)
 
 
 class TaskDetailView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):

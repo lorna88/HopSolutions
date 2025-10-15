@@ -280,15 +280,21 @@ document.addEventListener('DOMContentLoaded', function() {
         setStatusOfCompletedTasks('.calendar-task-card');
         setColorOfTags('.tag-line', 'border-color');
 
-        // Highlighting chosen days in calendar
+        // Highlight chosen day in calendar
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('date')) {
+            const chosenDate = urlParams.get('date');
+            const chosenDay = document.querySelector(`.fc-day[data-date="${chosenDate}"]`);
+            chosenDay.classList.add('fc-day-active');
+        }
+
+        // Move to a new date on calendar click
         function chooseDate() {
             const days = document.querySelectorAll('.fc-day');
             days.forEach(day => {
                 day.addEventListener('click', function() {
                     days.forEach(d => d.classList.remove('fc-day-active'));
-                    this.classList.add('fc-day-active');
                     date = this.getAttribute('data-date');
-                    const urlParams = new URLSearchParams(window.location.search);
                     urlParams.set('date', date);
                     window.location.href = `${window.location.pathname}?` + urlParams.toString();
                 });
@@ -305,8 +311,6 @@ document.addEventListener('DOMContentLoaded', function() {
         calendarButtons.forEach(button => {
                 button.addEventListener('click', chooseDate)
         });
-
-        setColorOfTags('.tag-line', 'border-color');
     }
 
     // --- Logic for Authorization Pages ---

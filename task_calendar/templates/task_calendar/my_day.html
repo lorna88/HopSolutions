@@ -113,9 +113,9 @@
             </form>
         </div>
 
-<!--        <div class="hero-banner">-->
-<!--            <img src="{% static 'img/background/hopfen-fields.jpg' %}" alt="Beautiful hops on a dark background" class="hero-banner__image">-->
-<!--        </div>-->
+        <div class="calendar-banner">
+            <img src="{% static 'img/background/hopfen-fields-vertical.jpg' %}" alt="Beautiful hops on a dark background" class="calendar-banner__image">
+        </div>
 
         <!-- Button for show hidden sidebar -->
         <aside class="sidebar--vertical">
@@ -129,7 +129,7 @@
     <!-- Hidden sidebar with calendar -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasCalendar" aria-labelledby="offcanvasCalendarLabel">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasCalendarLabel">Calendar</h5>
+        <h5 class="offcanvas-title" id="offcanvasCalendarLabel">Choose date</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
     </div>
     <div class="offcanvas-body">
@@ -153,6 +153,8 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/bootstrap5@6.1.9/index.global.min.js"></script>
 <!-- Link to JavaScript file for calendar -->
 <script src="{% static 'js/calendar-1.js' %}"></script>
 {% endblock %}

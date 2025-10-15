@@ -1,8 +1,13 @@
 {% load i18n %}
+{% load static %}
 
 <!-- Main Content -->
 <main class="admin-page-wrapper">
+  <section class="hero-banner">
+    <img src="{% static 'img/background/hopfen-fields.jpg' %}" alt="Beautiful hops on a dark background" class="hero-banner__image">
+    <div class="hero-banner__overlay"></div>
+  </section>
   <div class="admin-container">
-    <h2>Welcome to Admin page!</h2>
+    <h2 class="welcome-header">Welcome to Admin page!</h2>
   </div>
 </main>

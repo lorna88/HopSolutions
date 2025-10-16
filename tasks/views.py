@@ -22,7 +22,7 @@ class TaskListView(LoginRequiredMixin, ListView):
     template_name = 'tasks/home.html'
     model = Category
     context_object_name = 'categories'
-    paginate_by = 3
+    paginate_by = 5
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         """Set parameters into template context"""
@@ -90,6 +90,12 @@ class TaskDetailView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
             context['next'] = self.request.GET.get('next')
         return context
 
+    def get_success_url(self) -> str:
+        """Get the page redirect"""
+        if self.request.GET.get('next'):
+            return self.request.GET.get('next')
+        return super().get_success_url()
+
 
 class TaskCompleteView(LoginRequiredMixin, View):
     """Make a task completed or active"""
@@ -114,7 +120,7 @@ class TaskCreateView(LoginRequiredMixin, View):
         if category_slug:
             category = Category.objects.get(slug=category_slug)
         else:
-            category = Category.objects.first()
+            category = Category.objects.filter(user=request.user).first()
 
         date_object = None
         date = request.POST.get("date")
@@ -193,4 +199,13 @@ class DeleteCompletedView(LoginRequiredMixin, View):
             messages.success(request, f'{total_count} completed tasks were deleted')
         else:
             messages.info(request, 'No completed tasks found')
+        return redirect('tasks:home')
+
+
+class TaskRedirectView(LoginRequiredMixin, View):
+    """Redirect to previous page on a task card"""
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        """Get URL from the query string"""
+        if request.GET.get('next'):
+            return redirect(request.GET.get('next'))
         return redirect('tasks:home')

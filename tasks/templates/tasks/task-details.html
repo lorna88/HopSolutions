@@ -45,13 +45,14 @@
             <form id="task-form" method="post">
             {% csrf_token %}
 
-            `<!-- Task Category Section -->
+            <!-- Task Category Section -->
             <section class="product-details-section">
               <div class="review-rating">
                 <span class="author-name"># {{ form.category }}</span>
               </div>
               <a id="deleteTaskButton" href="{% url 'tasks:task-delete' task.slug %}" class="quantity-btn-cart delete-task" data-bs-toggle="modal" data-bs-target="#deleteTaskModal">
                   <i class="fa fa-times"></i>
+                  Delete
               </a>
             </section>
 
@@ -135,6 +136,8 @@
             </section>
 
         </div>
+
+        <a href="{% url 'tasks:back' %}?next={{ next }}" class="button button--secondary">Back</a>
     </div>
   </div>
 </main>

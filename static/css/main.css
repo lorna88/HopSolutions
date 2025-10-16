@@ -204,18 +204,7 @@ header {
     padding-bottom: 64px;
     max-width: 1440px;
     margin-top: 32px;
-    margin-left: 256px;
     padding: 0 64px;
-    min-height: 70vh; /* Минимальная высота, чтобы футер не прилипал к хедеру */
-}
-
-.main-content-calendar {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    padding-bottom: 64px;
-    margin-top: 32px;
-    margin-left: 1%;
     min-height: 70vh; /* Минимальная высота, чтобы футер не прилипал к хедеру */
 }
 
@@ -445,7 +434,7 @@ header {
 .product-grid {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 32px;
 }
 
@@ -476,6 +465,7 @@ header {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    width: 390px;
 }
 
 .category-card:hover {
@@ -1145,6 +1135,7 @@ footer {
     border-radius: 8px;
     width: 710px;
     margin-left: 250px;
+    flex-direction: column;
 }
 
 .task-info {
@@ -2219,6 +2210,36 @@ fieldset {
 
 /*
 ========================================
+    Task Detail Page Styles
+========================================
+*/
+
+.button--add {
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 16px;
+    line-height: 1;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    border: 1px solid var(--border-dark-grey);
+    color: var(--grey-text);
+}
+
+.delete-task {
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 16px;
+    line-height: 1;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    border: 1px solid var(--border-dark-grey);
+    color: var(--grey-text);
+}
+
+/*
+========================================
     Calendar Page Styles
 ========================================
 */
@@ -2283,6 +2304,16 @@ td.fc-day-active .fc-daygrid-day-frame {
     gap: 16px;
 }
 
+.main-content-calendar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding-bottom: 64px;
+    margin-top: 32px;
+    margin-left: 1%;
+    min-height: 70vh; /* Минимальная высота, чтобы футер не прилипал к хедеру */
+}
+
 /*
 ========================================
     Subtasks Elements Styles
@@ -2333,18 +2364,6 @@ td.fc-day-active .fc-daygrid-day-frame {
 */
 
 .button--ellipsis {
-    color: var(--grey-text);
-}
-
-.button--add {
-    padding: 8px;
-    border-radius: 8px;
-    font-size: 16px;
-    line-height: 1;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-    border: 1px solid var(--border-dark-grey);
     color: var(--grey-text);
 }
 

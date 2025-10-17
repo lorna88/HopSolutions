@@ -34,13 +34,13 @@ class MyDayView(LoginRequiredMixin, ListView):
         """Set parameters into template context"""
         context = super().get_context_data(**kwargs)
         context['date'] = self.task_date
-        context['all_categories'] = Category.objects.filter(user=self.request.user)
-        context['tags'] = Tag.objects.filter(user=self.request.user)
+        context['all_categories'] = Category.objects.for_user(self.request.user)
+        context['tags'] = Tag.objects.for_user(self.request.user)
         return context
 
     def get_queryset(self) -> list[Task]:
         """Filter and search options implementation."""
-        qs = Task.objects.filter(date=self.task_date, user=self.request.user)
+        qs = Task.objects.for_user(self.request.user).filter(date=self.task_date)
 
         # filter by category
         categories = self.request.GET.get('categories', None)

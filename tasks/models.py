@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.utils.text import slugify
 
 from tags.models import Tag
+from tasks.managers import ForUserManager
 
 
 class Category(models.Model):
@@ -11,6 +12,8 @@ class Category(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True, blank=True)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    # Attach user manager
+    objects = ForUserManager()
 
     class Meta:
         verbose_name = 'category'
@@ -40,6 +43,8 @@ class Task(models.Model):
     is_completed = models.BooleanField(default=False)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     tags = models.ManyToManyField(Tag, related_name='tasks', blank=True)
+    # Attach user manager
+    objects = ForUserManager()
 
     class Meta:
         verbose_name = 'task'

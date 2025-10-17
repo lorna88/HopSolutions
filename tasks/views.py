@@ -41,8 +41,8 @@ class TaskListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self) -> list[Category]:
         """Filter, search and sort options implementation."""
-        qs = Category.objects.filter(user=self.request.user)
-        qs_tasks = Task.objects.filter(user=self.request.user)
+        qs = Category.objects.for_user(self.request.user)
+        qs_tasks = Task.objects.for_user(self.request.user)
 
         # filter by category
         categories = self.request.GET.get('categories', None)
@@ -120,7 +120,7 @@ class TaskCreateView(LoginRequiredMixin, View):
         if category_slug:
             category = Category.objects.get(slug=category_slug)
         else:
-            category = Category.objects.filter(user=request.user).first()
+            category = Category.objects.for_user(request.user).first()
 
         date_object = None
         date = request.POST.get("date")
@@ -188,7 +188,7 @@ class DeleteCompletedView(LoginRequiredMixin, View):
     """Delete all completed tasks"""
     def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         """Process a menu link in a GET request"""
-        tasks = Task.objects.filter(is_completed=True, user=self.request.user)
+        tasks = Task.objects.for_user(request.user).filter(is_completed=True)
         total_count = tasks.count()
         for task in tasks:
             task.delete()

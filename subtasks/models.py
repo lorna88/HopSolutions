@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.text import slugify
 
+from tasks.managers import ForUserManager
 from tasks.models import Task
 
 
@@ -12,6 +13,8 @@ class Subtask(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='subtasks')
     is_completed = models.BooleanField(default=False)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    # Attach user manager
+    objects = ForUserManager()
 
     class Meta:
         verbose_name = 'subtask'

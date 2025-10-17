@@ -642,6 +642,10 @@ footer {
 /* Link wrapper for product cards */
 .product-card-link {
     text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex-grow: 1;
 }
 
 
@@ -2206,6 +2210,11 @@ fieldset {
 
 .task-completed-name {
     text-decoration: line-through;
+}
+
+.category-task-card {
+    display: flex;
+    justify-content: space-between;
 }
 
 /*

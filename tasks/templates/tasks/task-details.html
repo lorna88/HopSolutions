@@ -26,12 +26,12 @@
 </div>
 
 <!-- Modal form for task delete -->
-<div class="modal fade delete-task" id="deleteTaskModal" tabindex="-1" aria-labelledby="deleteTaskModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form id="deleteTaskForm" action="{% url 'tasks:task-delete' task.slug %}" method="post">
+            <form action="{% url 'tasks:task-delete' task.slug %}?next={{ next }}" method="post">
                 {% csrf_token %}
-                {% include 'tasks/task_confirm_delete.html' %}
+                {% include 'tasks/confirm_delete.html' %}
             </form>
         </div>
     </div>
@@ -50,9 +50,8 @@
               <div class="review-rating">
                 <span class="author-name"># {{ form.category }}</span>
               </div>
-              <a id="deleteTaskButton" href="{% url 'tasks:task-delete' task.slug %}" class="quantity-btn-cart delete-task" data-bs-toggle="modal" data-bs-target="#deleteTaskModal">
-                  <i class="fa fa-times"></i>
-                  Delete
+              <a class="quantity-btn-cart delete-task" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                  <i class="fa fa-times"></i> Delete
               </a>
             </section>
 

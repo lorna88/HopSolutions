@@ -38,6 +38,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Set object parameters into delete modal form
+    function setModalParameters(modalID, title, getMessage, getPostURL) {
+        const deleteModal = document.getElementById(modalID);
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            const deleteButton = event.relatedTarget;
+            const slug = deleteButton.getAttribute('data-bs-slug');
+            const name = deleteButton.getAttribute('data-bs-name');
+
+            const modalTitle = this.querySelector('.modal-title');
+            const modalMessage = this.querySelector('.modal-message');
+            const form = this.querySelector('form');
+
+            modalTitle.textContent = title;
+            form.action = getPostURL(slug);
+            modalMessage.innerHTML = getMessage(name);
+        });
+    }
+
     // --- User Messages ---
     const messages = document.querySelectorAll('.alert');
     messages.forEach(message => {
@@ -209,6 +227,20 @@ document.addEventListener('DOMContentLoaded', function() {
     if (homePageContent) {
         setStatusOfCompletedTasks('.product-card');
         setColorOfTags('.tag-line', 'border-color');
+
+        const urlParams = new URLSearchParams(window.location.search);
+        setModalParameters(
+            'deleteCategoryModal',
+            'Delete category?',
+            name => `Сategory <b>${name}</b> will be permanently deleted`,
+            slug => `/categories/${slug}/?next=/home/?${urlParams.toString()}`
+        );
+        setModalParameters(
+            'deleteTaskModal',
+            'Delete task?',
+            name => `Task <b>${name}</b> will be permanently deleted`,
+            slug => `/tasks/${slug}/delete/?next=/home/?${urlParams.toString()}`
+        );
     }
 
     // --- Logic for Task Detail Page (task-detail.html) ---
@@ -280,8 +312,15 @@ document.addEventListener('DOMContentLoaded', function() {
         setStatusOfCompletedTasks('.calendar-task-card');
         setColorOfTags('.tag-line', 'border-color');
 
-        // Highlight chosen day in calendar
         const urlParams = new URLSearchParams(window.location.search);
+        setModalParameters(
+            'deleteModal',
+            'Delete task?',
+            name => `Task <b>${name}</b> will be permanently deleted`,
+            slug => `/tasks/${slug}/delete/?next=/calendar/?${urlParams.toString()}`
+        );
+
+        // Highlight chosen day in calendar
         if (urlParams.has('date')) {
             const chosenDate = urlParams.get('date');
             const chosenDay = document.querySelector(`.fc-day[data-date="${chosenDate}"]`);

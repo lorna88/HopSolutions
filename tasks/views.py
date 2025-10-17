@@ -144,7 +144,6 @@ class TaskDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = Task
     slug_field = 'slug'
     success_url = reverse_lazy("tasks:home")
-    template_name = 'tasks/task_confirm_delete.html'
 
     def get_success_url(self) -> str:
         """Get the page redirect"""
@@ -179,7 +178,6 @@ class CategoryDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = Category
     slug_field = 'slug'
     success_url = reverse_lazy("tasks:home")
-    template_name = 'tasks/category_confirm_delete.html'
 
     def get_success_message(self, cleaned_data: dict[str, Any]) -> str:
         """Success message after delete"""

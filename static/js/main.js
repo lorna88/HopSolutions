@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const deleteModal = document.getElementById(modalID);
         deleteModal.addEventListener('show.bs.modal', function (event) {
             const deleteButton = event.relatedTarget;
-            const slug = deleteButton.getAttribute('data-bs-slug');
+            const pk = deleteButton.getAttribute('data-bs-pk');
             const name = deleteButton.getAttribute('data-bs-name');
 
             const modalTitle = this.querySelector('.modal-title');
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const form = this.querySelector('form');
 
             modalTitle.textContent = title;
-            form.action = getPostURL(slug);
+            form.action = getPostURL(pk);
             modalMessage.innerHTML = getMessage(name);
         });
     }
@@ -233,13 +233,13 @@ document.addEventListener('DOMContentLoaded', function() {
             'deleteCategoryModal',
             'Delete category?',
             name => `Сategory <b>${name}</b> will be permanently deleted`,
-            slug => `/categories/${slug}/?next=/home/?${urlParams.toString()}`
+            pk => `/categories/${pk}/?next=/home/?${urlParams.toString()}`
         );
         setModalParameters(
             'deleteTaskModal',
             'Delete task?',
             name => `Task <b>${name}</b> will be permanently deleted`,
-            slug => `/tasks/${slug}/delete/?next=/home/?${urlParams.toString()}`
+            pk => `/tasks/${pk}/delete/?next=/home/?${urlParams.toString()}`
         );
     }
 
@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'deleteModal',
             'Delete task?',
             name => `Task <b>${name}</b> will be permanently deleted`,
-            slug => `/tasks/${slug}/delete/?next=/calendar/?${urlParams.toString()}`
+            pk => `/tasks/${pk}/delete/?next=/calendar/?${urlParams.toString()}`
         );
 
         // Highlight chosen day in calendar

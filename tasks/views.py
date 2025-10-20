@@ -4,10 +4,11 @@ from typing import Any
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db.models import Q, Prefetch
+from django.db.models import Q, Prefetch, QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
+from django.utils.text import slugify
 from django.views import View
 from django.views.generic import ListView, UpdateView, CreateView, DeleteView
 
@@ -27,8 +28,8 @@ class TaskListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         """Set parameters into template context"""
         context = super().get_context_data(**kwargs)
-        context['all_categories'] = Category.objects.filter(user=self.request.user)
-        context['tags'] = Tag.objects.filter(user=self.request.user)
+        context['all_categories'] = Category.objects.for_user(self.request.user)
+        context['tags'] = Tag.objects.for_user(self.request.user)
 
         context['sort_options'] = [
             {'key': 'date_asc', 'label': 'Date ascending'},
@@ -96,12 +97,15 @@ class TaskDetailView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
             return self.request.GET.get('next')
         return super().get_success_url()
 
+    def get_queryset(self) -> QuerySet:
+        return Task.objects.for_user(self.request.user)
+
 
 class TaskCompleteView(LoginRequiredMixin, View):
     """Make a task completed or active"""
-    def post(self, request: HttpRequest, slug: str, *args, **kwargs) -> HttpResponse:
+    def post(self, request: HttpRequest, pk: int, *args, **kwargs) -> HttpResponse:
         """Update task status on form post"""
-        task = get_object_or_404(Task, slug=slug)
+        task = get_object_or_404(Task, pk=pk)
         is_completed = request.POST.get("is_completed") is not None
 
         task.is_completed = is_completed
@@ -116,23 +120,29 @@ class TaskCreateView(LoginRequiredMixin, View):
     def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         """Create a new task on form post"""
         name = request.POST.get("name")
-        category_slug = request.POST.get("category")
-        if category_slug:
-            category = Category.objects.get(slug=category_slug)
+        # Name validation - slug must be unique for the user
+        slug = slugify(name)
+        if Task.objects.for_user(request.user).filter(slug=slug).exists():
+            messages.error(request, f'A task with slug "{slug}" is already exists.')
+
         else:
-            category = Category.objects.for_user(request.user).first()
+            category_pk = request.POST.get("category")
+            if category_pk:
+                category = Category.objects.get(pk=category_pk)
+            else:
+                category = Category.objects.for_user(request.user).first()
 
-        date_object = None
-        date = request.POST.get("date")
-        if date:
-            date_object = datetime.strptime(date, "%b %d, %Y").date()
+            date_object = None
+            date = request.POST.get("date")
+            if date:
+                date_object = datetime.strptime(date, "%b %d, %Y").date()
 
-        task = Task.objects.create(
-            name=name,
-            category=category,
-            date=date_object,
-            user=request.user)
-        messages.success(request, f'Task created successfully: {task.name}')
+            task = Task.objects.create(
+                name=name,
+                category=category,
+                date=date_object,
+                user=request.user)
+            messages.success(request, f'Task created successfully: {task.name}')
 
         if request.GET.get('next'):
             return redirect(request.GET.get('next'))
@@ -142,7 +152,6 @@ class TaskCreateView(LoginRequiredMixin, View):
 class TaskDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     """Delete the task"""
     model = Task
-    slug_field = 'slug'
     success_url = reverse_lazy("tasks:home")
 
     def get_success_url(self) -> str:
@@ -163,6 +172,17 @@ class CategoryCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('tasks:home')
     template_name = 'tasks/add-category.html'
 
+    def get_form_kwargs(self):
+        """Add the keyword argument user for instantiating the form."""
+        form_kwargs = super().get_form_kwargs()
+        form_kwargs.update(
+            {
+                "user": self.request.user,
+            }
+        )
+        return form_kwargs
+
+
     def form_valid(self, form: CategoryCreateForm) -> HttpResponse:
         """
         Display success message if form is valid.
@@ -172,11 +192,17 @@ class CategoryCreateView(LoginRequiredMixin, CreateView):
         messages.success(self.request, f'Category created successfully: {form.instance.name}')
         return super().form_valid(form)
 
+    def form_invalid(self, form: CategoryCreateForm) -> HttpResponse:
+        """Display error message if there are errors when filling out the form"""
+        for field, error_list in form.errors.items():
+            for error in error_list:
+                messages.error(self.request, error)
+        return redirect('tasks:home')
+
 
 class CategoryDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     """Delete the category"""
     model = Category
-    slug_field = 'slug'
     success_url = reverse_lazy("tasks:home")
 
     def get_success_message(self, cleaned_data: dict[str, Any]) -> str:

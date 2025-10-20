@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.text import slugify
 
 from .models import Task, Category
 
@@ -19,7 +20,7 @@ class TaskUpdateForm(forms.ModelForm):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         if user:
-            self.fields["category"].queryset = Category.objects.filter(user=self.instance.user)
+            self.fields["category"].queryset = Category.objects.for_user(user)
             self.fields["category"].empty_label = None
 
     class Meta:
@@ -39,7 +40,16 @@ class TaskUpdateForm(forms.ModelForm):
 
 
 class CategoryCreateForm(forms.ModelForm):
-    """A form to create new category"""
+    """A form to create a new category"""
+    def __init__(self, *args, **kwargs):
+        """
+        Add user to form instance
+        """
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user:
+            self.instance.user = user
+
     class Meta:
         model = Category
         fields = ('name',)
@@ -47,3 +57,11 @@ class CategoryCreateForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'class': 'InputTask', 'placeholder': 'Category name'}),
         }
+
+    def clean_name(self):
+        """A slug computed by name must be unique for the user"""
+        name = self.cleaned_data.get('name')
+        slug = slugify(name)
+        if Category.objects.for_user(self.instance.user).filter(slug=slug).exists():
+            raise forms.ValidationError(f'A category with slug "{slug}" is already exists.')
+        return name

@@ -21,7 +21,7 @@ class SubtaskCompleteView(LoginRequiredMixin, View):
 
         subtask.is_completed = is_completed
         subtask.save()
-        return redirect('tasks:task-detail', slug=task_slug)
+        return redirect('tasks:task-detail', username=request.user.username, slug=task_slug)
 
 
 class SubtaskCreateView(LoginRequiredMixin, View):
@@ -29,10 +29,10 @@ class SubtaskCreateView(LoginRequiredMixin, View):
     def post(self, request: HttpRequest, task_slug: str, *args, **kwargs) -> HttpResponse:
         """Create a new task on form post"""
         name = request.POST.get("name")
-        task = get_object_or_404(Task, slug=task_slug)
+        task = get_object_or_404(Task.objects.for_user(request.user), slug=task_slug)
         Subtask.objects.create(name=name, task=task)
 
-        return redirect('tasks:task-detail', slug=task_slug)
+        return redirect('tasks:task-detail', username=request.user.username, slug=task_slug)
 
 
 class SubtaskDeleteView(LoginRequiredMixin, View):
@@ -46,4 +46,4 @@ class SubtaskDeleteView(LoginRequiredMixin, View):
         """Delete the subtask on form post"""
         subtask = get_object_or_404(Subtask, id=subtask_id)
         subtask.delete()
-        return redirect('tasks:task-detail', slug=task_slug)
+        return redirect('tasks:task-detail', username=request.user.username, slug=task_slug)

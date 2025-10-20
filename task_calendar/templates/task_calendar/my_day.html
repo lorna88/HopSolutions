@@ -84,7 +84,7 @@
 
                     <!-- Task card -->
                     <div class="calendar-task-card">
-                        <a href="{% url 'tasks:task-detail' task.slug %}?next={{ request.get_full_path }}" class="product-card-link">
+                        <a href="{% url 'tasks:task-detail' request.user.username task.slug %}?next={{ request.get_full_path }}" class="product-card-link">
                             <div class="product-card__info">
                                 <div class="tag-section">
                                     {% for tag in task.tags.all %}
@@ -92,7 +92,7 @@
                                     {% endfor %}
                                 </div>
                                 <p class="product-card__description">{{ task.category }}</p>
-                                <form action="{% url 'tasks:task-complete' task.slug %}?next={{ request.get_full_path }}" method="post">
+                                <form action="{% url 'tasks:task-complete' task.pk %}?next={{ request.get_full_path }}" method="post">
                                     {% csrf_token %}
                                     <div class="CheckboxField">
                                         <label class="checkbox-task">
@@ -106,7 +106,7 @@
                                 <p class="subtask-count">Subtasks: {{ task.subtasks_completed }}/{{ task.subtasks_total }}</p>
                             </div>
                         </a>
-                        <a class="quantity-btn-cart" data-bs-toggle="modal" data-bs-target="#deleteModal" data-bs-slug="{{ task.slug }}" data-bs-name="{{ task.name }}">
+                        <a class="quantity-btn-cart" data-bs-toggle="modal" data-bs-target="#deleteModal" data-bs-pk="{{ task.pk }}" data-bs-name="{{ task.name }}">
                             <i class="fa-solid fa-times"></i>
                         </a>
                     </div>

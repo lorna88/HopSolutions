@@ -17,26 +17,23 @@ def create_default_settings(
     """
     if created:
         categories = [
-            Category(name="Today", slug=f"today-{instance.username}", user=instance),
-            Category(name="Tomorrow", slug=f"tomorrow-{instance.username}", user=instance),
-            Category(name="Nearest time", slug=f"nearest-time-{instance.username}", user=instance),
+            Category(name="Today", slug=f"today", user=instance),
+            Category(name="Tomorrow", slug=f"tomorrow", user=instance),
+            Category(name="Nearest time", slug=f"nearest-time", user=instance),
         ]
         Category.objects.bulk_create(categories)
 
         tags = [
             Tag(
                 name="Important",
-                slug=f"important-{instance.username}",
                 color="--background-yellow",
                 user=instance),
             Tag(
                 name="Deadline",
-                slug=f"deadline-{instance.username}",
                 color="--background-pink",
                 user=instance),
             Tag(
                 name="Family",
-                slug=f"family-{instance.username}",
                 color="--background-green",
                 user=instance),
         ]

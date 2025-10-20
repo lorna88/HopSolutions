@@ -129,7 +129,7 @@
                     <div class="category-card">
                         <div class="category_name_menu">
                             <h3 class="section-title">{{ category.name }}</h3>
-                            <a class="quantity-btn-cart" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal" data-bs-slug="{{ category.slug }}" data-bs-name="{{ category.name }}">
+                            <a class="quantity-btn-cart" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal" data-bs-pk="{{ category.pk }}" data-bs-name="{{ category.name }}">
                                 <i class="fa-solid fa-times"></i>
                             </a>
                         </div>
@@ -137,7 +137,7 @@
                         {% for task in category.tasks.all %}
                         <div class="product-card">
                             <div class="category-task-card">
-                                <a href="{% url 'tasks:task-detail' task.slug %}?next={{ request.get_full_path }}" class="product-card-link">
+                                <a href="{% url 'tasks:task-detail' request.user.username task.slug %}?next={{ request.get_full_path }}" class="product-card-link">
                                     <div class="tag-section">
                                         {% for tag in task.tags.all %}
                                           <div class="tag-line" data-color="{{ tag.color }}"></div>
@@ -145,7 +145,7 @@
                                     </div>
 
                                     <div class="product-card__info">
-                                        <form action="{% url 'tasks:task-complete' task.slug %}?next={{ request.get_full_path }}" method="post">
+                                        <form action="{% url 'tasks:task-complete' task.pk %}?next={{ request.get_full_path }}" method="post">
                                           {% csrf_token %}
                                           <div class="CheckboxField">
                                             <label class="checkbox-task">
@@ -168,7 +168,7 @@
                                     </div>
                                 </a>
 
-                                <a class="quantity-btn-cart" data-bs-toggle="modal" data-bs-target="#deleteTaskModal" data-bs-slug="{{ task.slug }}" data-bs-name="{{ task.name }}">
+                                <a class="quantity-btn-cart" data-bs-toggle="modal" data-bs-target="#deleteTaskModal" data-bs-pk="{{ task.pk }}" data-bs-name="{{ task.name }}">
                                     <i class="fa-solid fa-times"></i>
                                 </a>
                             </div>
@@ -179,7 +179,7 @@
                             {% csrf_token %}
                             <div class="cart-item__quantity-selector">
                                 <input type="text" name="name" class="InputTask" placeholder="Add new task" required>
-                                <input type="hidden" name="category" value="{{ category.slug }}">
+                                <input type="hidden" name="category" value="{{ category.pk }}">
                                 <button type="submit" class="quantity-btn-cart"><i class="fa-solid fa-plus"></i></button>
                             </div>
                         </form>

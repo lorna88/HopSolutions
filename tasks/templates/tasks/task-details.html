@@ -29,7 +29,7 @@
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form action="{% url 'tasks:task-delete' task.slug %}?next={{ next }}" method="post">
+            <form action="{% url 'tasks:task-delete' task.pk %}?next={{ next }}" method="post">
                 {% csrf_token %}
                 {% include 'tasks/confirm_delete.html' %}
             </form>

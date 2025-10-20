@@ -6,7 +6,7 @@ from .models import Subtask
 
 class SubtaskAdmin(admin.ModelAdmin):
     """Class for representing Subtask model in the admin area"""
-    list_display = ('id', 'name', 'slug', 'task', 'user', 'is_completed')
+    list_display = ('id', 'name', 'task', 'user', 'is_completed')
     list_per_page = 10
     readonly_fields = ('user', 'task')
 

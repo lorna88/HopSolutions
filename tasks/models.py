@@ -10,7 +10,7 @@ from tasks.managers import ForUserManager
 class Category(models.Model):
     """Model for categories"""
     name = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100, unique=True, blank=True)
+    slug = models.SlugField(max_length=100, blank=True)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     # Attach user manager
     objects = ForUserManager()
@@ -22,11 +22,9 @@ class Category(models.Model):
     def save(self, *args, **kwargs):
         """
         Fills in the slug field for a new category.
-        The slug consists of name and username
-        (to comply with the unique constraint).
         """
         if not self.slug:
-            self.slug = slugify(self.name) + '-' + self.user.username
+            self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -36,7 +34,7 @@ class Category(models.Model):
 class Task(models.Model):
     """Model for tasks"""
     name = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100, unique=True, blank=True)
+    slug = models.SlugField(max_length=100, blank=True)
     description = models.TextField(null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='tasks')
     date = models.DateField(null=True, blank=True)
@@ -52,7 +50,10 @@ class Task(models.Model):
 
     def get_absolute_url(self):
         """returns URL on page with current task object"""
-        return reverse('tasks:task-detail', kwargs={'slug': self.slug})
+        return reverse('tasks:task-detail', kwargs={
+            'username': self.user.username,
+            'slug': self.slug
+        })
 
     @property
     def subtasks_total(self):
@@ -73,11 +74,9 @@ class Task(models.Model):
     def save(self, *args, **kwargs):
         """
         Fills in the slug field for a new task.
-        The slug consists of name and username
-        (to comply with the unique constraint).
         """
         if not self.slug:
-            self.slug = slugify(self.name) + '-' + self.user.username
+            self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
     def __str__(self):

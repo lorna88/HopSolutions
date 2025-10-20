@@ -24,4 +24,4 @@ class TagView(LoginRequiredMixin, View):
         task.tags.add(*tags)
         task.save()
 
-        return redirect('tasks:task-detail', slug=task.slug)
+        return redirect('tasks:task-detail', username=request.user.username, slug=task.slug)

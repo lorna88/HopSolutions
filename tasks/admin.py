@@ -27,8 +27,8 @@ class TaskAdminForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         try:
             if self.instance.user:
-                self.fields["category"].queryset = Category.objects.filter(user=self.instance.user)
-                self.fields["tags"].queryset = Tag.objects.filter(user=self.instance.user)
+                self.fields["category"].queryset = Category.objects.for_user(self.instance.user)
+                self.fields["tags"].queryset = Tag.objects.for_user(self.instance.user)
         except AttributeError:
             self.instance.user = None
 
@@ -58,7 +58,7 @@ class TaskAdmin(admin.ModelAdmin):
         Used on add task form.
         """
         if db_field.name == "category":
-            kwargs["queryset"] = Category.objects.filter(user=request.user)
+            kwargs["queryset"] = Category.objects.for_user(request.user)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     def formfield_for_manytomany(
@@ -71,7 +71,7 @@ class TaskAdmin(admin.ModelAdmin):
         Used on add task form.
         """
         if db_field.name == "tags":
-            kwargs["queryset"] = Tag.objects.filter(user=request.user)
+            kwargs["queryset"] = Tag.objects.for_user(request.user)
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
     def save_model(

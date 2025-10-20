@@ -69,12 +69,12 @@ docker compose run backend python manage.py createsuperuser
 #### Category
 - `id` (PK)
 - `name` (CharField)
-- `slug` (SlugField, unique)
+- `slug` (SlugField)
 - `user` (ForeignKey to User)
 #### Task
 - `id` (PK)
 - `name` (CharField)
-- `slug` (SlugField, unique)
+- `slug` (SlugField)
 - `description` (TextField, nullable)
 - `date` (DateField, nullable)
 - `category` (ForeignKey to Category)
@@ -86,7 +86,6 @@ docker compose run backend python manage.py createsuperuser
 #### Tag
 - `id` (PK)
 - `name` (CharField)
-- `slug` (SlugField, unique)
 - `color` (CharField)
 - `user` (ForeignKey to User)
 
@@ -94,7 +93,6 @@ docker compose run backend python manage.py createsuperuser
 #### Subtask
 - `id` (PK)
 - `name` (CharField)
-- `slug` (SlugField, unique)
 - `is_completed` (BooleanField)
 - `task` (ForeignKey to Task)
 - `user` (ForeignKey to User)

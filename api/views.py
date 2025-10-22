@@ -42,15 +42,5 @@ class TagViewSet(ModelViewSet):
         serializer.save(user=self.request.user)
 
 
-class SubtaskViewSet(ModelViewSet):
-    serializer_class = SubtaskSerializer
-    permission_classes = [IsAuthenticated, IsOwner]
-
-    def get_queryset(self):
-        return Subtask.objects.for_user(self.request.user)
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
 class RegisterUserView(CreateAPIView):
     serializer_class = UserSerializer

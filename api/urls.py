@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from api.views import TaskViewSet, CategoryViewSet, TagViewSet, SubtaskViewSet, RegisterUserView
+from api.views import TaskViewSet, CategoryViewSet, TagViewSet, RegisterUserView
 
 app_name = 'api'
 
@@ -10,7 +10,6 @@ router = DefaultRouter()
 router.register(r'tasks', TaskViewSet, basename='task')
 router.register(r'categories', CategoryViewSet, basename='category')
 router.register(r'tags', TagViewSet, basename='tag')
-router.register(r'subtasks', SubtaskViewSet, basename='subtask')
 
 urlpatterns = [
     path('', include(router.urls)),

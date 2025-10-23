@@ -1,3 +1,6 @@
+from django.contrib.auth import password_validation
+from django.core import exceptions
+from django.utils.text import slugify
 from rest_framework import serializers
 
 from subtasks.models import Subtask
@@ -71,11 +74,47 @@ class TaskSerializer(serializers.ModelSerializer):
             instance.tags.set(tags_data)
 
         if subtasks_data is not None:
-            instance.subtasks.all().delete()
-            for subtask_data in subtasks_data:
-                Subtask.objects.create(task=instance, user=instance.user, **subtask_data)
+            instance_subtasks = {sub.name: sub for sub in instance.subtasks.all()}
+
+            for subtask in subtasks_data:
+                subtask_name = subtask["name"]
+                if subtask_name not in instance_subtasks.keys():
+                    instance.subtasks.create(task=instance, user=instance.user, **subtask)
+                else:
+                    instance_subtasks.pop(subtask_name)
+                    Subtask.objects.filter(name=subtask_name).update(**subtask)
+
+            for subtask in instance_subtasks.values():
+                subtask.delete()
 
         return instance
+
+    def validate(self, data):
+        user = self.context['request'].user
+        if 'slug' in data:
+            if Task.objects.filter(user=user, slug=data['slug']).exists():
+                raise serializers.ValidationError({'slug': 'A slug must be unique.'})
+        else:
+            if not self.instance and 'name' in data:
+                slug = slugify(data['name'])
+                if Task.objects.filter(user=user, slug=slug).exists():
+                    raise serializers.ValidationError({'name': 'A slug for this name already exists.'})
+
+        if 'subtasks' in data:
+            subtask_names = [sub['name'] for sub in data['subtasks']]
+            if len(subtask_names) != len(set(subtask_names)):
+                raise serializers.ValidationError({
+                    'subtasks': 'The list of subtasks must not contain duplicates.'
+                })
+
+        if 'tags' in data:
+            tags = data['tags']
+            if len(tags) != len(set(tags)):
+                raise serializers.ValidationError({
+                    'tags': 'The list of tags must not contain duplicates.'
+                })
+
+        return data
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -89,6 +128,18 @@ class CategorySerializer(serializers.ModelSerializer):
         representation['user'] = instance.user.username
         return representation
 
+    def validate(self, data):
+        user = self.context['request'].user
+        if 'slug' in data:
+            if Category.objects.filter(user=user, slug=data['slug']).exists():
+                raise serializers.ValidationError("A slug must be unique.")
+        else:
+            if not self.instance and 'name' in data:
+                slug = slugify(data['name'])
+                if Category.objects.filter(user=user, slug=slug).exists():
+                    raise serializers.ValidationError("A slug for this name already exists.")
+        return data
+
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
@@ -100,6 +151,12 @@ class TagSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation['user'] = instance.user.username
         return representation
+
+    def validate_name(self, value):
+        user = self.context['request'].user
+        if Tag.objects.filter(user=user, name=value).exists():
+            raise serializers.ValidationError("A name must be unique.")
+        return value
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -115,3 +172,18 @@ class UserSerializer(serializers.ModelSerializer):
             email=validated_data['email']
         )
         return user
+
+    def validate(self, data):
+        user = User(**data)
+        password = data.get('password')
+        errors = dict()
+
+        try:
+            password_validation.validate_password(password=password, user=user)
+        except exceptions.ValidationError as e:
+            errors['password'] = list(e.messages)
+
+        if errors:
+            raise serializers.ValidationError(errors)
+
+        return super().validate(data)

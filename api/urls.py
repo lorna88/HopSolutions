@@ -13,7 +13,7 @@ router.register(r'tags', TagViewSet, basename='tag')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('users/login', TokenObtainPairView.as_view(), name='login'),
+    path('users/login/', TokenObtainPairView.as_view(), name='login'),
     path('users/login/refresh/', TokenRefreshView.as_view(), name='login_refresh'),
     path('users/register/', RegisterUserView.as_view(), name='register'),
 ]

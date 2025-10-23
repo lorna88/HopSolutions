@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, get_object_or_404
@@ -30,8 +31,11 @@ class SubtaskCreateView(LoginRequiredMixin, View):
         """Create a new task on form post"""
         name = request.POST.get("name")
         task = get_object_or_404(Task.objects.for_user(request.user), slug=task_slug)
-        Subtask.objects.create(name=name, task=task)
-
+        # Name validation - name must be unique for the task
+        if Subtask.objects.filter(task=task, name=name).exists():
+            messages.error(request, f'Name must be unique for each subtask!')
+        else:
+            Subtask.objects.create(name=name, task=task)
         return redirect('tasks:task-detail', username=request.user.username, slug=task_slug)
 
 

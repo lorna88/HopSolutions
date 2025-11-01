@@ -1,3 +1,5 @@
+import datetime
+
 import pytest
 
 from tags.models import Tag
@@ -32,7 +34,7 @@ def create_user():
     return create_user_for_data
 
 @pytest.fixture
-def login_user(client, create_user):
+def login(client, create_user):
     """Fixture for user login."""
     def login_user_with_data(data):
         user = User.objects.filter(email=data['email']).first()
@@ -44,36 +46,59 @@ def login_user(client, create_user):
     return login_user_with_data
 
 @pytest.fixture
+def today():
+    """Fixture for today's date."""
+    return datetime.date.today()
+
+@pytest.fixture
+def tomorrow():
+    """Fixture for tomorrow's date."""
+    return datetime.date.today() + datetime.timedelta(days=1)
+
+@pytest.fixture
+def in_a_week():
+    """Fixture for date in a week."""
+    return datetime.date.today() + datetime.timedelta(days=7)
+
+@pytest.fixture
+def format_date():
+    """Fixture for date formatting."""
+    def inner_format_date(date, format_string):
+        return date.strftime(format_string)
+    return inner_format_date
+
+
+@pytest.fixture
 def create_task():
     """Return function for creating a task."""
-    def create_task_for_data(name, category, tags, user):
-        task = Task.objects.create(name=name, category=category, user=user)
+    def create_task_for_data(name, category, date, tags, user):
+        task = Task.objects.create(name=name, category=category, date=date, user=user)
         task.tags.set(tags)
         return task
 
     return create_task_for_data
 
 @pytest.fixture
-def tasks_user_data():
+def tasks_user_data(today, tomorrow, in_a_week):
     """Return data for tasks creation by user."""
     return [
-        {'name': 'Complete project', 'category': 'today', 'tags': ['Deadline']},
-        {'name': 'Go to market', 'category': 'today', 'tags': ['Important', 'Family']},
-        {'name': 'Read Django guide', 'category': 'today', 'tags': []},
-        {'name': 'Write tests and docs', 'category': 'tomorrow', 'tags': ['Deadline']},
-        {'name': 'Make soup', 'category': 'tomorrow', 'tags': ['Family']},
-        {'name': 'Sell old skis', 'category': 'nearest-time', 'tags': ['Family']},
+        {'name': 'Complete project', 'category': 'today', 'date': today, 'tags': ['Deadline']},
+        {'name': 'Go to market', 'category': 'today', 'date': today, 'tags': ['Important', 'Family']},
+        {'name': 'Read Django guide', 'category': 'today', 'date': today, 'tags': []},
+        {'name': 'Write tests and docs', 'category': 'tomorrow', 'date': tomorrow, 'tags': ['Deadline']},
+        {'name': 'Make soup', 'category': 'tomorrow', 'date': tomorrow, 'tags': ['Family']},
+        {'name': 'Sell old skis', 'category': 'nearest-time', 'date': in_a_week, 'tags': ['Family']},
     ]
 
 @pytest.fixture
-def tasks_other_user_data():
+def tasks_other_user_data(today, tomorrow, in_a_week):
     """Return data for tasks creation by other user."""
     return [
-        {'name': 'Feed cat', 'category': 'today', 'tags': ['Family']},
-        {'name': 'Go to meeting', 'category': 'today', 'tags': ['Important']},
-        {'name': 'Project refactoring', 'category': 'nearest-time', 'tags': ['Important']},
-        {'name': 'Meet up with friends', 'category': 'nearest-time', 'tags': []},
-        {'name': 'Great party', 'category': 'tomorrow', 'tags': ['Family']},
+        {'name': 'Feed cat', 'category': 'today', 'date': today, 'tags': ['Family']},
+        {'name': 'Go to meeting', 'category': 'today', 'date': today, 'tags': ['Important']},
+        {'name': 'Project refactoring', 'category': 'nearest-time', 'date': in_a_week, 'tags': ['Important']},
+        {'name': 'Meet up with friends', 'category': 'nearest-time', 'date': in_a_week, 'tags': []},
+        {'name': 'Great party', 'category': 'tomorrow', 'date': tomorrow, 'tags': ['Family']},
     ]
 
 @pytest.fixture
@@ -87,6 +112,7 @@ def create_tasks(create_user, user_data, other_user_data, tasks_user_data, tasks
             create_task(
                 data['name'],
                 categories[data['category']],
+                data['date'],
                 [tags[tag_name] for tag_name in data['tags']],
                 user
             )
@@ -95,41 +121,41 @@ def create_tasks(create_user, user_data, other_user_data, tasks_user_data, tasks
     create_tasks_for_user(create_user(other_user_data), tasks_other_user_data)
 
 @pytest.fixture
-def task_new():
+def task_new(today, format_date):
     """Return one task data for creation."""
     return {
         'name': 'New task',
         'category': 'nearest-time',
-        'date': 'Oct 31, 2025',
+        'date': format_date(today, '%b %d, %Y'),
     }
 
 @pytest.fixture
-def task_update():
+def task_update(in_a_week):
     """Return one task data for updating."""
     return {
         'name': 'Completed task',
         'category': 'nearest-time',
         'description': 'This task is used for testing any existing task update',
-        'date': '2025-10-31',
+        'date': in_a_week,
         'is_completed': 'on',
     }
 
 @pytest.fixture
-def task_user():
+def task_user(today):
     """Return data of existing user's task."""
     return {
         'name': 'Complete project',
         'category': 'today',
         'description': '',
-        'date': '',
+        'date': today,
     }
 
 @pytest.fixture
-def task_other_user():
+def task_other_user(tomorrow):
     """Return data of existing other user's task."""
     return {
         'name': 'Great party',
         'category': 'tomorrow',
         'description': '',
-        'date': '',
+        'date': tomorrow,
     }

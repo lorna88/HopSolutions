@@ -1,12 +1,12 @@
-import datetime
 from urllib.parse import urlencode
 
 import pytest
+from django.db.models import Q
 from django.urls import reverse
-from django.utils.text import slugify
 from pytest_django.fixtures import client
 
 from tasks.models import Category, Task
+from tests.conftest import today
 
 
 @pytest.mark.django_db
@@ -17,9 +17,9 @@ from tasks.models import Category, Task
         ('other_user_data', 'tasks_other_user_data'),
     ],
 )
-def test_tasks_list_view(client, request, create_tasks, login_user, user_fixture, tasks_data_fixture):
+def test_tasks_list_view(client, request, create_tasks, login, user_fixture, tasks_data_fixture):
     """Checks that every user gets only his own tasks."""
-    user = login_user(request.getfixturevalue(user_fixture))
+    user = login(request.getfixturevalue(user_fixture))
     tasks_data = {data['name']: data for data in request.getfixturevalue(tasks_data_fixture)}
     db_categories = Category.objects.for_user(user)
 
@@ -42,116 +42,113 @@ def test_tasks_list_view(client, request, create_tasks, login_user, user_fixture
                 assert task.tags.all().first().name in tags
 
 @pytest.mark.django_db
-def test_task_creation(client, create_tasks, login_user, user_data, task_new):
-    """
-    Testing successful task creation.
-    """
-    user = login_user(user_data)
-    task_data = task_new.copy()
-    task_data['category'] = Category.objects.for_user(user).get(slug=task_data['category']).pk
+@pytest.mark.parametrize(
+    "user_fixture, tasks_data_fixture, date_fixture",
+    [
+        ('user_data', 'tasks_user_data', 'today'),
+        ('user_data', 'tasks_user_data', 'tomorrow'),
+        ('other_user_data', 'tasks_other_user_data', 'today'),
+        ('other_user_data', 'tasks_other_user_data', 'in_a_week'),
+    ],
+)
+def test_calendar_view(client, request, create_tasks, login, user_fixture, tasks_data_fixture, date_fixture, today):
+    """Gets task list for different users and dates on calendar view."""
+    login(request.getfixturevalue(user_fixture))
 
-    query_params = {'next': reverse('tasks:home')}
-    url = f'{reverse('tasks:task-create')}?{urlencode(query_params)}'
+    date = request.getfixturevalue(date_fixture)
+    tasks_data = {data['name']: data for data in request.getfixturevalue(tasks_data_fixture) if data['date'] == date}
 
-    response = client.post(url, task_data, follow=True)
-
-    assert response.status_code == 200
-    assert response.request['PATH_INFO'] == reverse('tasks:home')
-
-    new_task = Task.objects.for_user(user).get(name=task_data['name'])
-    assert new_task.category.slug == 'nearest-time'
-    assert new_task.date == datetime.datetime.strptime('2025-10-31', "%Y-%m-%d").date()
-
-@pytest.mark.django_db
-def test_existing_task_creation(client, create_tasks, login_user, user_data, task_user):
-    """
-    Creation of existing task must fail.
-    """
-    user = login_user(user_data)
-    task_data = task_user.copy()
-    task_data['category'] = Category.objects.for_user(user).get(slug=task_data['category']).pk
-    initial_tasks_count = Task.objects.count()
-
-    query_params = {'next': reverse('tasks:home')}
-    url = f'{reverse('tasks:task-create')}?{urlencode(query_params)}'
-
-    response = client.post(url, task_data, follow=True)
+    query_params = {}
+    if date_fixture != today:
+        query_params = {
+            'date': date,
+        }
+    url = reverse('calendar:my_day')
+    response = client.get(url, query_params)
 
     assert response.status_code == 200
-    assert response.request['PATH_INFO'] == reverse('tasks:home')
-    final_tasks_count = Task.objects.count()
-    assert initial_tasks_count == final_tasks_count
+    tasks = response.context['tasks']
+    assert len(tasks) == len(tasks_data)
+
+    for task in tasks:
+        assert task.name in tasks_data
+        tags = tasks_data[task.name]['tags']
+        assert task.tags.count() == len(tags)
+        if task.tags.exists():
+            assert task.tags.all().first().name in tags
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "user_fixture, task_fixture",
+    "filter_data",
     [
-        ('user_data', 'task_user'),
-        ('other_user_data', 'task_other_user'),
+        {'categories': 'today'},
+        {'tags': 'Important'},
+        {'q': 'Task'},
+        {
+            'categories': 'today',
+            'tags': 'Deadline',
+        },
+        {
+            'categories': 'today,tomorrow',
+            'tags': 'Deadline',
+        },
+        {
+            'categories': 'tomorrow',
+            'tags': 'Deadline,Family',
+        },
+        {
+            'categories': 'today',
+            'tags': 'Deadline',
+            'q': 'Task',
+        },
     ],
 )
-def test_task_detail_success(client, request, create_tasks, login_user, user_fixture, task_fixture):
-    """Testing user's task viewing."""
-    user = login_user(request.getfixturevalue(user_fixture))
-    task_data = request.getfixturevalue(task_fixture)
+def test_tasks_list_filter_search(client, create_tasks, login, user_data, filter_data):
+    """Checks that every user gets only his own tasks."""
+    user = login(user_data)
+    filter_categories = filter_data.get('categories')
+    # if filter_categories:
+    #     filter_categories = filter_categories.split(',')
+    filter_tags = filter_data.get('tags')
+    # if filter_tags:
+    #     filter_tags = filter_tags.split(',')
+    search_string = filter_data.get('q')
+    # if search_string:
+    #     search_string = search_string.lower()
 
-    url = reverse(
-        'tasks:task-detail',
-        kwargs={'username': user.username, 'slug': slugify(task_data['name'])}
-    )
-    response = client.get(url)
+    db_tasks = Task.objects.for_user(user)
+    if filter_categories:
+        filter_categories = filter_categories.split(',')
+        db_tasks = db_tasks.filter(category__slug__in=filter_categories).distinct()
+    if filter_tags:
+        filter_tags = filter_tags.split(',')
+        db_tasks = db_tasks.filter(tags__name__in=filter_tags).distinct()
+    if search_string:
+        search_string = search_string.lower()
+        db_tasks = db_tasks.filter(Q(name__icontains=search_string) | Q(description__icontains=search_string))
 
-    assert response.status_code == 200
-    task = response.context['task']
-    assert task.name == task_data['name']
-    assert task.category.slug == task_data['category']
-    assert task.user == user
-    # assert {tag.name for tag in task.tags.all()} == set(task_data['tags'])
+    category_slugs = list({task.category.slug for task in db_tasks})
 
-@pytest.mark.django_db
-@pytest.mark.parametrize(
-    "user_fixture, task_fixture",
-    [
-        ('user_data', 'task_other_user'),
-        ('other_user_data', 'task_user'),
-    ],
-)
-def test_task_detail_fail(client, request, create_tasks, login_user, user_fixture, task_fixture):
-    """Testing someone else's task viewing."""
-    login_user(request.getfixturevalue(user_fixture))
-    task = Task.objects.get(name=request.getfixturevalue(task_fixture)['name'])
-
-    url = reverse(
-        'tasks:task-detail',
-        kwargs={'username': task.user.username, 'slug': task.slug}
-    )
-    response = client.get(url)
-
-    assert response.status_code == 404
-
-@pytest.mark.django_db
-def test_task_update(client, create_tasks, login_user, user_data, task_user, task_update):
-    """
-    Testing successful task creation.
-    """
-    user = login_user(user_data)
-    task = Task.objects.for_user(user).get(name=task_user['name'])
-    task_data = task_update.copy()
-    task_data['category'] = Category.objects.for_user(user).get(slug=task_data['category']).pk
-
-    query_params = {'next': reverse('tasks:home')}
-    url = f'{reverse('tasks:task-detail',
-                     kwargs={'username': user.username, 'slug': task.slug}
-                     )}?{urlencode(query_params)}'
-
-    response = client.post(url, task_data, follow=True)
+    url = reverse('tasks:home')
+    response = client.get(url, filter_data)
 
     assert response.status_code == 200
-    assert response.request['PATH_INFO'] == reverse('tasks:home')
+    total_tasks_count = 0
 
-    task.refresh_from_db()
-    assert task.name == task_update['name']
-    assert task.category.slug == task_update['category']
-    assert task.description == task_update['description']
-    assert task.date == datetime.datetime.strptime(task_update['date'], "%Y-%m-%d").date()
-    assert task.is_completed == (task_update.get('is_completed') is not None)
+    categories = response.context['categories']
+    assert len(categories) == len(category_slugs)
+    for category in categories:
+        if filter_categories:
+            assert category.slug in filter_categories
+        tasks_count = category.tasks.count()
+        assert tasks_count > 0
+        total_tasks_count += tasks_count
+
+        tasks = category.tasks.all()
+        for task in tasks:
+            if search_string:
+                assert (search_string in task.name.lower()) or (search_string in task.description.lower())
+            if filter_tags:
+                assert any(tag.name in filter_tags for tag in task.tags.all())
+
+    assert total_tasks_count == db_tasks.count()

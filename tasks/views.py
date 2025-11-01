@@ -4,7 +4,7 @@ from typing import Any
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db.models import Q, Prefetch, QuerySet
+from django.db.models import Q, Prefetch, QuerySet, Count
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
@@ -53,6 +53,12 @@ class TaskListView(LoginRequiredMixin, ListView):
         # filter by tag
         tags = self.request.GET.get('tags', None)
         if tags:
+            qs = qs.annotate(
+                tasks_count=Count(
+                    'tasks',
+                    filter=Q(tasks__tags__name__in=tags.split(','))
+                )
+            ).filter(tasks_count__gt=0)
             qs_tasks = qs_tasks.filter(tags__name__in=tags.split(',')).distinct()
 
         # search
@@ -60,7 +66,7 @@ class TaskListView(LoginRequiredMixin, ListView):
         if to_search:
             qs = qs.filter(
                 Q(tasks__name__icontains=to_search) | Q(tasks__description__icontains=to_search)
-            )
+            ).distinct()
             qs_tasks = qs_tasks.filter(
                 Q(name__icontains=to_search) | Q(description__icontains=to_search)
             )

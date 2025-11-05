@@ -1,5 +1,3 @@
-from urllib.parse import urlencode
-
 import pytest
 from django.db.models import Q
 from django.urls import reverse
@@ -104,17 +102,11 @@ def test_calendar_view(client, request, create_tasks, login, user_fixture, tasks
     ],
 )
 def test_tasks_list_filter_search(client, create_tasks, login, user_data, filter_data):
-    """Checks that every user gets only his own tasks."""
+    """Checks filtering and searching data on task list view."""
     user = login(user_data)
     filter_categories = filter_data.get('categories')
-    # if filter_categories:
-    #     filter_categories = filter_categories.split(',')
     filter_tags = filter_data.get('tags')
-    # if filter_tags:
-    #     filter_tags = filter_tags.split(',')
     search_string = filter_data.get('q')
-    # if search_string:
-    #     search_string = search_string.lower()
 
     db_tasks = Task.objects.for_user(user)
     if filter_categories:

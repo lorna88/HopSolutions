@@ -61,14 +61,6 @@ def in_a_week():
     return datetime.date.today() + datetime.timedelta(days=7)
 
 @pytest.fixture
-def format_date():
-    """Fixture for date formatting."""
-    def inner_format_date(date, format_string):
-        return date.strftime(format_string)
-    return inner_format_date
-
-
-@pytest.fixture
 def create_task():
     """Return function for creating a task."""
     def create_task_for_data(name, category, date, tags, user):
@@ -121,12 +113,19 @@ def create_tasks(create_user, user_data, other_user_data, tasks_user_data, tasks
     create_tasks_for_user(create_user(other_user_data), tasks_other_user_data)
 
 @pytest.fixture
-def task_new(today, format_date):
-    """Return one task data for creation."""
+def task_new_with_category():
+    """Return one task data for creation on task list view."""
     return {
         'name': 'New task',
         'category': 'nearest-time',
-        'date': format_date(today, '%b %d, %Y'),
+    }
+
+@pytest.fixture
+def task_new_with_date(today):
+    """Return one task data for creation on calendar view."""
+    return {
+        'name': 'New task',
+        'date': today,
     }
 
 @pytest.fixture
@@ -148,6 +147,7 @@ def task_user(today):
         'category': 'today',
         'description': '',
         'date': today,
+        'tags': ['Deadline'],
     }
 
 @pytest.fixture
@@ -158,4 +158,5 @@ def task_other_user(tomorrow):
         'category': 'tomorrow',
         'description': '',
         'date': tomorrow,
+        'tags': ['Family']
     }

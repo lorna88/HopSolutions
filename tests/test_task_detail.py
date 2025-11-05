@@ -9,13 +9,24 @@ from tasks.models import Category, Task
 
 
 @pytest.mark.django_db
-def test_task_creation(client, create_tasks, login, user_data, task_new, today):
+@pytest.mark.parametrize(
+    "task_fixture",
+    [
+        'task_new_with_category',
+        'task_new_with_date',
+    ],
+)
+def test_task_creation(client, request, create_tasks, login, user_data, task_fixture):
     """
     Testing successful task creation.
     """
     user = login(user_data)
-    task_data = task_new.copy()
-    task_data['category'] = Category.objects.for_user(user).get(slug=task_data['category']).pk
+    task_data_original = request.getfixturevalue(task_fixture)
+    task_data = task_data_original.copy()
+    if 'category' in task_data:
+        task_data['category'] = Category.objects.for_user(user).get(slug=task_data['category']).pk
+    if 'date' in task_data:
+        task_data['date'] = task_data['date'].strftime('%b %d, %Y')
 
     query_params = {'next': reverse('tasks:home')}
     url = f'{reverse('tasks:task-create')}?{urlencode(query_params)}'
@@ -26,8 +37,10 @@ def test_task_creation(client, create_tasks, login, user_data, task_new, today):
     assert response.request['PATH_INFO'] == reverse('tasks:home')
 
     new_task = Task.objects.for_user(user).get(name=task_data['name'])
-    assert new_task.category.slug == 'nearest-time'
-    assert new_task.date == today
+    if 'category' in task_data:
+        assert new_task.category.slug == task_data_original['category']
+    if 'date' in task_data:
+        assert new_task.date == task_data_original['date']
 
 @pytest.mark.django_db
 def test_existing_task_creation(client, create_tasks, login, user_data, task_user):
@@ -35,8 +48,10 @@ def test_existing_task_creation(client, create_tasks, login, user_data, task_use
     Creation of existing task must fail.
     """
     user = login(user_data)
-    task_data = task_user.copy()
-    task_data['category'] = Category.objects.for_user(user).get(slug=task_data['category']).pk
+    task_data = {
+        'name': task_user['name'],
+        'category': Category.objects.for_user(user).get(slug=task_user['category']).pk
+    }
     initial_tasks_count = Task.objects.count()
 
     query_params = {'next': reverse('tasks:home')}
@@ -74,7 +89,7 @@ def test_task_detail_success(client, request, create_tasks, login, user_fixture,
     assert task.category.slug == task_data['category']
     assert task.date == task_data['date']
     assert task.user == user
-    # assert {tag.name for tag in task.tags.all()} == set(task_data['tags'])
+    assert {tag.name for tag in task.tags.all()} == set(task_data['tags'])
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(

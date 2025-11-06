@@ -2,6 +2,7 @@ import datetime
 
 import pytest
 
+from subtasks.models import Subtask
 from tags.models import Tag
 from tasks.models import Category, Task
 from users.models import User
@@ -61,37 +62,116 @@ def in_a_week():
     return datetime.date.today() + datetime.timedelta(days=7)
 
 @pytest.fixture
-def create_task():
-    """Return function for creating a task."""
-    def create_task_for_data(name, category, date, tags, user):
-        task = Task.objects.create(name=name, category=category, date=date, user=user)
-        task.tags.set(tags)
-        return task
-
-    return create_task_for_data
-
-@pytest.fixture
 def tasks_user_data(today, tomorrow, in_a_week):
     """Return data for tasks creation by user."""
     return [
-        {'name': 'Complete project', 'category': 'today', 'date': today, 'tags': ['Deadline']},
-        {'name': 'Go to market', 'category': 'today', 'date': today, 'tags': ['Important', 'Family']},
-        {'name': 'Read Django guide', 'category': 'today', 'date': today, 'tags': []},
-        {'name': 'Write tests and docs', 'category': 'tomorrow', 'date': tomorrow, 'tags': ['Deadline']},
-        {'name': 'Make soup', 'category': 'tomorrow', 'date': tomorrow, 'tags': ['Family']},
-        {'name': 'Sell old skis', 'category': 'nearest-time', 'date': in_a_week, 'tags': ['Family']},
+        {
+            'name': 'Complete project',
+            'category': 'today',
+            'description': '',
+            'date': today,
+            'tags': ['Deadline'],
+            'subtasks': ['Write tests', 'Create docs']
+        },
+        {
+            'name': 'Go to market',
+            'category': 'today',
+            'description': '',
+            'date': today,
+            'tags': ['Important', 'Family'],
+            'subtasks': ['Buy fish', 'Buy potatoes']
+        },
+        {
+            'name': 'Read Django guide',
+            'category': 'today',
+            'description': '',
+            'date': today,
+            'tags': [],
+            'subtasks': []
+        },
+        {
+            'name': 'Write tests and docs',
+            'category': 'tomorrow',
+            'description': '',
+            'date': tomorrow,
+            'tags': ['Deadline'],
+            'subtasks': []
+        },
+        {
+            'name': 'Make soup',
+            'category': 'tomorrow',
+            'description': '',
+            'date': tomorrow,
+            'tags': ['Family'],
+            'subtasks': []
+        },
+        {
+            'name': 'Sell old skis',
+            'category': 'nearest-time',
+            'description': '',
+            'date': in_a_week,
+            'tags': ['Family'],
+            'subtasks': []
+        },
     ]
 
 @pytest.fixture
 def tasks_other_user_data(today, tomorrow, in_a_week):
     """Return data for tasks creation by other user."""
     return [
-        {'name': 'Feed cat', 'category': 'today', 'date': today, 'tags': ['Family']},
-        {'name': 'Go to meeting', 'category': 'today', 'date': today, 'tags': ['Important']},
-        {'name': 'Project refactoring', 'category': 'nearest-time', 'date': in_a_week, 'tags': ['Important']},
-        {'name': 'Meet up with friends', 'category': 'nearest-time', 'date': in_a_week, 'tags': []},
-        {'name': 'Great party', 'category': 'tomorrow', 'date': tomorrow, 'tags': ['Family']},
+        {
+            'name': 'Great party',
+            'category': 'tomorrow',
+            'description': '',
+            'date': tomorrow,
+            'tags': ['Family'],
+            'subtasks': ['Cook the pie', 'Invite relatives and friends']
+        },
+        {
+            'name': 'Feed cat',
+            'category': 'today',
+            'description': '',
+            'date': today,
+            'tags': ['Family'],
+            'subtasks': []
+        },
+        {
+            'name': 'Go to meeting',
+            'category': 'today',
+            'description': '',
+            'date': today,
+            'tags': ['Important'],
+            'subtasks': []
+        },
+        {
+            'name': 'Project refactoring',
+            'category': 'nearest-time',
+            'description': '',
+            'date': in_a_week,
+            'tags': ['Important'],
+            'subtasks': ['First step', 'Second step', 'Third step']
+        },
+        {
+            'name': 'Meet up with friends',
+            'category': 'nearest-time',
+            'description': '',
+            'date': in_a_week,
+            'tags': [],
+            'subtasks': []
+        },
     ]
+
+@pytest.fixture
+def create_task():
+    """Return function for creating a task."""
+    def create_task_for_data(name, category, description, date, tags, subtasks, user):
+        task = Task.objects.create(name=name, category=category, description=description, date=date, user=user)
+        task.tags.set(tags)
+        for subtask in subtasks:
+            Subtask.objects.create(name=subtask, task=task, user=user)
+        return task
+
+    return create_task_for_data
 
 @pytest.fixture
 def create_tasks(create_user, user_data, other_user_data, tasks_user_data, tasks_other_user_data, create_task):
@@ -104,8 +184,10 @@ def create_tasks(create_user, user_data, other_user_data, tasks_user_data, tasks
             create_task(
                 data['name'],
                 categories[data['category']],
+                data['description'],
                 data['date'],
                 [tags[tag_name] for tag_name in data['tags']],
+                data['subtasks'],
                 user
             )
 
@@ -137,26 +219,4 @@ def task_update(in_a_week):
         'description': 'This task is used for testing any existing task update',
         'date': in_a_week,
         'is_completed': 'on',
-    }
-
-@pytest.fixture
-def task_user(today):
-    """Return data of existing user's task."""
-    return {
-        'name': 'Complete project',
-        'category': 'today',
-        'description': '',
-        'date': today,
-        'tags': ['Deadline'],
-    }
-
-@pytest.fixture
-def task_other_user(tomorrow):
-    """Return data of existing other user's task."""
-    return {
-        'name': 'Great party',
-        'category': 'tomorrow',
-        'description': '',
-        'date': tomorrow,
-        'tags': ['Family']
     }

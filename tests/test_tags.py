@@ -8,9 +8,10 @@ from tasks.models import Task
 
 
 @pytest.mark.django_db
-def test_get_tag_list(client, create_tasks, login, user_data, task_user):
+def test_get_tag_list(client, create_tasks, login, user_data, tasks_user_data):
     """Testing tag list view for a task."""
     user = login(user_data)
+    task_user = tasks_user_data[0]
     task = Task.objects.for_user(user).get(name=task_user['name'])
 
     url = reverse(
@@ -31,12 +32,12 @@ def test_get_tag_list(client, create_tasks, login, user_data, task_user):
     assert set(tags) == set(Tag.objects.for_user(user))
 
 @pytest.mark.django_db
-def test_set_tag_list(client, create_tasks, login, user_data, task_user):
+def test_set_tag_list(client, create_tasks, login, user_data, tasks_user_data):
     """
     Testing tags replacement to the task.
     """
     user = login(user_data)
-    task = Task.objects.for_user(user).get(name=task_user['name'])
+    task = Task.objects.for_user(user).get(name=tasks_user_data[0]['name'])
 
     reverse_to_task_detail = reverse('tasks:task-detail', kwargs={
         'username': user.username,

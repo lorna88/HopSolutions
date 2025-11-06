@@ -34,10 +34,16 @@ def test_tasks_list_view(client, request, create_tasks, login, user_fixture, tas
 
         for task in tasks:
             assert task.name in tasks_data
+
             tags = tasks_data[task.name]['tags']
             assert task.tags.count() == len(tags)
             if task.tags.exists():
                 assert task.tags.all().first().name in tags
+
+            subtasks = tasks_data[task.name]['subtasks']
+            assert task.subtasks.count() == len(subtasks)
+            if task.subtasks.exists():
+                assert task.subtasks.all().first().name in subtasks
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
@@ -70,10 +76,16 @@ def test_calendar_view(client, request, create_tasks, login, user_fixture, tasks
 
     for task in tasks:
         assert task.name in tasks_data
+
         tags = tasks_data[task.name]['tags']
         assert task.tags.count() == len(tags)
         if task.tags.exists():
             assert task.tags.all().first().name in tags
+
+        subtasks = tasks_data[task.name]['subtasks']
+        assert task.subtasks.count() == len(subtasks)
+        if task.subtasks.exists():
+            assert task.subtasks.all().first().name in subtasks
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(

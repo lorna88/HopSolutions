@@ -2,7 +2,6 @@ import pytest
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse
 
-from subtasks.models import Subtask
 from tasks.models import Task
 
 
@@ -62,7 +61,7 @@ def test_subtask_complete(client, create_tasks, login, user_data, tasks_user_dat
 @pytest.mark.django_db
 def test_subtask_delete(client, create_tasks, login, user_data, tasks_user_data):
     """
-    Testing subtask completing.
+    Testing subtask deleting.
     """
     user = login(user_data)
     task_data = tasks_user_data[0]

@@ -220,3 +220,19 @@ def task_update(in_a_week):
         'date': in_a_week,
         'is_completed': 'on',
     }
+
+@pytest.fixture
+def compare_date_asc():
+    """Fixture for comparing two tasks by date ascending."""
+    def compare_tasks(task1, task2):
+        return task1.date <= task2.date
+
+    return compare_tasks
+
+@pytest.fixture
+def compare_date_desc():
+    """Fixture for comparing two tasks by date descending."""
+    def compare_tasks(task1, task2):
+        return task1.date >= task2.date
+
+    return compare_tasks

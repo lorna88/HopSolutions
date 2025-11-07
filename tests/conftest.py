@@ -1,6 +1,8 @@
 import datetime
 
 import pytest
+from rest_framework.test import APIClient
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from subtasks.models import Subtask
 from tags.models import Tag
@@ -45,6 +47,23 @@ def login(client, create_user):
         return user
 
     return login_user_with_data
+
+@pytest.fixture
+def api_client():
+    """Fixture for api client."""
+    return APIClient()
+
+@pytest.fixture
+def token_pair():
+    """Returns dict with access and refresh tokens for user."""
+    def get_token_pair(user):
+        refresh = RefreshToken.for_user(user)
+        return {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        }
+
+    return get_token_pair
 
 @pytest.fixture
 def today():

@@ -66,6 +66,20 @@ def token_pair():
     return get_token_pair
 
 @pytest.fixture
+def authenticated(api_client, create_user, token_pair):
+    """Fixture for API user authentication."""
+    def get_client_with_credentials(data):
+        user = User.objects.filter(email=data['email']).first()
+        if not user:
+            user = create_user(data)
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        api_client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
+        return user
+
+    return get_client_with_credentials
+
+@pytest.fixture
 def today():
     """Fixture for today's date."""
     return datetime.date.today()

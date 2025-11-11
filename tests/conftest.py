@@ -269,3 +269,19 @@ def compare_date_desc():
         return task1.date >= task2.date
 
     return compare_tasks
+
+@pytest.fixture
+def compare_objects_asc():
+    """Fixture for comparing two dict elements by field ascending."""
+    def compare_objects(obj1, obj2, field_name):
+        return obj1[field_name] <= obj2[field_name]
+
+    return compare_objects
+
+@pytest.fixture
+def compare_objects_desc():
+    """Fixture for comparing two dict elements by field descending."""
+    def compare_objects(obj1, obj2, field_name):
+        return obj1[field_name] >= obj2[field_name]
+
+    return compare_objects

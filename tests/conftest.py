@@ -244,6 +244,17 @@ def task_new_with_date(today):
     }
 
 @pytest.fixture
+def task_new_with_many_fields(today):
+    """Return one task data for creation in API."""
+    return {
+        'name': 'New task',
+        'date': today,
+        'category': 'today',
+        "tags": ["Deadline"],
+        "subtasks": ["First subtask", "Second subtask"]
+    }
+
+@pytest.fixture
 def task_update(in_a_week):
     """Return one task data for updating."""
     return {
@@ -252,6 +263,27 @@ def task_update(in_a_week):
         'description': 'This task is used for testing any existing task update',
         'date': in_a_week,
         'is_completed': 'on',
+    }
+
+@pytest.fixture
+def task_update_tags_subtasks(in_a_week):
+    """Return one task data for updating in API."""
+    return {
+        'name': 'Completed task',
+        'category': 'nearest-time',
+        'description': 'This task is used for testing any existing task update',
+        'date': in_a_week,
+        'is_completed': 'on',
+        'tags': ['Important'],
+        'subtasks': [
+            {
+                'name': 'Run linters',
+            },
+            {
+                'name': 'Write tests',
+                'is_completed': 'on',
+            }
+        ]
     }
 
 @pytest.fixture

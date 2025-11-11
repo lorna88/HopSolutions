@@ -116,7 +116,7 @@ def test_task_detail_fail(client, request, create_tasks, login, user_fixture, ta
     assert response.status_code == 404
 
 @pytest.mark.django_db
-def test_task_update(client, create_tasks, login, user_data, tasks_user_data, task_update, in_a_week):
+def test_task_update(client, create_tasks, login, user_data, tasks_user_data, task_update):
     """
     Testing successful task updating.
     """
@@ -139,7 +139,7 @@ def test_task_update(client, create_tasks, login, user_data, tasks_user_data, ta
     assert task.name == task_update['name']
     assert task.category.slug == task_update['category']
     assert task.description == task_update['description']
-    assert task.date == in_a_week
+    assert task.date == task_update['date']
     assert task.is_completed == (task_update.get('is_completed') == 'on')
 
 @pytest.mark.django_db

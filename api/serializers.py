@@ -1,6 +1,7 @@
 from django.contrib.auth import password_validation
 from django.core import exceptions
 from django.utils.text import slugify
+from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
 from rest_framework import serializers
 
 from subtasks.models import Subtask
@@ -28,6 +29,63 @@ class SubtaskSerializer(serializers.ModelSerializer):
         fields = ['name', 'is_completed']
 
 
+@extend_schema_serializer(
+    examples = [
+        OpenApiExample(
+            'Request',
+            summary='task request example',
+            description='request for task named Go to market and user Admin',
+            value={
+                "category": "today",
+                "name": "Go to market",
+                "date": "2025-10-24",
+                "tags": [
+                    "Important",
+                    "Family"
+                ],
+                "subtasks": [
+                    {
+                        "name": "Buy a fish"
+                    },
+                    {
+                        "name": "Buy fruits"
+                    }
+                ]
+            },
+            request_only=True,
+        ),
+        OpenApiExample(
+            'Response',
+            summary='task response example',
+            description='response for task named Go to market and user Admin',
+            value={
+                "id": 1,
+                "category": "today",
+                "name": "Go to market",
+                "slug": "go-to-market",
+                "description": None,
+                "date": "2025-10-24",
+                "is_completed": False,
+                "user": "admin",
+                "tags": [
+                    "Important",
+                    "Family"
+                ],
+                "subtasks": [
+                    {
+                        "name": "Buy a fish",
+                        "is_completed": False
+                    },
+                    {
+                        "name": "Buy fruits",
+                        "is_completed": False
+                    }
+                ]
+            },
+            response_only=True,
+        ),
+    ]
+)
 class TaskSerializer(serializers.ModelSerializer):
     category = TasksSlugRelatedField(
         manager = Category.objects,
@@ -117,6 +175,31 @@ class TaskSerializer(serializers.ModelSerializer):
         return data
 
 
+@extend_schema_serializer(
+    examples = [
+        OpenApiExample(
+            'Request',
+            summary='category request example',
+            description='request for category named Today and user Admin',
+            value={
+                'name': 'Today',
+            },
+            request_only=True,
+        ),
+        OpenApiExample(
+            'Response',
+            summary='category response example',
+            description='response for category named Today and user Admin',
+            value={
+                'id': 1,
+                'name': 'Today',
+                'slug': 'today',
+                'user': 'admin',
+            },
+            response_only=True,
+        ),
+    ]
+)
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
@@ -141,6 +224,32 @@ class CategorySerializer(serializers.ModelSerializer):
         return data
 
 
+@extend_schema_serializer(
+    examples = [
+        OpenApiExample(
+            'Request',
+            summary='tag request example',
+            description='request for tag named Important and user Admin',
+            value={
+                'name': 'Important',
+                'color': '--background-green',
+            },
+            request_only=True,
+        ),
+        OpenApiExample(
+            'Response',
+            summary='tag response example',
+            description='response for tag named Important and user Admin',
+            value={
+                'id': 1,
+                'name': 'Important',
+                'color': '--background-green',
+                'user': 'admin',
+            },
+            response_only=True,
+        ),
+    ]
+)
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag

@@ -1,4 +1,6 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import extend_schema, inline_serializer
+from rest_framework import serializers
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import CreateAPIView
 from rest_framework.pagination import PageNumberPagination
@@ -29,10 +31,36 @@ class TaskViewSet(ModelViewSet):
     ordering = ['category__slug']
 
     def get_queryset(self):
+        if getattr(self, "swagger_fake_view", False):
+            return Task.objects.none()
         return Task.objects.for_user(self.request.user).select_related('category').prefetch_related('tags', 'subtasks')
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    @extend_schema(
+        responses={
+            200: inline_serializer(
+                name='CustomPaginatedResponse',
+                fields={
+                    'count': serializers.IntegerField(help_text='Общее количество элементов'),
+                    'next': serializers.URLField(
+                        allow_null=True,
+                        help_text='URL следующей страницы',
+                        example='https://api.example.com/api/tasks/?page=4'
+                    ),
+                    'previous': serializers.URLField(
+                        allow_null=True,
+                        help_text='URL предыдущей страницы',
+                        example='https://api.example.com/api/tasks/?page=2'
+                    ),
+                    'results': TaskSerializer(many=True, help_text='Список задач'),
+                }
+            )
+        }
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class CategoryViewSet(ModelViewSet):
@@ -40,6 +68,8 @@ class CategoryViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated, IsOwner]
 
     def get_queryset(self):
+        if getattr(self, "swagger_fake_view", False):
+            return Category.objects.none()
         return Category.objects.for_user(self.request.user)
 
     def perform_create(self, serializer):
@@ -51,6 +81,8 @@ class TagViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated, IsOwner]
 
     def get_queryset(self):
+        if getattr(self, "swagger_fake_view", False):
+            return Tag.objects.none()
         return Tag.objects.for_user(self.request.user)
 
     def perform_create(self, serializer):

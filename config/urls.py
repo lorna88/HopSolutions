@@ -17,6 +17,7 @@ Including another URLconf
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 from config import settings
 from users.views import ConfirmPasswordView
@@ -31,6 +32,9 @@ urlpatterns = [
     path('password-reset-confirm/<uidb64>/<token>/', ConfirmPasswordView.as_view(),
          name='password_reset_confirm'),
     path('api/', include('api.urls', namespace='api')),
+
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

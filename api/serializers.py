@@ -215,12 +215,12 @@ class CategorySerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         if 'slug' in data:
             if Category.objects.filter(user=user, slug=data['slug']).exists():
-                raise serializers.ValidationError("A slug must be unique.")
+                raise serializers.ValidationError({'slug': 'A slug must be unique.'})
         else:
             if not self.instance and 'name' in data:
                 slug = slugify(data['name'])
                 if Category.objects.filter(user=user, slug=slug).exists():
-                    raise serializers.ValidationError("A slug for this name already exists.")
+                    raise serializers.ValidationError({'name': 'A slug for this name already exists.'})
         return data
 
 
@@ -264,7 +264,7 @@ class TagSerializer(serializers.ModelSerializer):
     def validate_name(self, value):
         user = self.context['request'].user
         if Tag.objects.filter(user=user, name=value).exists():
-            raise serializers.ValidationError("A name must be unique.")
+            raise serializers.ValidationError({'name': 'A name must be unique.'})
         return value
 
 

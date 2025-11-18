@@ -9,6 +9,9 @@ from tags.models import Tag
 from tasks.models import Category, Task
 from users.models import User
 
+# =============================================================================
+# Fixtures for manipulation with users
+# =============================================================================
 
 @pytest.fixture
 def user_data():
@@ -38,7 +41,7 @@ def create_user():
 
 @pytest.fixture
 def login(client, create_user):
-    """Fixture for user login."""
+    """Fixture for user login on site."""
     def login_user_with_data(data):
         user = User.objects.filter(email=data['email']).first()
         if not user:
@@ -79,6 +82,10 @@ def authenticated(api_client, create_user, token_pair):
 
     return get_client_with_credentials
 
+# =============================================================================
+# Fixtures for retrieving dates
+# =============================================================================
+
 @pytest.fixture
 def today():
     """Fixture for today's date."""
@@ -93,6 +100,10 @@ def tomorrow():
 def in_a_week():
     """Fixture for date in a week."""
     return datetime.date.today() + datetime.timedelta(days=7)
+
+# =============================================================================
+# Fixtures for manipulation with task objects
+# =============================================================================
 
 @pytest.fixture
 def tasks_user_data(today, tomorrow, in_a_week):
@@ -227,6 +238,10 @@ def create_tasks(create_user, user_data, other_user_data, tasks_user_data, tasks
     create_tasks_for_user(create_user(user_data), tasks_user_data)
     create_tasks_for_user(create_user(other_user_data), tasks_other_user_data)
 
+# =============================================================================
+# Fixtures of task data for different purposes
+# =============================================================================
+
 @pytest.fixture
 def task_new_with_category():
     """Return one task data for creation on task list view."""
@@ -285,6 +300,10 @@ def task_update_tags_subtasks(in_a_week):
             }
         ]
     }
+
+# =============================================================================
+# Fixtures of comparing two objects for ordering check
+# =============================================================================
 
 @pytest.fixture
 def compare_date_asc():

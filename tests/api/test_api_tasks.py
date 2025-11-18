@@ -152,18 +152,23 @@ def test_api_tasks_search(api_client, authenticated, create_tasks, user_data):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "sort",
-    ['date', '-date', 'is_completed', '-is_completed', 'category'],
+    "sort, field_name",
+    [
+        ('date','date'),
+        ('-date', 'date'),
+        ('is_completed', 'is_completed'),
+        ('-is_completed', 'is_completed'),
+        ('category__slug', 'category'),
+        ('-category__slug', 'category'),
+    ]
 )
-def test_api_tasks_order(api_client, request, authenticated, create_tasks, user_data, sort):
+def test_api_tasks_order(api_client, request, authenticated, create_tasks, user_data, sort, field_name):
     """Checks getting tasks data in a certain order."""
     authenticated(user_data)
 
-    compare = request.getfixturevalue('compare_asc')
-    order_field_name = sort
+    compare = request.getfixturevalue('compare_objects_asc')
     if sort.startswith('-'):
-        compare = request.getfixturevalue('compare_desc')
-        order_field_name = sort[1:]
+        compare = request.getfixturevalue('compare_objects_desc')
 
     query_params = {
         'ordering': sort
@@ -177,5 +182,5 @@ def test_api_tasks_order(api_client, request, authenticated, create_tasks, user_
     prev_task = None
     for task in data['results']:
         if prev_task:
-            assert compare(prev_task, task, order_field_name)
+            assert compare(prev_task, task, field_name)
         prev_task = task

@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'task_calendar',
     'tags',
     'subtasks',
+    'api',
     'rest_framework',
     'drf_spectacular',
 ]

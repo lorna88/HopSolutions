@@ -7,15 +7,54 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from tags.models import Tag
 from .filters import TaskFilter
-from .open_api import AUTHENTICATION_ERROR_RESPONSE, ErrorSerializer, UNIQUE_SLUG_EXAMPLE, UNIQUE_NAME_EXAMPLE, \
+from .open_api import ErrorSerializer, UNIQUE_SLUG_EXAMPLE, UNIQUE_NAME_EXAMPLE, \
     UNIQUE_SLUG_FOR_NAME_EXAMPLE, UNIQUE_TAGS_EXAMPLE, UNIQUE_SUBTASKS_EXAMPLE, \
-    get_not_found_response, get_success_response, OrderValues
+    get_not_found_response, get_success_response, OrderValues, get_auth_error_response, WRONG_EMAIL_EXAMPLE, \
+    WRONG_USERNAME_EXAMPLE, WRONG_PASSWORD_EXAMPLE, EXISTING_USER_EXAMPLE, LOGIN_USER_REQUEST_EXAMPLE, \
+    LOGIN_USER_RESPONSE_EXAMPLE, AUTH_LOGIN_ERROR_EXAMPLE, REFRESH_TOKEN_REQUEST_EXAMPLE, \
+    REFRESH_TOKEN_RESPONSE_EXAMPLE, AUTH_REFRESH_ERROR_EXAMPLE
 from .permissions import IsOwner
 from .serializers import TaskSerializer, CategorySerializer, TagSerializer, UserSerializer
 from tasks.models import Task, Category
+
+
+login_schema_config = extend_schema_view(
+    post=extend_schema(
+        summary="Login user and retrieve access tokens",
+        responses={
+            200: get_success_response(TokenObtainPairSerializer),
+            401: OpenApiResponse(
+                response=ErrorSerializer,
+                description='Authentication error',
+                examples = [AUTH_LOGIN_ERROR_EXAMPLE]
+            ),
+        },
+        examples=[LOGIN_USER_REQUEST_EXAMPLE, LOGIN_USER_RESPONSE_EXAMPLE]
+    )
+)
+
+refresh_token_schema_config = extend_schema_view(
+    post=extend_schema(
+        summary="Retrieve new JWT tokens with refresh token",
+        responses={
+            200: get_success_response(TokenRefreshSerializer),
+            401: OpenApiResponse(
+                response=ErrorSerializer,
+                description='Authentication error',
+                examples = [AUTH_REFRESH_ERROR_EXAMPLE]
+            ),
+        },
+        examples=[REFRESH_TOKEN_REQUEST_EXAMPLE, REFRESH_TOKEN_RESPONSE_EXAMPLE]
+    )
+)
+
+TokenObtainPairView = login_schema_config(TokenObtainPairView)
+TokenRefreshView = refresh_token_schema_config(TokenRefreshView)
 
 
 class TaskPagination(PageNumberPagination):
@@ -43,7 +82,7 @@ class TaskPagination(PageNumberPagination):
         summary="Full list of tasks",
         responses={
             200: get_success_response(TaskSerializer),
-            401: AUTHENTICATION_ERROR_RESPONSE,
+            401: get_auth_error_response(),
         },
         parameters=[
             OpenApiParameter("date", type=datetime.date,
@@ -70,14 +109,14 @@ class TaskPagination(PageNumberPagination):
                 examples = [UNIQUE_SLUG_EXAMPLE, UNIQUE_SLUG_FOR_NAME_EXAMPLE, UNIQUE_TAGS_EXAMPLE,
                             UNIQUE_SUBTASKS_EXAMPLE]
             ),
-            401: AUTHENTICATION_ERROR_RESPONSE,
+            401: get_auth_error_response(),
         },
     ),
     retrieve=extend_schema(
         summary="View a specific task",
         responses={
             200: get_success_response(TaskSerializer),
-            401: AUTHENTICATION_ERROR_RESPONSE,
+            401: get_auth_error_response(),
             404: get_not_found_response('Task'),
         },
     ),
@@ -90,7 +129,7 @@ class TaskPagination(PageNumberPagination):
                 description='Bad request error',
                 examples = [UNIQUE_SLUG_EXAMPLE, UNIQUE_TAGS_EXAMPLE, UNIQUE_SUBTASKS_EXAMPLE]
             ),
-            401: AUTHENTICATION_ERROR_RESPONSE,
+            401: get_auth_error_response(),
             404: get_not_found_response('Task'),
         },
     ),
@@ -103,7 +142,7 @@ class TaskPagination(PageNumberPagination):
                 description='Bad request error',
                 examples = [UNIQUE_SLUG_EXAMPLE, UNIQUE_TAGS_EXAMPLE, UNIQUE_SUBTASKS_EXAMPLE]
             ),
-            401: AUTHENTICATION_ERROR_RESPONSE,
+            401: get_auth_error_response(),
             404: get_not_found_response('Task'),
         },
     ),
@@ -111,7 +150,7 @@ class TaskPagination(PageNumberPagination):
         summary="Delete a specific task",
         responses={
             204: get_success_response(TaskSerializer),
-            401: AUTHENTICATION_ERROR_RESPONSE,
+            401: get_auth_error_response(),
             404: get_not_found_response('Task'),
         },
     ),
@@ -140,7 +179,7 @@ class TaskViewSet(ModelViewSet):
         summary="Full list of categories",
         responses={
             200: get_success_response(CategorySerializer),
-            401: AUTHENTICATION_ERROR_RESPONSE,
+            401: get_auth_error_response(),
         },
     ),
     create=extend_schema(
@@ -152,14 +191,14 @@ class TaskViewSet(ModelViewSet):
                 description='Bad request error',
                 examples = [UNIQUE_SLUG_EXAMPLE, UNIQUE_SLUG_FOR_NAME_EXAMPLE]
             ),
-            401: AUTHENTICATION_ERROR_RESPONSE,
+            401: get_auth_error_response(),
         },
     ),
     retrieve=extend_schema(
         summary="View a specific category",
         responses={
             200: get_success_response(CategorySerializer),
-            401: AUTHENTICATION_ERROR_RESPONSE,
+            401: get_auth_error_response(),
             404: get_not_found_response('Category'),
         },
     ),
@@ -172,7 +211,7 @@ class TaskViewSet(ModelViewSet):
                 description='Bad request error',
                 examples = [UNIQUE_SLUG_EXAMPLE]
             ),
-            401: AUTHENTICATION_ERROR_RESPONSE,
+            401: get_auth_error_response(),
             404: get_not_found_response('Category'),
         },
     ),
@@ -185,7 +224,7 @@ class TaskViewSet(ModelViewSet):
                 description='Bad request error',
                 examples = [UNIQUE_SLUG_EXAMPLE]
             ),
-            401: AUTHENTICATION_ERROR_RESPONSE,
+            401: get_auth_error_response(),
             404: get_not_found_response('Category'),
         },
     ),
@@ -193,7 +232,7 @@ class TaskViewSet(ModelViewSet):
         summary="Delete a specific category",
         responses={
             204: get_success_response(CategorySerializer),
-            401: AUTHENTICATION_ERROR_RESPONSE,
+            401: get_auth_error_response(),
             404: get_not_found_response('Category'),
         },
     ),
@@ -201,6 +240,7 @@ class TaskViewSet(ModelViewSet):
 class CategoryViewSet(ModelViewSet):
     serializer_class = CategorySerializer
     permission_classes = [IsAuthenticated, IsOwner]
+    filter_backends = []
 
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
@@ -216,7 +256,7 @@ class CategoryViewSet(ModelViewSet):
         summary="Full list of tags",
         responses={
             200: get_success_response(TagSerializer),
-            401: AUTHENTICATION_ERROR_RESPONSE,
+            401: get_auth_error_response(),
         },
     ),
     create=extend_schema(
@@ -228,14 +268,14 @@ class CategoryViewSet(ModelViewSet):
                 description='Bad request error',
                 examples = [UNIQUE_NAME_EXAMPLE]
             ),
-            401: AUTHENTICATION_ERROR_RESPONSE,
+            401: get_auth_error_response(),
         },
     ),
     retrieve=extend_schema(
         summary="View a specific tag",
         responses={
             200: get_success_response(TagSerializer),
-            401: AUTHENTICATION_ERROR_RESPONSE,
+            401: get_auth_error_response(),
             404: get_not_found_response('Tag'),
         },
     ),
@@ -248,7 +288,7 @@ class CategoryViewSet(ModelViewSet):
                 description='Bad request error',
                 examples = [UNIQUE_NAME_EXAMPLE]
             ),
-            401: AUTHENTICATION_ERROR_RESPONSE,
+            401: get_auth_error_response(),
             404: get_not_found_response('Tag'),
         },
     ),
@@ -261,7 +301,7 @@ class CategoryViewSet(ModelViewSet):
                 description='Bad request error',
                 examples = [UNIQUE_NAME_EXAMPLE]
             ),
-            401: AUTHENTICATION_ERROR_RESPONSE,
+            401: get_auth_error_response(),
             404: get_not_found_response('Tag'),
         },
     ),
@@ -269,7 +309,7 @@ class CategoryViewSet(ModelViewSet):
         summary="Delete a specific tag",
         responses={
             204: get_success_response(TagSerializer),
-            401: AUTHENTICATION_ERROR_RESPONSE,
+            401: get_auth_error_response(),
             404: get_not_found_response('Tag'),
         },
     ),
@@ -277,6 +317,7 @@ class CategoryViewSet(ModelViewSet):
 class TagViewSet(ModelViewSet):
     serializer_class = TagSerializer
     permission_classes = [IsAuthenticated, IsOwner]
+    filter_backends = []
 
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
@@ -287,5 +328,21 @@ class TagViewSet(ModelViewSet):
         serializer.save(user=self.request.user)
 
 
+@extend_schema_view(
+    post=extend_schema(
+        summary="Register new user",
+        responses={
+            201: get_success_response(UserSerializer),
+            400: OpenApiResponse(
+                response=ErrorSerializer,
+                description='Bad request error',
+                examples = [WRONG_EMAIL_EXAMPLE, WRONG_USERNAME_EXAMPLE, WRONG_PASSWORD_EXAMPLE,
+                            EXISTING_USER_EXAMPLE]
+            ),
+        },
+    ),
+)
 class RegisterUserView(CreateAPIView):
     serializer_class = UserSerializer
+    permission_classes = ()
+    authentication_classes = ()

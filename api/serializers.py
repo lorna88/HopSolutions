@@ -268,6 +268,31 @@ class TagSerializer(serializers.ModelSerializer):
         return value
 
 
+@extend_schema_serializer(
+    examples = [
+        OpenApiExample(
+            'Request',
+            summary='user register request example',
+            description='example for user registration with correct credentials',
+            value={
+                'email': 'user@example.com',
+                'username': 'user',
+                'password': 'strong-password-123',
+            },
+            request_only=True,
+        ),
+        OpenApiExample(
+            'Response',
+            summary='user register response example',
+            description='example for response on user registration with correct credentials',
+            value={
+                'email': 'user@example.com',
+                'username': 'user',
+            },
+            response_only=True,
+        ),
+    ]
+)
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

@@ -1,5 +1,6 @@
 import datetime
 
+from django.utils.module_loading import import_string
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiResponse, OpenApiParameter
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -7,7 +8,7 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
+from rest_framework_simplejwt.settings import api_settings
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from tags.models import Tag
@@ -27,7 +28,7 @@ login_schema_config = extend_schema_view(
     post=extend_schema(
         summary="Login user and retrieve access tokens",
         responses={
-            200: get_success_response(TokenObtainPairSerializer),
+            200: get_success_response(import_string(api_settings.TOKEN_OBTAIN_SERIALIZER)),
             401: OpenApiResponse(
                 response=ErrorSerializer,
                 description='Authentication error',
@@ -42,7 +43,7 @@ refresh_token_schema_config = extend_schema_view(
     post=extend_schema(
         summary="Retrieve new JWT tokens with refresh token",
         responses={
-            200: get_success_response(TokenRefreshSerializer),
+            200: get_success_response(import_string(api_settings.TOKEN_REFRESH_SERIALIZER)),
             401: OpenApiResponse(
                 response=ErrorSerializer,
                 description='Authentication error',

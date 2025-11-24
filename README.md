@@ -51,7 +51,7 @@ docker compose run backend python manage.py migrate
 docker compose run backend python manage.py createsuperuser
 ```
 ### Приложение будет доступно по адресу
-### `http://localhost:8000/home`
+<a target="_blank" href="http://localhost:8000/home/">http://localhost:8000/home/</a>
 
 ### *Структура Django проекта*
 1. **USERS** - приложение для работы с пользователями. Обеспечивает регистрацию и аутентификацию
@@ -266,6 +266,14 @@ Authorization: Bearer secret.access.token
 
 ### `GET` `PUT` `PATCH` `DELETE` `/api/tags/<id>/`
 Просмотреть, обновить или удалить тег с заданным id.
+
+<br>
+
+Документация API:
+<a target="_blank" href="http://127.0.0.1:8000/api/schema/swagger-ui/">http://127.0.0.1:8000/api/schema/swagger-ui/</a>
+
+Документация API в формате OpenAPI:
+<a target="_blank" href="http://127.0.0.1:8000/api/schema/">http://127.0.0.1:8000/api/schema/</a>
 
 В приложении использована иконка
 <a target="_blank" href="https://icons8.com/icon/21322/done">

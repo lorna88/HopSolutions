@@ -101,7 +101,8 @@ class TaskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Task
-        fields = '__all__'
+        fields = ['id', 'category', 'name', 'slug', 'description', 'date',
+                  'is_completed', 'user', 'tags', 'subtasks']
         read_only_fields = ['user']
 
     def to_representation(self, instance):

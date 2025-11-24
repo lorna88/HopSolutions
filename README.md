@@ -275,6 +275,11 @@ Authorization: Bearer secret.access.token
 Документация API в формате OpenAPI:
 <a target="_blank" href="http://127.0.0.1:8000/api/schema/">http://127.0.0.1:8000/api/schema/</a>
 
+Запуск тестов:
+```bash
+pytest
+```
+
 В приложении использована иконка
 <a target="_blank" href="https://icons8.com/icon/21322/done">
     <img src="{% static 'favicon.ico' %}" alt="Check mark">

@@ -4,6 +4,7 @@ from tasks.models import Task
 
 
 class TaskFilter(FilterSet):
+    """Class for custom filter sets on task list view."""
     date_after = DateFilter(field_name='date', lookup_expr='gte')
     date_before = DateFilter(field_name='date', lookup_expr='lte')
     category = CharFilter(field_name='category__name', lookup_expr='icontains')

@@ -171,6 +171,9 @@ AUTH_REFRESH_ERROR_EXAMPLE = OpenApiExample(
 
 
 class OrderValues(models.TextChoices):
+    """
+    Class describing possible options for the sorting parameter values on task list view.
+    """
     DATE_ASC = 'date', 'date ascending'
     DATE_DESC = '-date', 'date descending'
     IS_COMPLETED_ASC = 'is_completed', 'is_completed ascending'
@@ -180,10 +183,16 @@ class OrderValues(models.TextChoices):
 
 
 class ErrorSerializer(serializers.Serializer):
+    """
+    Universal serializer for responses with errors.
+    """
     detail = serializers.CharField(max_length=200)
 
 
-def get_auth_error_response():
+def get_auth_error_response() -> OpenApiResponse:
+    """
+    Returns a response to unauthorized request.
+    """
     return OpenApiResponse(
         response=ErrorSerializer,
         description='Authentication error',
@@ -200,7 +209,10 @@ def get_auth_error_response():
         ]
     )
 
-def get_not_found_response(model_name):
+def get_not_found_response(model_name: str) -> OpenApiResponse:
+    """
+    Returns a response if the requested object does not exist.
+    """
     return OpenApiResponse(
         response=ErrorSerializer,
         description='Not found error',
@@ -217,7 +229,10 @@ def get_not_found_response(model_name):
         ]
     )
 
-def get_success_response(serializer_class):
+def get_success_response(serializer_class: type[serializers.ModelSerializer]) -> OpenApiResponse:
+    """
+    Returns a successful response.
+    """
     return OpenApiResponse(
         response=serializer_class,
         description='Successful response',

@@ -2,5 +2,8 @@ from rest_framework.permissions import BasePermission
 
 
 class IsOwner(BasePermission):
+    """
+    A permission that grants access to object if the user is the owner of the object.
+    """
     def has_object_permission(self, request, view, obj):
         return obj.user == request.user

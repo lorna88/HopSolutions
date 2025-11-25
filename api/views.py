@@ -1,5 +1,7 @@
 import datetime
+from typing import Any
 
+from django.db.models import QuerySet
 from django.utils.module_loading import import_string
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiResponse, OpenApiParameter
@@ -24,6 +26,7 @@ from .serializers import TaskSerializer, CategorySerializer, TagSerializer, User
 from tasks.models import Task, Category
 
 
+# Schema configuration of OpenAPI documentation for TokenObtainPairView
 login_schema_config = extend_schema_view(
     post=extend_schema(
         summary="Login user and retrieve access tokens",
@@ -39,6 +42,7 @@ login_schema_config = extend_schema_view(
     )
 )
 
+# Schema configuration of OpenAPI documentation for TokenRefreshView
 refresh_token_schema_config = extend_schema_view(
     post=extend_schema(
         summary="Retrieve new JWT tokens with refresh token",
@@ -54,16 +58,23 @@ refresh_token_schema_config = extend_schema_view(
     )
 )
 
+# Apply schemas to views
 TokenObtainPairView = login_schema_config(TokenObtainPairView)
 TokenRefreshView = refresh_token_schema_config(TokenRefreshView)
 
 
 class TaskPagination(PageNumberPagination):
+    """
+    Custom pagination class for the task list view.
+    """
     page_size = 10
     page_size_query_param = 'size'
     max_page_size = 20
 
-    def get_paginated_response_schema(self, schema):
+    def get_paginated_response_schema(self, schema: dict[str: Any | None]) -> dict[str: Any | None]:
+        """
+        Replaces examples for the pagination OpenAPI schema
+        """
         paginated_schema = super().get_paginated_response_schema(schema)
         paginated_schema['properties']['next']['example'] = (
             'http://api.example.org/api/tasks/?{page_query_param}=4'.format(
@@ -157,6 +168,9 @@ class TaskPagination(PageNumberPagination):
     ),
 )
 class TaskViewSet(ModelViewSet):
+    """
+    A viewset that provides all actions for the task object.
+    """
     serializer_class = TaskSerializer
     pagination_class = TaskPagination
     permission_classes = [IsAuthenticated, IsOwner]
@@ -166,12 +180,19 @@ class TaskViewSet(ModelViewSet):
     ordering_fields = ['category__slug', 'date', 'is_completed']
     ordering = ['category__slug']
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
+        """
+        Limits queryset by user.
+        """
+        # Correcting spectacular warnings
         if getattr(self, "swagger_fake_view", False):
             return Task.objects.none()
         return Task.objects.for_user(self.request.user).select_related('category').prefetch_related('tags', 'subtasks')
 
-    def perform_create(self, serializer):
+    def perform_create(self, serializer: TaskSerializer) -> None:
+        """
+        Puts down the user when creating.
+        """
         serializer.save(user=self.request.user)
 
 
@@ -239,16 +260,26 @@ class TaskViewSet(ModelViewSet):
     ),
 )
 class CategoryViewSet(ModelViewSet):
+    """
+    A viewset that provides all actions for the category object.
+    """
     serializer_class = CategorySerializer
     permission_classes = [IsAuthenticated, IsOwner]
     filter_backends = []
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
+        """
+        Limits queryset by user.
+        """
+        # Correcting spectacular warnings
         if getattr(self, "swagger_fake_view", False):
             return Category.objects.none()
         return Category.objects.for_user(self.request.user)
 
-    def perform_create(self, serializer):
+    def perform_create(self, serializer: CategorySerializer) -> None:
+        """
+        Puts down the user when creating.
+        """
         serializer.save(user=self.request.user)
 
 
@@ -316,16 +347,26 @@ class CategoryViewSet(ModelViewSet):
     ),
 )
 class TagViewSet(ModelViewSet):
+    """
+    A viewset that provides all actions for the tag object.
+    """
     serializer_class = TagSerializer
     permission_classes = [IsAuthenticated, IsOwner]
     filter_backends = []
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
+        """
+        Limits queryset by user.
+        """
+        # Correcting spectacular warnings
         if getattr(self, "swagger_fake_view", False):
             return Tag.objects.none()
         return Tag.objects.for_user(self.request.user)
 
-    def perform_create(self, serializer):
+    def perform_create(self, serializer: TagSerializer) -> None:
+        """
+        Puts down the user when creating.
+        """
         serializer.save(user=self.request.user)
 
 
@@ -344,6 +385,9 @@ class TagViewSet(ModelViewSet):
     ),
 )
 class RegisterUserView(CreateAPIView):
+    """
+    A viewset for user creating.
+    """
     serializer_class = UserSerializer
     permission_classes = ()
     authentication_classes = ()

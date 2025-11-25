@@ -1,5 +1,8 @@
+from typing import Any
+
 from django.contrib.auth import password_validation
 from django.core import exceptions
+from django.db.models import QuerySet
 from django.utils.text import slugify
 from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
 from rest_framework import serializers
@@ -11,12 +14,17 @@ from users.models import User
 
 
 class TasksSlugRelatedField(serializers.SlugRelatedField):
+    """
+    A field that represents the target of the relationship
+    by a unique 'slug' attribute with user restrictions
+    on object selection.
+    """
     def __init__(self, manager=None, **kwargs):
         assert manager is not None, 'The `manager` argument is required.'
         self.manager = manager
         super().__init__(**kwargs)
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         request = self.context.get('request', None)
         if request and request.user.is_authenticated:
             return self.manager.for_user(request.user)
@@ -24,6 +32,9 @@ class TasksSlugRelatedField(serializers.SlugRelatedField):
 
 
 class SubtaskSerializer(serializers.ModelSerializer):
+    """
+    Nested subtask serializer for using in task serializer
+    """
     class Meta:
         model = Subtask
         fields = ['name', 'is_completed']
@@ -87,6 +98,9 @@ class SubtaskSerializer(serializers.ModelSerializer):
     ]
 )
 class TaskSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the task model.
+    """
     category = TasksSlugRelatedField(
         manager = Category.objects,
         slug_field='slug'
@@ -105,12 +119,18 @@ class TaskSerializer(serializers.ModelSerializer):
                   'is_completed', 'user', 'tags', 'subtasks']
         read_only_fields = ['user']
 
-    def to_representation(self, instance):
+    def to_representation(self, instance: Task) -> dict[str: Any | None]:
+        """
+        Replaces the user ID with the username in the response.
+        """
         representation = super().to_representation(instance)
         representation['user'] = instance.user.username
         return representation
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict[str: Any]) -> Task:
+        """
+        Adds set of tags and subtasks to the task when creating.
+        """
         subtasks_data = validated_data.pop('subtasks', [])
         tags_data = validated_data.pop('tags', [])
 
@@ -121,7 +141,11 @@ class TaskSerializer(serializers.ModelSerializer):
         task.tags.set(tags_data)
         return task
 
-    def update(self, instance, validated_data):
+    def update(self, instance: Task, validated_data: dict[str: Any]) -> Task:
+        """
+        Replaces set of tags and subtasks to the task with te data
+        from request when updating.
+        """
         tags_data = validated_data.pop('tags', None)
         subtasks_data = validated_data.pop('subtasks', None)
 
@@ -148,7 +172,10 @@ class TaskSerializer(serializers.ModelSerializer):
 
         return instance
 
-    def validate(self, data):
+    def validate(self, data: dict[str: Any]) -> dict[str: Any]:
+        """
+        Checks slug, tags and subtasks for uniqueness
+        """
         user = self.context['request'].user
         if 'slug' in data:
             if Task.objects.filter(user=user, slug=data['slug']).exists():
@@ -202,17 +229,26 @@ class TaskSerializer(serializers.ModelSerializer):
     ]
 )
 class CategorySerializer(serializers.ModelSerializer):
+    """
+    Serializer for the category model.
+    """
     class Meta:
         model = Category
         fields = '__all__'
         read_only_fields = ['user']
 
-    def to_representation(self, instance):
+    def to_representation(self, instance: Category) -> dict[str: Any | None]:
+        """
+        Replaces the user ID with the username in the response.
+        """
         representation = super().to_representation(instance)
         representation['user'] = instance.user.username
         return representation
 
-    def validate(self, data):
+    def validate(self, data: dict[str: Any]) -> dict[str: Any]:
+        """
+        Checks slug for uniqueness
+        """
         user = self.context['request'].user
         if 'slug' in data:
             if Category.objects.filter(user=user, slug=data['slug']).exists():
@@ -252,17 +288,26 @@ class CategorySerializer(serializers.ModelSerializer):
     ]
 )
 class TagSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the tag model.
+    """
     class Meta:
         model = Tag
         fields = '__all__'
         read_only_fields = ['user']
 
-    def to_representation(self, instance):
+    def to_representation(self, instance: Tag) -> dict[str: Any | None]:
+        """
+        Replaces the user ID with the username in the response.
+        """
         representation = super().to_representation(instance)
         representation['user'] = instance.user.username
         return representation
 
-    def validate_name(self, value):
+    def validate_name(self, value: str) -> str:
+        """
+        Checks name for uniqueness
+        """
         user = self.context['request'].user
         if Tag.objects.filter(user=user, name=value).exists():
             raise serializers.ValidationError({'name': 'A name must be unique.'})
@@ -295,12 +340,18 @@ class TagSerializer(serializers.ModelSerializer):
     ]
 )
 class UserSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the user model
+    """
     class Meta:
         model = User
         fields = ('email', 'username', 'password')
         extra_kwargs = {'password': {'write_only': True}}
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict[str: Any]) -> User:
+        """
+        Creates and saves a user with password hashing
+        """
         user = User.objects.create_user(
             username=validated_data['username'],
             password=validated_data['password'],
@@ -308,7 +359,10 @@ class UserSerializer(serializers.ModelSerializer):
         )
         return user
 
-    def validate(self, data):
+    def validate(self, data: dict[str: Any]) -> dict[str: Any]:
+        """
+        Password checking
+        """
         user = User(**data)
         password = data.get('password')
         errors = dict()

@@ -16,7 +16,9 @@ from tests.conftest import today
     ],
 )
 def test_tasks_list_view(client, request, create_tasks, login, user_fixture, tasks_data_fixture):
-    """Checks that every user gets only his own tasks."""
+    """
+    Checks that every user gets only his own tasks.
+    """
     user = login(request.getfixturevalue(user_fixture))
     tasks_data = {data['name']: data for data in request.getfixturevalue(tasks_data_fixture)}
     db_categories = Category.objects.for_user(user)
@@ -56,7 +58,9 @@ def test_tasks_list_view(client, request, create_tasks, login, user_fixture, tas
     ],
 )
 def test_calendar_view(client, request, create_tasks, login, user_fixture, tasks_data_fixture, date_fixture, today):
-    """Gets task list for different users and dates on calendar view."""
+    """
+    Gets task list for different users and dates on calendar view.
+    """
     login(request.getfixturevalue(user_fixture))
 
     date = request.getfixturevalue(date_fixture)
@@ -114,7 +118,9 @@ def test_calendar_view(client, request, create_tasks, login, user_fixture, tasks
     ],
 )
 def test_tasks_list_filter_search(client, create_tasks, login, user_data, filter_data):
-    """Checks filtering and searching data on task list view."""
+    """
+    Checks filtering and searching data on task list view.
+    """
     user = login(user_data)
     filter_categories = filter_data.get('categories')
     filter_tags = filter_data.get('tags')
@@ -163,7 +169,9 @@ def test_tasks_list_filter_search(client, create_tasks, login, user_data, filter
     ['date_asc', 'date_desc'],
 )
 def test_tasks_list_order(client, request, create_tasks, login, user_data, sort):
-    """Checks ordering data on task list view."""
+    """
+    Checks ordering data on task list view.
+    """
     login(user_data)
     compare = request.getfixturevalue(f'compare_{sort}')
 
@@ -207,7 +215,9 @@ def test_tasks_list_order(client, request, create_tasks, login, user_data, sort)
     ],
 )
 def test_calendar_filter_search(client, create_tasks, login, user_data, filter_data, today):
-    """Checks filtering and searching data on calendar view."""
+    """
+    Checks filtering and searching data on calendar view.
+    """
     user = login(user_data)
     filter_categories = filter_data.get('categories')
     filter_tags = filter_data.get('tags')

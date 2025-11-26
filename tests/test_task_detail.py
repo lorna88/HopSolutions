@@ -74,7 +74,9 @@ def test_existing_task_creation(client, create_tasks, login, user_data, tasks_us
     ],
 )
 def test_task_detail_success(client, request, create_tasks, login, user_fixture, task_fixture):
-    """Testing user's task viewing."""
+    """
+    Testing user's task viewing.
+    """
     user = login(request.getfixturevalue(user_fixture))
     task_data = request.getfixturevalue(task_fixture)[0]
 
@@ -103,7 +105,9 @@ def test_task_detail_success(client, request, create_tasks, login, user_fixture,
     ],
 )
 def test_task_detail_fail(client, request, create_tasks, login, user_fixture, task_fixture):
-    """Testing someone else's task viewing."""
+    """
+    Testing someone else's task viewing.
+    """
     login(request.getfixturevalue(user_fixture))
     task = Task.objects.get(name=request.getfixturevalue(task_fixture)[0]['name'])
 

@@ -63,7 +63,9 @@ def test_wrong_password_user_registration(client, user_data, other_user_data):
 
 @pytest.mark.django_db
 def test_login_success(client, create_user, user_data):
-    """Testing successful login."""
+    """
+    Testing successful login.
+    """
     create_user(user_data)
     login_url = reverse('users:login')
     response = client.post(login_url, {
@@ -77,7 +79,9 @@ def test_login_success(client, create_user, user_data):
 
 @pytest.mark.django_db
 def test_wrong_credentials_login(client, create_user, user_data, other_user_data):
-    """Testing login with incorrect email and password."""
+    """
+    Testing login with incorrect email and password.
+    """
     create_user(user_data)
     login_url = reverse('users:login')
     response = client.post(login_url, {

@@ -7,7 +7,9 @@ from tasks.models import Task
 
 @pytest.mark.django_db
 def test_api_task_create(api_client, authenticated, create_tasks, user_data, task_new_with_many_fields):
-    """Testing successful task creation."""
+    """
+    Testing successful task creation.
+    """
     user = authenticated(user_data)
     task_data = task_new_with_many_fields.copy()
     task_data['subtasks'] =[{'name': subtask} for subtask in task_data['subtasks']]
@@ -29,7 +31,9 @@ def test_api_task_create(api_client, authenticated, create_tasks, user_data, tas
 
 @pytest.mark.django_db
 def test_api_existing_task_create(api_client, authenticated, create_tasks, user_data, tasks_user_data):
-    """Creation of existing task must fail."""
+    """
+    Creation of existing task must fail.
+    """
     authenticated(user_data)
     task_user = tasks_user_data[0]
     task_data = {
@@ -53,7 +57,9 @@ def test_api_existing_task_create(api_client, authenticated, create_tasks, user_
     ],
 )
 def test_api_task_detail_success(api_client, request, authenticated, create_tasks, user_fixture, task_fixture):
-    """Testing user's task viewing."""
+    """
+    Testing user's task viewing.
+    """
     user = authenticated(request.getfixturevalue(user_fixture))
     task_data = request.getfixturevalue(task_fixture)[0]
     task = Task.objects.for_user(user).get(name=task_data['name'])
@@ -81,7 +87,9 @@ def test_api_task_detail_success(api_client, request, authenticated, create_task
     ],
 )
 def test_api_task_detail_fail(api_client, request, authenticated, create_tasks, user_fixture, task_fixture):
-    """Testing someone else's task viewing."""
+    """
+    Testing someone else's task viewing.
+    """
     authenticated(request.getfixturevalue(user_fixture))
     task_data = request.getfixturevalue(task_fixture)[0]
     task = Task.objects.get(name=task_data['name'])
@@ -92,7 +100,9 @@ def test_api_task_detail_fail(api_client, request, authenticated, create_tasks, 
 
 @pytest.mark.django_db
 def test_api_task_update(api_client, authenticated, create_tasks, user_data, tasks_user_data, task_update_tags_subtasks):
-    """Testing successful task updating."""
+    """
+    Testing successful task updating.
+    """
     user = authenticated(user_data)
     task = Task.objects.for_user(user).get(name=tasks_user_data[0]['name'])
     task_data = task_update_tags_subtasks.copy()
@@ -121,7 +131,9 @@ def test_api_task_update(api_client, authenticated, create_tasks, user_data, tas
 
 @pytest.mark.django_db
 def test_api_task_delete(api_client, authenticated, create_tasks, user_data, tasks_user_data):
-    """Testing successful task deleting."""
+    """
+    Testing successful task deleting.
+    """
     user = authenticated(user_data)
     task_id = Task.objects.for_user(user).get(name=tasks_user_data[0]['name']).id
 

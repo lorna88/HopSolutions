@@ -14,7 +14,9 @@ from tasks.models import Task
     ],
 )
 def test_api_tasks_list(api_client, request, authenticated, create_tasks, user_fixture, tasks_data_fixture):
-    """Checks that every user gets only his own tasks."""
+    """
+    Checks that every user gets only his own tasks.
+    """
     user = authenticated(request.getfixturevalue(user_fixture))
     tasks_data = {data['name']: data for data in request.getfixturevalue(tasks_data_fixture)}
 
@@ -45,7 +47,9 @@ def test_api_tasks_list(api_client, request, authenticated, create_tasks, user_f
 
 @pytest.mark.django_db
 def test_api_tasks_paginate(api_client, authenticated, create_tasks, user_data, tasks_user_data):
-    """Testing pagination with a number of elements on a page different from standard."""
+    """
+    Testing pagination with a number of elements on a page different from standard.
+    """
     authenticated(user_data)
 
     query_params = {
@@ -79,7 +83,9 @@ def test_api_tasks_paginate(api_client, authenticated, create_tasks, user_data, 
     ],
 )
 def test_api_tasks_filter(api_client, request, authenticated, create_tasks, user_data, filter_data):
-    """Checks filtering of tasks data."""
+    """
+    Checks filtering of tasks data.
+    """
     user = authenticated(user_data)
     db_tasks = Task.objects.for_user(user)
 
@@ -126,7 +132,9 @@ def test_api_tasks_filter(api_client, request, authenticated, create_tasks, user
 
 @pytest.mark.django_db
 def test_api_tasks_search(api_client, authenticated, create_tasks, user_data):
-    """Checks using a search string for tasks data."""
+    """
+    Checks using a search string for tasks data.
+    """
     query_params = {
         'search': 'make'
     }
@@ -163,7 +171,9 @@ def test_api_tasks_search(api_client, authenticated, create_tasks, user_data):
     ]
 )
 def test_api_tasks_order(api_client, request, authenticated, create_tasks, user_data, sort, field_name):
-    """Checks getting tasks data in a certain order."""
+    """
+    Checks getting tasks data in a certain order.
+    """
     authenticated(user_data)
 
     compare = request.getfixturevalue('compare_objects_asc')

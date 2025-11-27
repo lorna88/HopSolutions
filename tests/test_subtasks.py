@@ -30,6 +30,7 @@ def test_subtask_creation(client, create_tasks, login, user_data, tasks_user_dat
     assert task.subtasks.count() == len(task_data['subtasks']) + 1
     assert subtask_data['name'] in [subtask.name for subtask in task.subtasks.all()]
 
+
 @pytest.mark.django_db
 def test_subtask_complete(client, create_tasks, login, user_data, tasks_user_data):
     """
@@ -46,7 +47,10 @@ def test_subtask_complete(client, create_tasks, login, user_data, tasks_user_dat
     })
     subtask_data = {'is_completed': 'on'}
 
-    url = reverse('subtasks:complete', kwargs={'task_slug': task.slug, 'subtask_id': subtask.id})
+    url = reverse(
+        'subtasks:complete',
+        kwargs={'task_slug': task.slug, 'subtask_id': subtask.id}
+    )
     response = client.post(url, subtask_data, follow=True)
 
     assert response.status_code == 200
@@ -56,7 +60,8 @@ def test_subtask_complete(client, create_tasks, login, user_data, tasks_user_dat
     assert task.subtasks.count() == len(task_data['subtasks'])
     subtask.refresh_from_db()
     assert subtask.name == task_data['subtasks'][0]
-    assert subtask.is_completed == True
+    assert subtask.is_completed is True
+
 
 @pytest.mark.django_db
 def test_subtask_delete(client, create_tasks, login, user_data, tasks_user_data):
@@ -73,7 +78,10 @@ def test_subtask_delete(client, create_tasks, login, user_data, tasks_user_data)
         'slug': task.slug
     })
 
-    url = reverse('subtasks:delete', kwargs={'task_slug': task.slug, 'subtask_id': subtask.id})
+    url = reverse(
+        'subtasks:delete',
+        kwargs={'task_slug': task.slug, 'subtask_id': subtask.id}
+    )
     response = client.post(url, follow=True)
 
     assert response.status_code == 200

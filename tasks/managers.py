@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class ForUserManager(models.Manager):
     """Manager what automatically filter selecting data by current user."""
 

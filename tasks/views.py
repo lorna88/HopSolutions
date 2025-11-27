@@ -188,7 +188,6 @@ class CategoryCreateView(LoginRequiredMixin, CreateView):
         )
         return form_kwargs
 
-
     def form_valid(self, form: CategoryCreateForm) -> HttpResponse:
         """
         Display success message if form is valid.

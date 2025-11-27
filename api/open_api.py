@@ -76,7 +76,10 @@ WRONG_USERNAME_EXAMPLE = OpenApiExample(
     summary='incorrect username error',
     description='An error occurs if username contains any incorrect symbols.',
     value={
-        'username': ['Enter a valid username. This value may contain only latin letters, numbers, and -/_ characters.'],
+        'username': [
+            'Enter a valid username. This value may contain only latin letters, numbers, \
+and -/_ characters.'
+        ],
     },
     response_only=True,
 )
@@ -97,7 +100,8 @@ WRONG_PASSWORD_EXAMPLE = OpenApiExample(
 EXISTING_USER_EXAMPLE = OpenApiExample(
     'User already exists',
     summary='existing user error',
-    description='An error occurs when trying to register user with an existing email address and username.',
+    description='An error occurs when trying to register user with an existing email \
+address and username.',
     value={
         'email': ["User with this email already exists."],
         'username': ["A user with that username already exists."],
@@ -200,7 +204,8 @@ def get_auth_error_response() -> OpenApiResponse:
             OpenApiExample(
                 'Response',
                 summary='authentication error',
-                description='An error occurs if a request is made without providing an access JWT token in the request header.',
+                description='An error occurs if a request is made without providing \
+an access JWT token in the request header.',
                 value={
                     'detail': 'Authentication credentials were not provided.',
                 },
@@ -209,6 +214,7 @@ def get_auth_error_response() -> OpenApiResponse:
         ]
     )
 
+
 def get_not_found_response(model_name: str) -> OpenApiResponse:
     """
     Returns a response if the requested object does not exist.
@@ -216,7 +222,7 @@ def get_not_found_response(model_name: str) -> OpenApiResponse:
     return OpenApiResponse(
         response=ErrorSerializer,
         description='Not found error',
-        examples = [
+        examples=[
             OpenApiExample(
                 'Response',
                 summary='not found error',
@@ -228,6 +234,7 @@ def get_not_found_response(model_name: str) -> OpenApiResponse:
             ),
         ]
     )
+
 
 def get_success_response(serializer_class: type[serializers.ModelSerializer]) -> OpenApiResponse:
     """

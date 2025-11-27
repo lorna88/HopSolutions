@@ -1,10 +1,8 @@
 import pytest
 from django.db.models import Q
 from django.urls import reverse
-from pytest_django.fixtures import client
 
 from tasks.models import Category, Task
-from tests.conftest import today
 
 
 @pytest.mark.django_db
@@ -47,6 +45,7 @@ def test_tasks_list_view(client, request, create_tasks, login, user_fixture, tas
             if task.subtasks.exists():
                 assert task.subtasks.all().first().name in subtasks
 
+
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "user_fixture, tasks_data_fixture, date_fixture",
@@ -57,14 +56,16 @@ def test_tasks_list_view(client, request, create_tasks, login, user_fixture, tas
         ('other_user_data', 'tasks_other_user_data', 'in_a_week'),
     ],
 )
-def test_calendar_view(client, request, create_tasks, login, user_fixture, tasks_data_fixture, date_fixture, today):
+def test_calendar_view(client, request, create_tasks, login, user_fixture, tasks_data_fixture,
+                       date_fixture, today):
     """
     Gets task list for different users and dates on calendar view.
     """
     login(request.getfixturevalue(user_fixture))
 
     date = request.getfixturevalue(date_fixture)
-    tasks_data = {data['name']: data for data in request.getfixturevalue(tasks_data_fixture) if data['date'] == date}
+    tasks_data = {data['name']: data for data in request.getfixturevalue(tasks_data_fixture)
+                  if data['date'] == date}
 
     query_params = {}
     if date_fixture != today:
@@ -90,6 +91,7 @@ def test_calendar_view(client, request, create_tasks, login, user_fixture, tasks
         assert task.subtasks.count() == len(subtasks)
         if task.subtasks.exists():
             assert task.subtasks.all().first().name in subtasks
+
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
@@ -135,7 +137,9 @@ def test_tasks_list_filter_search(client, create_tasks, login, user_data, filter
         db_tasks = db_tasks.filter(tags__name__in=filter_tags).distinct()
     if search_string:
         search_string = search_string.lower()
-        db_tasks = db_tasks.filter(Q(name__icontains=search_string) | Q(description__icontains=search_string))
+        db_tasks = db_tasks.filter(
+            Q(name__icontains=search_string) | Q(description__icontains=search_string)
+        )
 
     category_slugs = list({task.category.slug for task in db_tasks})
 
@@ -157,11 +161,13 @@ def test_tasks_list_filter_search(client, create_tasks, login, user_data, filter
         tasks = category.tasks.all()
         for task in tasks:
             if search_string:
-                assert (search_string in task.name.lower()) or (search_string in task.description.lower())
+                assert ((search_string in task.name.lower())
+                        or (search_string in task.description.lower()))
             if filter_tags:
                 assert any(tag.name in filter_tags for tag in task.tags.all())
 
     assert total_tasks_count == db_tasks.count()
+
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
@@ -187,6 +193,7 @@ def test_tasks_list_order(client, request, create_tasks, login, user_data, sort)
             if prev_task:
                 assert compare(prev_task, task)
             prev_task = task
+
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
@@ -232,7 +239,9 @@ def test_calendar_filter_search(client, create_tasks, login, user_data, filter_d
         db_tasks = db_tasks.filter(tags__name__in=filter_tags).distinct()
     if search_string:
         search_string = search_string.lower()
-        db_tasks = db_tasks.filter(Q(name__icontains=search_string) | Q(description__icontains=search_string))
+        db_tasks = db_tasks.filter(
+            Q(name__icontains=search_string) | Q(description__icontains=search_string)
+        )
 
     url = reverse('calendar:my_day')
     response = client.get(url, filter_data)
@@ -243,7 +252,8 @@ def test_calendar_filter_search(client, create_tasks, login, user_data, filter_d
     assert len(tasks) == db_tasks.count()
     for task in tasks:
         if search_string:
-            assert (search_string in task.name.lower()) or (search_string in task.description.lower())
+            assert ((search_string in task.name.lower())
+                    or (search_string in task.description.lower()))
         if filter_categories:
             assert task.category.slug in filter_categories
         if filter_tags:

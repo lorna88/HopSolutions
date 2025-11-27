@@ -41,7 +41,7 @@ class SubtaskSerializer(serializers.ModelSerializer):
 
 
 @extend_schema_serializer(
-    examples = [
+    examples=[
         OpenApiExample(
             'Request',
             summary='task request example',
@@ -102,7 +102,7 @@ class TaskSerializer(serializers.ModelSerializer):
     Serializer for the task model.
     """
     category = TasksSlugRelatedField(
-        manager = Category.objects,
+        manager=Category.objects,
         slug_field='slug'
     )
     tags = TasksSlugRelatedField(
@@ -184,7 +184,9 @@ class TaskSerializer(serializers.ModelSerializer):
             if not self.instance and 'name' in data:
                 slug = slugify(data['name'])
                 if Task.objects.filter(user=user, slug=slug).exists():
-                    raise serializers.ValidationError({'name': 'A slug for this name already exists.'})
+                    raise serializers.ValidationError(
+                        {'name': 'A slug for this name already exists.'}
+                    )
 
         if 'subtasks' in data:
             subtask_names = [sub['name'] for sub in data['subtasks']]
@@ -204,7 +206,7 @@ class TaskSerializer(serializers.ModelSerializer):
 
 
 @extend_schema_serializer(
-    examples = [
+    examples=[
         OpenApiExample(
             'Request',
             summary='category request example',
@@ -257,12 +259,14 @@ class CategorySerializer(serializers.ModelSerializer):
             if not self.instance and 'name' in data:
                 slug = slugify(data['name'])
                 if Category.objects.filter(user=user, slug=slug).exists():
-                    raise serializers.ValidationError({'name': 'A slug for this name already exists.'})
+                    raise serializers.ValidationError(
+                        {'name': 'A slug for this name already exists.'}
+                    )
         return data
 
 
 @extend_schema_serializer(
-    examples = [
+    examples=[
         OpenApiExample(
             'Request',
             summary='tag request example',
@@ -315,7 +319,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 @extend_schema_serializer(
-    examples = [
+    examples=[
         OpenApiExample(
             'Request',
             summary='user register request example',

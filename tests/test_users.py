@@ -21,6 +21,7 @@ def test_user_registration_success(client, user_data):
     assert response.request['PATH_INFO'] == reverse('users:login')
     assert User.objects.filter(username=user_data['username']).exists()
 
+
 @pytest.mark.django_db
 def test_existing_user_registration(client, create_user, user_data):
     """
@@ -40,6 +41,7 @@ def test_existing_user_registration(client, create_user, user_data):
     assert response.request['PATH_INFO'] == reverse('users:register')
     final_users_count = User.objects.count()
     assert initial_users_count == final_users_count
+
 
 @pytest.mark.django_db
 def test_wrong_password_user_registration(client, user_data, other_user_data):
@@ -76,6 +78,7 @@ def test_login_success(client, create_user, user_data):
     assert response.status_code == 200
     assert response.request['PATH_INFO'] == reverse('tasks:home')
     assert response.wsgi_request.user.is_authenticated
+
 
 @pytest.mark.django_db
 def test_wrong_credentials_login(client, create_user, user_data, other_user_data):

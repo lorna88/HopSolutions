@@ -14,6 +14,7 @@ from users.models import User
 # Fixtures for manipulation with users
 # =============================================================================
 
+
 @pytest.fixture
 def user_data() -> dict[str: Any]:
     """Returns data for user login and registration."""
@@ -22,6 +23,7 @@ def user_data() -> dict[str: Any]:
         'username': 'user',
         'password': 'strong-password-123',
     }
+
 
 @pytest.fixture
 def other_user_data() -> dict[str: Any]:
@@ -32,6 +34,7 @@ def other_user_data() -> dict[str: Any]:
         'password': 'strong-password-456',
     }
 
+
 @pytest.fixture
 def create_user() -> Callable[[dict[str: Any]], User]:
     """Fixture for user creation."""
@@ -39,6 +42,7 @@ def create_user() -> Callable[[dict[str: Any]], User]:
         return User.objects.create_user(**data)
 
     return create_user_for_data
+
 
 @pytest.fixture
 def login(client, create_user) -> Callable[[dict[str: Any]], User]:
@@ -52,10 +56,12 @@ def login(client, create_user) -> Callable[[dict[str: Any]], User]:
 
     return login_user_with_data
 
+
 @pytest.fixture
 def api_client() -> APIClient:
     """Fixture for api client."""
     return APIClient()
+
 
 @pytest.fixture
 def token_pair() -> Callable[[User], dict[str: Any]]:
@@ -68,6 +74,7 @@ def token_pair() -> Callable[[User], dict[str: Any]]:
         }
 
     return get_token_pair
+
 
 @pytest.fixture
 def authenticated(api_client, create_user, token_pair) -> Callable[[dict[str: Any]], User]:
@@ -87,15 +94,18 @@ def authenticated(api_client, create_user, token_pair) -> Callable[[dict[str: An
 # Fixtures for retrieving dates
 # =============================================================================
 
+
 @pytest.fixture
 def today() -> datetime.date:
     """Fixture for today's date."""
     return datetime.date.today()
 
+
 @pytest.fixture
 def tomorrow() -> datetime.date:
     """Fixture for tomorrow's date."""
     return datetime.date.today() + datetime.timedelta(days=1)
+
 
 @pytest.fixture
 def in_a_week() -> datetime.date:
@@ -105,6 +115,7 @@ def in_a_week() -> datetime.date:
 # =============================================================================
 # Fixtures for manipulation with task objects
 # =============================================================================
+
 
 @pytest.fixture
 def tasks_user_data(today, tomorrow, in_a_week) -> list[dict[str: Any]]:
@@ -160,6 +171,7 @@ def tasks_user_data(today, tomorrow, in_a_week) -> list[dict[str: Any]]:
         },
     ]
 
+
 @pytest.fixture
 def tasks_other_user_data(today, tomorrow, in_a_week) -> list[dict[str: Any]]:
     """Returns data for tasks creation by other user."""
@@ -206,18 +218,36 @@ def tasks_other_user_data(today, tomorrow, in_a_week) -> list[dict[str: Any]]:
         },
     ]
 
+
 @pytest.fixture
-def create_task() -> Callable[[str, Category, str, datetime.date, list[Tag], list[str], User], Task]:
+def create_task() -> Callable[
+    [str, Category, str, datetime.date, list[Tag], list[str], User],
+    Task
+]:
     """Returns function for creating a task."""
-    def create_task_for_data(name: str, category: Category, description: str, date: datetime.date,
-                             tags: list[Tag], subtasks: list[str], user: User) -> Task:
-        task = Task.objects.create(name=name, category=category, description=description, date=date, user=user)
+    def create_task_for_data(
+            name: str,
+            category: Category,
+            description: str,
+            date: datetime.date,
+            tags: list[Tag],
+            subtasks: list[str],
+            user: User
+    ) -> Task:
+        task = Task.objects.create(
+            name=name,
+            category=category,
+            description=description,
+            date=date,
+            user=user
+        )
         task.tags.set(tags)
         for subtask in subtasks:
             Subtask.objects.create(name=subtask, task=task, user=user)
         return task
 
     return create_task_for_data
+
 
 @pytest.fixture
 def create_tasks(
@@ -251,6 +281,7 @@ def create_tasks(
 # Fixtures of task data for different purposes
 # =============================================================================
 
+
 @pytest.fixture
 def task_new_with_category() -> dict[str: Any]:
     """Returns one task data for creation on task list view."""
@@ -259,6 +290,7 @@ def task_new_with_category() -> dict[str: Any]:
         'category': 'nearest-time',
     }
 
+
 @pytest.fixture
 def task_new_with_date(today) -> dict[str: Any]:
     """Returns one task data for creation on calendar view."""
@@ -266,6 +298,7 @@ def task_new_with_date(today) -> dict[str: Any]:
         'name': 'New task',
         'date': today,
     }
+
 
 @pytest.fixture
 def task_new_with_many_fields(today) -> dict[str: Any]:
@@ -278,6 +311,7 @@ def task_new_with_many_fields(today) -> dict[str: Any]:
         "subtasks": ["First subtask", "Second subtask"]
     }
 
+
 @pytest.fixture
 def task_update(in_a_week) -> dict[str: Any]:
     """Returns one task data for updating."""
@@ -288,6 +322,7 @@ def task_update(in_a_week) -> dict[str: Any]:
         'date': in_a_week,
         'is_completed': 'on',
     }
+
 
 @pytest.fixture
 def task_update_tags_subtasks(in_a_week) -> dict[str: Any]:
@@ -314,6 +349,7 @@ def task_update_tags_subtasks(in_a_week) -> dict[str: Any]:
 # Fixtures of comparing two objects for ordering check
 # =============================================================================
 
+
 @pytest.fixture
 def compare_date_asc() -> Callable[[Task, Task], bool]:
     """Fixture for comparing two tasks by date ascending."""
@@ -321,6 +357,7 @@ def compare_date_asc() -> Callable[[Task, Task], bool]:
         return task1.date <= task2.date
 
     return compare_tasks
+
 
 @pytest.fixture
 def compare_date_desc() -> Callable[[Task, Task], bool]:
@@ -330,6 +367,7 @@ def compare_date_desc() -> Callable[[Task, Task], bool]:
 
     return compare_tasks
 
+
 @pytest.fixture
 def compare_objects_asc() -> Callable[[dict[str: Any], dict[str: Any], str], bool]:
     """Fixture for comparing two dict elements by field ascending."""
@@ -337,6 +375,7 @@ def compare_objects_asc() -> Callable[[dict[str: Any], dict[str: Any], str], boo
         return obj1[field_name] <= obj2[field_name]
 
     return compare_objects
+
 
 @pytest.fixture
 def compare_objects_desc() -> Callable[[dict[str: Any], dict[str: Any], str], bool]:

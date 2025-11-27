@@ -31,6 +31,7 @@ def test_get_tag_list(client, create_tasks, login, user_data, tasks_user_data):
     tags = response.context['tags']
     assert set(tags) == set(Tag.objects.for_user(user))
 
+
 @pytest.mark.django_db
 def test_set_tag_list(client, create_tasks, login, user_data, tasks_user_data):
     """
@@ -44,7 +45,10 @@ def test_set_tag_list(client, create_tasks, login, user_data, tasks_user_data):
         'slug': task.slug
     })
     query_params = {'next': reverse_to_task_detail}
-    url = f'{reverse('tags:tag-list', kwargs={'task_id': task.id})}?{urlencode(query_params)}'
+    url = f'{reverse(
+        'tags:tag-list',
+        kwargs={'task_id': task.id}
+    )}?{urlencode(query_params)}'
 
     tags_data = {
         'Important': '',

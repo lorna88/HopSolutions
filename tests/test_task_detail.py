@@ -24,7 +24,8 @@ def test_task_creation(client, request, create_tasks, login, user_data, task_fix
     task_data_original = request.getfixturevalue(task_fixture)
     task_data = task_data_original.copy()
     if 'category' in task_data:
-        task_data['category'] = Category.objects.for_user(user).get(slug=task_data['category']).pk
+        task_data['category'] = (Category.objects.for_user(user)
+                                 .get(slug=task_data['category']).pk)
     if 'date' in task_data:
         task_data['date'] = task_data['date'].strftime('%b %d, %Y')
 
@@ -41,6 +42,7 @@ def test_task_creation(client, request, create_tasks, login, user_data, task_fix
         assert new_task.category.slug == task_data_original['category']
     if 'date' in task_data:
         assert new_task.date == task_data_original['date']
+
 
 @pytest.mark.django_db
 def test_existing_task_creation(client, create_tasks, login, user_data, tasks_user_data):
@@ -64,6 +66,7 @@ def test_existing_task_creation(client, create_tasks, login, user_data, tasks_us
     assert response.request['PATH_INFO'] == reverse('tasks:home')
     final_tasks_count = Task.objects.count()
     assert initial_tasks_count == final_tasks_count
+
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
@@ -96,6 +99,7 @@ def test_task_detail_success(client, request, create_tasks, login, user_fixture,
     assert {tag.name for tag in task.tags.all()} == set(task_data['tags'])
     assert {subtask.name for subtask in task.subtasks.all()} == set(task_data['subtasks'])
 
+
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "user_fixture, task_fixture",
@@ -118,6 +122,7 @@ def test_task_detail_fail(client, request, create_tasks, login, user_fixture, ta
     response = client.get(url)
 
     assert response.status_code == 404
+
 
 @pytest.mark.django_db
 def test_task_update(client, create_tasks, login, user_data, tasks_user_data, task_update):
@@ -145,6 +150,7 @@ def test_task_update(client, create_tasks, login, user_data, tasks_user_data, ta
     assert task.description == task_update['description']
     assert task.date == task_update['date']
     assert task.is_completed == (task_update.get('is_completed') == 'on')
+
 
 @pytest.mark.django_db
 def test_task_delete(client, create_tasks, login, user_data, tasks_user_data):

@@ -4,7 +4,8 @@ from typing import Any
 from django.db.models import QuerySet
 from django.utils.module_loading import import_string
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiResponse, OpenApiParameter
+from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiResponse, \
+    OpenApiParameter
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import CreateAPIView
 from rest_framework.pagination import PageNumberPagination
@@ -17,9 +18,10 @@ from tags.models import Tag
 from .filters import TaskFilter
 from .open_api import ErrorSerializer, UNIQUE_SLUG_EXAMPLE, UNIQUE_NAME_EXAMPLE, \
     UNIQUE_SLUG_FOR_NAME_EXAMPLE, UNIQUE_TAGS_EXAMPLE, UNIQUE_SUBTASKS_EXAMPLE, \
-    get_not_found_response, get_success_response, OrderValues, get_auth_error_response, WRONG_EMAIL_EXAMPLE, \
-    WRONG_USERNAME_EXAMPLE, WRONG_PASSWORD_EXAMPLE, EXISTING_USER_EXAMPLE, LOGIN_USER_REQUEST_EXAMPLE, \
-    LOGIN_USER_RESPONSE_EXAMPLE, AUTH_LOGIN_ERROR_EXAMPLE, REFRESH_TOKEN_REQUEST_EXAMPLE, \
+    get_not_found_response, get_success_response, OrderValues, get_auth_error_response, \
+    WRONG_EMAIL_EXAMPLE, WRONG_USERNAME_EXAMPLE, WRONG_PASSWORD_EXAMPLE, \
+    EXISTING_USER_EXAMPLE, LOGIN_USER_REQUEST_EXAMPLE, LOGIN_USER_RESPONSE_EXAMPLE, \
+    AUTH_LOGIN_ERROR_EXAMPLE, REFRESH_TOKEN_REQUEST_EXAMPLE, \
     REFRESH_TOKEN_RESPONSE_EXAMPLE, AUTH_REFRESH_ERROR_EXAMPLE
 from .permissions import IsOwner
 from .serializers import TaskSerializer, CategorySerializer, TagSerializer, UserSerializer
@@ -35,7 +37,7 @@ login_schema_config = extend_schema_view(
             401: OpenApiResponse(
                 response=ErrorSerializer,
                 description='Authentication error',
-                examples = [AUTH_LOGIN_ERROR_EXAMPLE]
+                examples=[AUTH_LOGIN_ERROR_EXAMPLE]
             ),
         },
         examples=[LOGIN_USER_REQUEST_EXAMPLE, LOGIN_USER_RESPONSE_EXAMPLE]
@@ -51,7 +53,7 @@ refresh_token_schema_config = extend_schema_view(
             401: OpenApiResponse(
                 response=ErrorSerializer,
                 description='Authentication error',
-                examples = [AUTH_REFRESH_ERROR_EXAMPLE]
+                examples=[AUTH_REFRESH_ERROR_EXAMPLE]
             ),
         },
         examples=[REFRESH_TOKEN_REQUEST_EXAMPLE, REFRESH_TOKEN_RESPONSE_EXAMPLE]
@@ -103,8 +105,11 @@ class TaskPagination(PageNumberPagination):
                              description='Show all tasks with date after specified'),
             OpenApiParameter("date_before", type=datetime.date,
                              description='Show all tasks with date before specified'),
-            OpenApiParameter("is_completed", type=bool,
-                             description='Show only completed (if true) or active (if false) tasks'),
+            OpenApiParameter(
+                "is_completed",
+                type=bool,
+                description='Show only completed (if true) or active (if false) tasks'
+            ),
             OpenApiParameter("category", description='Filter by category name'),
             OpenApiParameter("tag", description='Filter by tag name'),
             OpenApiParameter("ordering", type={'type': 'string'}, enum=OrderValues,
@@ -118,7 +123,7 @@ class TaskPagination(PageNumberPagination):
             400: OpenApiResponse(
                 response=ErrorSerializer,
                 description='Bad request error',
-                examples = [UNIQUE_SLUG_EXAMPLE, UNIQUE_SLUG_FOR_NAME_EXAMPLE, UNIQUE_TAGS_EXAMPLE,
+                examples=[UNIQUE_SLUG_EXAMPLE, UNIQUE_SLUG_FOR_NAME_EXAMPLE, UNIQUE_TAGS_EXAMPLE,
                             UNIQUE_SUBTASKS_EXAMPLE]
             ),
             401: get_auth_error_response(),
@@ -139,7 +144,7 @@ class TaskPagination(PageNumberPagination):
             400: OpenApiResponse(
                 response=ErrorSerializer,
                 description='Bad request error',
-                examples = [UNIQUE_SLUG_EXAMPLE, UNIQUE_TAGS_EXAMPLE, UNIQUE_SUBTASKS_EXAMPLE]
+                examples=[UNIQUE_SLUG_EXAMPLE, UNIQUE_TAGS_EXAMPLE, UNIQUE_SUBTASKS_EXAMPLE]
             ),
             401: get_auth_error_response(),
             404: get_not_found_response('Task'),
@@ -152,7 +157,7 @@ class TaskPagination(PageNumberPagination):
             400: OpenApiResponse(
                 response=ErrorSerializer,
                 description='Bad request error',
-                examples = [UNIQUE_SLUG_EXAMPLE, UNIQUE_TAGS_EXAMPLE, UNIQUE_SUBTASKS_EXAMPLE]
+                examples=[UNIQUE_SLUG_EXAMPLE, UNIQUE_TAGS_EXAMPLE, UNIQUE_SUBTASKS_EXAMPLE]
             ),
             401: get_auth_error_response(),
             404: get_not_found_response('Task'),
@@ -187,7 +192,9 @@ class TaskViewSet(ModelViewSet):
         # Correcting spectacular warnings
         if getattr(self, "swagger_fake_view", False):
             return Task.objects.none()
-        return Task.objects.for_user(self.request.user).select_related('category').prefetch_related('tags', 'subtasks')
+        return (Task.objects.for_user(self.request.user)
+                .select_related('category')
+                .prefetch_related('tags', 'subtasks'))
 
     def perform_create(self, serializer: TaskSerializer) -> None:
         """
@@ -211,7 +218,7 @@ class TaskViewSet(ModelViewSet):
             400: OpenApiResponse(
                 response=ErrorSerializer,
                 description='Bad request error',
-                examples = [UNIQUE_SLUG_EXAMPLE, UNIQUE_SLUG_FOR_NAME_EXAMPLE]
+                examples=[UNIQUE_SLUG_EXAMPLE, UNIQUE_SLUG_FOR_NAME_EXAMPLE]
             ),
             401: get_auth_error_response(),
         },
@@ -231,7 +238,7 @@ class TaskViewSet(ModelViewSet):
             400: OpenApiResponse(
                 response=ErrorSerializer,
                 description='Bad request error',
-                examples = [UNIQUE_SLUG_EXAMPLE]
+                examples=[UNIQUE_SLUG_EXAMPLE]
             ),
             401: get_auth_error_response(),
             404: get_not_found_response('Category'),
@@ -244,7 +251,7 @@ class TaskViewSet(ModelViewSet):
             400: OpenApiResponse(
                 response=ErrorSerializer,
                 description='Bad request error',
-                examples = [UNIQUE_SLUG_EXAMPLE]
+                examples=[UNIQUE_SLUG_EXAMPLE]
             ),
             401: get_auth_error_response(),
             404: get_not_found_response('Category'),
@@ -298,7 +305,7 @@ class CategoryViewSet(ModelViewSet):
             400: OpenApiResponse(
                 response=ErrorSerializer,
                 description='Bad request error',
-                examples = [UNIQUE_NAME_EXAMPLE]
+                examples=[UNIQUE_NAME_EXAMPLE]
             ),
             401: get_auth_error_response(),
         },
@@ -318,7 +325,7 @@ class CategoryViewSet(ModelViewSet):
             400: OpenApiResponse(
                 response=ErrorSerializer,
                 description='Bad request error',
-                examples = [UNIQUE_NAME_EXAMPLE]
+                examples=[UNIQUE_NAME_EXAMPLE]
             ),
             401: get_auth_error_response(),
             404: get_not_found_response('Tag'),
@@ -331,7 +338,7 @@ class CategoryViewSet(ModelViewSet):
             400: OpenApiResponse(
                 response=ErrorSerializer,
                 description='Bad request error',
-                examples = [UNIQUE_NAME_EXAMPLE]
+                examples=[UNIQUE_NAME_EXAMPLE]
             ),
             401: get_auth_error_response(),
             404: get_not_found_response('Tag'),
@@ -378,7 +385,7 @@ class TagViewSet(ModelViewSet):
             400: OpenApiResponse(
                 response=ErrorSerializer,
                 description='Bad request error',
-                examples = [WRONG_EMAIL_EXAMPLE, WRONG_USERNAME_EXAMPLE, WRONG_PASSWORD_EXAMPLE,
+                examples=[WRONG_EMAIL_EXAMPLE, WRONG_USERNAME_EXAMPLE, WRONG_PASSWORD_EXAMPLE,
                             EXISTING_USER_EXAMPLE]
             ),
         },

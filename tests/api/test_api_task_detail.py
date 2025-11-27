@@ -6,13 +6,14 @@ from tasks.models import Task
 
 
 @pytest.mark.django_db
-def test_api_task_create(api_client, authenticated, create_tasks, user_data, task_new_with_many_fields):
+def test_api_task_create(api_client, authenticated, create_tasks, user_data,
+                         task_new_with_many_fields):
     """
     Testing successful task creation.
     """
     user = authenticated(user_data)
     task_data = task_new_with_many_fields.copy()
-    task_data['subtasks'] =[{'name': subtask} for subtask in task_data['subtasks']]
+    task_data['subtasks'] = [{'name': subtask} for subtask in task_data['subtasks']]
 
     response = api_client.post(reverse('api:task-list'), task_data, format='json')
 
@@ -27,10 +28,13 @@ def test_api_task_create(api_client, authenticated, create_tasks, user_data, tas
     assert task.category.slug == task_data['category']
     assert task.date == task_data['date']
     assert {tag.name for tag in task.tags.all()} == set(task_data['tags'])
-    assert {subtask.name for subtask in task.subtasks.all()} == set(task_new_with_many_fields['subtasks'])
+    assert ({subtask.name for subtask in task.subtasks.all()} ==
+            set(task_new_with_many_fields['subtasks']))
+
 
 @pytest.mark.django_db
-def test_api_existing_task_create(api_client, authenticated, create_tasks, user_data, tasks_user_data):
+def test_api_existing_task_create(api_client, authenticated, create_tasks, user_data,
+                                  tasks_user_data):
     """
     Creation of existing task must fail.
     """
@@ -48,6 +52,7 @@ def test_api_existing_task_create(api_client, authenticated, create_tasks, user_
     data = response.json()
     assert data['name'] == ["A slug for this name already exists."]
 
+
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "user_fixture, task_fixture",
@@ -56,7 +61,8 @@ def test_api_existing_task_create(api_client, authenticated, create_tasks, user_
         ('other_user_data', 'tasks_other_user_data'),
     ],
 )
-def test_api_task_detail_success(api_client, request, authenticated, create_tasks, user_fixture, task_fixture):
+def test_api_task_detail_success(api_client, request, authenticated, create_tasks,
+                                 user_fixture, task_fixture):
     """
     Testing user's task viewing.
     """
@@ -78,6 +84,7 @@ def test_api_task_detail_success(api_client, request, authenticated, create_task
     assert {subtask['name'] for subtask in task['subtasks']} == set(task_data['subtasks'])
     assert task['user'] == user.username
 
+
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "user_fixture, task_fixture",
@@ -86,7 +93,8 @@ def test_api_task_detail_success(api_client, request, authenticated, create_task
         ('other_user_data', 'tasks_user_data'),
     ],
 )
-def test_api_task_detail_fail(api_client, request, authenticated, create_tasks, user_fixture, task_fixture):
+def test_api_task_detail_fail(api_client, request, authenticated, create_tasks,
+                              user_fixture, task_fixture):
     """
     Testing someone else's task viewing.
     """
@@ -98,8 +106,10 @@ def test_api_task_detail_fail(api_client, request, authenticated, create_tasks, 
 
     assert response.status_code == 404
 
+
 @pytest.mark.django_db
-def test_api_task_update(api_client, authenticated, create_tasks, user_data, tasks_user_data, task_update_tags_subtasks):
+def test_api_task_update(api_client, authenticated, create_tasks, user_data, tasks_user_data,
+                         task_update_tags_subtasks):
     """
     Testing successful task updating.
     """
@@ -107,7 +117,11 @@ def test_api_task_update(api_client, authenticated, create_tasks, user_data, tas
     task = Task.objects.for_user(user).get(name=tasks_user_data[0]['name'])
     task_data = task_update_tags_subtasks.copy()
 
-    response = api_client.put(reverse('api:task-detail', args=[task.id]), task_data, format='json')
+    response = api_client.put(
+        reverse('api:task-detail', args=[task.id]),
+        task_data,
+        format='json'
+    )
 
     assert response.status_code == 200
 

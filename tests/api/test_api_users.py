@@ -20,12 +20,18 @@ def test_api_user_registration_success(api_client, user_data):
 
     assert User.objects.filter(username=user_data['username']).exists()
 
+
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "wrong_data, errors",
     [
         ({'email': 'user.example.com'}, {'email': ['Enter a valid email address.']}),
-        ({'username': 'user.'}, {'username': ['Enter a valid username. This value may contain only latin letters, numbers, and -/_ characters.']}),
+        (
+                {'username': 'user.'},
+                {'username': [
+                    'Enter a valid username. This value may contain only latin letters, \
+numbers, and -/_ characters.'
+                ]}),
         ({'password': 'password'}, {'password': ['This password is too common.']}),
     ],
 )
@@ -45,6 +51,7 @@ def test_api_user_registration_wrong(api_client, user_data, wrong_data, errors):
     for error in errors:
         assert response_data[error] == errors[error]
 
+
 @pytest.mark.django_db
 def test_api_existing_user_registration(api_client, create_user, user_data):
     """
@@ -58,6 +65,7 @@ def test_api_existing_user_registration(api_client, create_user, user_data):
     data = response.json()
     assert data['email'] == ["User with this email already exists."]
     assert data['username'] == ["A user with that username already exists."]
+
 
 @pytest.mark.django_db
 def test_api_user_login_success(api_client, create_user, user_data):
@@ -73,6 +81,7 @@ def test_api_user_login_success(api_client, create_user, user_data):
     assert 'access' in data
     assert 'refresh' in data
 
+
 @pytest.mark.django_db
 def test_api_user_login_wrong(api_client, create_user, user_data, other_user_data):
     """
@@ -86,6 +95,7 @@ def test_api_user_login_wrong(api_client, create_user, user_data, other_user_dat
     data = response.json()
     assert 'detail' in data
     assert data['detail'] == "No active account found with the given credentials"
+
 
 @pytest.mark.django_db
 def test_api_user_refresh_success(api_client, create_user, user_data, token_pair):

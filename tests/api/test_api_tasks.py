@@ -13,7 +13,8 @@ from tasks.models import Task
         ('other_user_data', 'tasks_other_user_data'),
     ],
 )
-def test_api_tasks_list(api_client, request, authenticated, create_tasks, user_fixture, tasks_data_fixture):
+def test_api_tasks_list(api_client, request, authenticated, create_tasks, user_fixture,
+                        tasks_data_fixture):
     """
     Checks that every user gets only his own tasks.
     """
@@ -45,6 +46,7 @@ def test_api_tasks_list(api_client, request, authenticated, create_tasks, user_f
         assert {subtask['name'] for subtask in task['subtasks']} == set(task_data['subtasks'])
         assert task['user'] == user.username
 
+
 @pytest.mark.django_db
 def test_api_tasks_paginate(api_client, authenticated, create_tasks, user_data, tasks_user_data):
     """
@@ -72,6 +74,7 @@ def test_api_tasks_paginate(api_client, authenticated, create_tasks, user_data, 
     results = data['results']
     assert len(results) == query_params['size']
 
+
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "filter_data",
@@ -93,10 +96,12 @@ def test_api_tasks_filter(api_client, request, authenticated, create_tasks, user
         filter_data['date'] = request.getfixturevalue(filter_data['date']).strftime('%Y-%m-%d')
         db_tasks = db_tasks.filter(date=filter_data['date'])
     if 'date_after' in filter_data:
-        filter_data['date_after'] = request.getfixturevalue(filter_data['date_after']).strftime('%Y-%m-%d')
+        filter_data['date_after'] = (request.getfixturevalue(filter_data['date_after'])
+                                     .strftime('%Y-%m-%d'))
         db_tasks = db_tasks.filter(date__gte=filter_data['date_after'])
     if 'date_before' in filter_data:
-        filter_data['date_before'] = request.getfixturevalue(filter_data['date_before']).strftime('%Y-%m-%d')
+        filter_data['date_before'] = (request.getfixturevalue(filter_data['date_before'])
+                                      .strftime('%Y-%m-%d'))
         db_tasks = db_tasks.filter(date__lte=filter_data['date_before'])
     if 'is_completed' in filter_data:
         db_tasks = db_tasks.filter(is_completed=filter_data['is_completed'])
@@ -130,6 +135,7 @@ def test_api_tasks_filter(api_client, request, authenticated, create_tasks, user
         if 'tag' in filter_data:
             assert any(tag == filter_data['tag'] for tag in task['tags'])
 
+
 @pytest.mark.django_db
 def test_api_tasks_search(api_client, authenticated, create_tasks, user_data):
     """
@@ -158,11 +164,12 @@ def test_api_tasks_search(api_client, authenticated, create_tasks, user_data):
         assert ((query_params['search'] in task['name'].lower())
                 or (query_params['search'] in task['description'].lower()))
 
+
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "sort, field_name",
     [
-        ('date','date'),
+        ('date', 'date'),
         ('-date', 'date'),
         ('is_completed', 'is_completed'),
         ('-is_completed', 'is_completed'),
@@ -170,7 +177,8 @@ def test_api_tasks_search(api_client, authenticated, create_tasks, user_data):
         ('-category__slug', 'category'),
     ]
 )
-def test_api_tasks_order(api_client, request, authenticated, create_tasks, user_data, sort, field_name):
+def test_api_tasks_order(api_client, request, authenticated, create_tasks, user_data, sort,
+                         field_name):
     """
     Checks getting tasks data in a certain order.
     """

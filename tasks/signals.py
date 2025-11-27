@@ -17,9 +17,9 @@ def create_default_settings(
     """
     if created:
         categories = [
-            Category(name="Today", slug=f"today", user=instance),
-            Category(name="Tomorrow", slug=f"tomorrow", user=instance),
-            Category(name="Nearest time", slug=f"nearest-time", user=instance),
+            Category(name="Today", slug="today", user=instance),
+            Category(name="Tomorrow", slug="tomorrow", user=instance),
+            Category(name="Nearest time", slug="nearest-time", user=instance),
         ]
         Category.objects.bulk_create(categories)
 

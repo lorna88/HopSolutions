@@ -33,7 +33,7 @@ class SubtaskCreateView(LoginRequiredMixin, View):
         task = get_object_or_404(Task.objects.for_user(request.user), slug=task_slug)
         # Name validation - name must be unique for the task
         if Subtask.objects.filter(task=task, name=name).exists():
-            messages.error(request, f'Name must be unique for each subtask!')
+            messages.error(request, 'Name must be unique for each subtask!')
         else:
             Subtask.objects.create(name=name, task=task)
         return redirect('tasks:task-detail', username=request.user.username, slug=task_slug)

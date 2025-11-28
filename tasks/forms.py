@@ -22,8 +22,10 @@ class TaskUpdateForm(forms.ModelForm):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         if user:
-            self.fields["category"].queryset = Category.objects.for_user(user)
-            self.fields["category"].empty_label = None
+            self.fields["category"].queryset = (  # type: ignore[attr-defined]
+                Category.objects.for_user(user)
+            )
+            self.fields["category"].empty_label = None  # type: ignore[attr-defined]
 
     class Meta:
         model = Task

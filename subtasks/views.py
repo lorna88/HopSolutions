@@ -21,7 +21,7 @@ class SubtaskCompleteView(LoginRequiredMixin, View):
         is_completed = request.POST.get("is_completed") is not None
 
         subtask.is_completed = is_completed
-        subtask.save()
+        subtask.save()  # type: ignore[no-untyped-call]
         return redirect('tasks:task-detail', username=request.user.username, slug=task_slug)
 
 
@@ -30,6 +30,8 @@ class SubtaskCreateView(LoginRequiredMixin, View):
     def post(self, request: HttpRequest, task_slug: str, *args, **kwargs) -> HttpResponse:
         """Create a new task on form post"""
         name = request.POST.get("name")
+        if not name:
+            raise ValueError('The new subtask is missing a name.')
         task = get_object_or_404(Task.objects.for_user(request.user), slug=task_slug)
         # Name validation - name must be unique for the task
         if Subtask.objects.filter(task=task, name=name).exists():

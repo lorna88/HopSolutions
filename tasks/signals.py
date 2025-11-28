@@ -8,9 +8,11 @@ from users.models import User
 
 @receiver(post_save, sender=User)
 def create_default_settings(
-        sender: User.__class__,
+        sender,
         instance: User,
-        created: bool, **kwargs) -> None:
+        created: bool,
+        **kwargs
+) -> None:
     """
     Creates default tags and categories after a new user was registered.
     This is need because every user has his own tasks, categories and tags.

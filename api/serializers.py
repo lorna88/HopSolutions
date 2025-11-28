@@ -9,6 +9,7 @@ from rest_framework import serializers
 
 from subtasks.models import Subtask
 from tags.models import Tag
+from tasks.managers import ForUserManager
 from tasks.models import Task, Category
 from users.models import User
 
@@ -19,7 +20,7 @@ class TasksSlugRelatedField(serializers.SlugRelatedField):
     by a unique 'slug' attribute with user restrictions
     on object selection.
     """
-    def __init__(self, manager=None, **kwargs):
+    def __init__(self, manager: ForUserManager, **kwargs) -> None:
         assert manager is not None, 'The `manager` argument is required.'
         self.manager = manager
         super().__init__(**kwargs)
@@ -119,7 +120,7 @@ class TaskSerializer(serializers.ModelSerializer):
                   'is_completed', 'user', 'tags', 'subtasks']
         read_only_fields = ['user']
 
-    def to_representation(self, instance: Task) -> dict[str: Any | None]:
+    def to_representation(self, instance: Task) -> dict[str, Any | None]:
         """
         Replaces the user ID with the username in the response.
         """
@@ -127,7 +128,7 @@ class TaskSerializer(serializers.ModelSerializer):
         representation['user'] = instance.user.username
         return representation
 
-    def create(self, validated_data: dict[str: Any]) -> Task:
+    def create(self, validated_data: dict[str, Any]) -> Task:
         """
         Adds set of tags and subtasks to the task when creating.
         """
@@ -141,7 +142,7 @@ class TaskSerializer(serializers.ModelSerializer):
         task.tags.set(tags_data)
         return task
 
-    def update(self, instance: Task, validated_data: dict[str: Any]) -> Task:
+    def update(self, instance: Task, validated_data: dict[str, Any]) -> Task:
         """
         Replaces set of tags and subtasks to the task with te data
         from request when updating.
@@ -151,7 +152,7 @@ class TaskSerializer(serializers.ModelSerializer):
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
-        instance.save()
+        instance.save()  # type: ignore[no-untyped-call]
 
         if tags_data is not None:
             instance.tags.set(tags_data)
@@ -172,7 +173,7 @@ class TaskSerializer(serializers.ModelSerializer):
 
         return instance
 
-    def validate(self, data: dict[str: Any]) -> dict[str: Any]:
+    def validate(self, data: dict[str, Any]) -> dict[str, Any]:
         """
         Checks slug, tags and subtasks for uniqueness
         """
@@ -239,7 +240,7 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['user']
 
-    def to_representation(self, instance: Category) -> dict[str: Any | None]:
+    def to_representation(self, instance: Category) -> dict[str, Any | None]:
         """
         Replaces the user ID with the username in the response.
         """
@@ -247,7 +248,7 @@ class CategorySerializer(serializers.ModelSerializer):
         representation['user'] = instance.user.username
         return representation
 
-    def validate(self, data: dict[str: Any]) -> dict[str: Any]:
+    def validate(self, data: dict[str, Any]) -> dict[str, Any]:
         """
         Checks slug for uniqueness
         """
@@ -300,7 +301,7 @@ class TagSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['user']
 
-    def to_representation(self, instance: Tag) -> dict[str: Any | None]:
+    def to_representation(self, instance: Tag) -> dict[str, Any | None]:
         """
         Replaces the user ID with the username in the response.
         """
@@ -352,7 +353,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('email', 'username', 'password')
         extra_kwargs = {'password': {'write_only': True}}
 
-    def create(self, validated_data: dict[str: Any]) -> User:
+    def create(self, validated_data: dict[str, Any]) -> User:
         """
         Creates and saves a user with password hashing
         """
@@ -363,12 +364,12 @@ class UserSerializer(serializers.ModelSerializer):
         )
         return user
 
-    def validate(self, data: dict[str: Any]) -> dict[str: Any]:
+    def validate(self, data: dict[str, Any]) -> Any:
         """
         Password checking
         """
         user = User(**data)
-        password = data.get('password')
+        password = data['password']
         errors = dict()
 
         try:

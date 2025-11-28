@@ -10,6 +10,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import CreateAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.serializers import BaseSerializer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.settings import api_settings
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -73,7 +74,7 @@ class TaskPagination(PageNumberPagination):
     page_size_query_param = 'size'
     max_page_size = 20
 
-    def get_paginated_response_schema(self, schema: dict[str: Any | None]) -> dict[str: Any | None]:
+    def get_paginated_response_schema(self, schema: dict[str, Any | None]) -> dict[str, Any | None]:
         """
         Replaces examples for the pagination OpenAPI schema
         """
@@ -196,7 +197,7 @@ class TaskViewSet(ModelViewSet):
                 .select_related('category')
                 .prefetch_related('tags', 'subtasks'))
 
-    def perform_create(self, serializer: TaskSerializer) -> None:
+    def perform_create(self, serializer: BaseSerializer) -> None:
         """
         Puts down the user when creating.
         """
@@ -283,7 +284,7 @@ class CategoryViewSet(ModelViewSet):
             return Category.objects.none()
         return Category.objects.for_user(self.request.user)
 
-    def perform_create(self, serializer: CategorySerializer) -> None:
+    def perform_create(self, serializer: BaseSerializer) -> None:
         """
         Puts down the user when creating.
         """
@@ -370,7 +371,7 @@ class TagViewSet(ModelViewSet):
             return Tag.objects.none()
         return Tag.objects.for_user(self.request.user)
 
-    def perform_create(self, serializer: TagSerializer) -> None:
+    def perform_create(self, serializer: BaseSerializer) -> None:
         """
         Puts down the user when creating.
         """

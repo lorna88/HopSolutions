@@ -62,8 +62,8 @@ refresh_token_schema_config = extend_schema_view(
 )
 
 # Apply schemas to views
-TokenObtainPairView = login_schema_config(TokenObtainPairView)
-TokenRefreshView = refresh_token_schema_config(TokenRefreshView)
+TokenObtainPairView = login_schema_config(TokenObtainPairView)  # type: ignore[misc]
+TokenRefreshView = refresh_token_schema_config(TokenRefreshView)  # type: ignore[misc]
 
 
 class TaskPagination(PageNumberPagination):
@@ -113,8 +113,12 @@ class TaskPagination(PageNumberPagination):
             ),
             OpenApiParameter("category", description='Filter by category name'),
             OpenApiParameter("tag", description='Filter by tag name'),
-            OpenApiParameter("ordering", type={'type': 'string'}, enum=OrderValues,
-                             description='Which field to use when ordering the results.'),
+            OpenApiParameter(
+                "ordering",
+                type={'type': 'string'},
+                enum=OrderValues,  # type: ignore[arg-type]
+                description='Which field to use when ordering the results.'
+            ),
         ],
     ),
     create=extend_schema(

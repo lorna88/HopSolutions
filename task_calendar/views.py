@@ -38,7 +38,7 @@ class MyDayView(LoginRequiredMixin, ListView):
         context['tags'] = Tag.objects.for_user(self.request.user)
         return context
 
-    def get_queryset(self) -> list[Task]:
+    def get_queryset(self) -> list[Task]:  # type: ignore[override]
         """Filter and search options implementation."""
         qs = Task.objects.for_user(self.request.user).filter(date=self.task_date)
 

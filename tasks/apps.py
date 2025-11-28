@@ -8,4 +8,4 @@ class TasksConfig(AppConfig):
 
     def ready(self) -> None:
         """Runs signals when tasks app starts"""
-        import tasks.signals
+        import tasks.signals  # noqa

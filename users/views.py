@@ -33,7 +33,7 @@ class UserCreateView(CreateView):
 class UserLoginView(LoginView):
     """Display the login form and handle the login action."""
     template_name = 'users/login.html'
-    next_page = reverse_lazy('tasks:home')
+    next_page = reverse_lazy('tasks:home')  # type: ignore[assignment]
 
     def form_valid(self, form: AuthenticationForm) -> HttpResponse:
         """Display success message if form is valid"""
@@ -53,7 +53,7 @@ class UserLoginView(LoginView):
 
 class UserLogoutView(LogoutView):
     """Log out the user and redirect him on login page."""
-    next_page = reverse_lazy('users:login')
+    next_page = reverse_lazy('users:login')  # type: ignore[assignment]
 
     def get_success_url(self) -> str:
         """Display message about having logged out of system"""

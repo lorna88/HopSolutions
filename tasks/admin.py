@@ -1,10 +1,13 @@
 from django.contrib import admin
 from django.db import models
 from django import forms
+from django.db.models import ForeignKey, ManyToManyField
+from django.forms.models import ModelChoiceField, ModelMultipleChoiceField
 from django.http import HttpRequest
 
 from subtasks.models import Subtask
 from tags.models import Tag
+from users.models import User
 from .forms import TaskDateInput
 from .models import Category, Task
 from .widgets import TagSelectMultiple
@@ -50,9 +53,9 @@ class TaskAdmin(admin.ModelAdmin):
 
     def formfield_for_foreignkey(
             self,
-            db_field: str,
+            db_field: ForeignKey,
             request: HttpRequest,
-            **kwargs) -> forms.Field:
+            **kwargs) -> ModelChoiceField | None:
         """
         Filter categories by current user.
         Used on add task form.
@@ -63,9 +66,9 @@ class TaskAdmin(admin.ModelAdmin):
 
     def formfield_for_manytomany(
             self,
-            db_field: str,
+            db_field: ManyToManyField,
             request: HttpRequest,
-            **kwargs) -> forms.Field:
+            **kwargs) -> ModelMultipleChoiceField | None:
         """
         Filter tags by current user.
         Used on add task form.
@@ -84,11 +87,12 @@ class TaskAdmin(admin.ModelAdmin):
         Fills in the user field for a new task.
         Used on add task form.
         """
-        try:
-            if not obj.user:
+        if isinstance(request.user, User):
+            try:
+                if not obj.user:
+                    obj.user = request.user
+            except AttributeError:
                 obj.user = request.user
-        except AttributeError:
-            obj.user = request.user
 
         super().save_model(request, obj, form, change)
 
@@ -110,11 +114,12 @@ class CategoryAdmin(admin.ModelAdmin):
         Fills in the user field for a new category.
         Used on add category form.
         """
-        try:
-            if not obj.user:
+        if isinstance(request.user, User):
+            try:
+                if not obj.user:
+                    obj.user = request.user
+            except AttributeError:
                 obj.user = request.user
-        except AttributeError:
-            obj.user = request.user
 
         super().save_model(request, obj, form, change)
 

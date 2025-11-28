@@ -2,6 +2,7 @@ from django import forms
 from django.contrib import admin
 from django.http import HttpRequest
 
+from users.models import User
 from .models import Tag
 
 
@@ -22,11 +23,12 @@ class TagAdmin(admin.ModelAdmin):
         Fills in the user field for a new tag.
         Used on add tag form.
         """
-        try:
-            if not obj.user:
+        if isinstance(request.user, User):
+            try:
+                if not obj.user:
+                    obj.user = request.user
+            except AttributeError:
                 obj.user = request.user
-        except AttributeError:
-            obj.user = request.user
 
         super().save_model(request, obj, form, change)
 

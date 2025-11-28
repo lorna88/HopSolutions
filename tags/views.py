@@ -22,6 +22,6 @@ class TagView(LoginRequiredMixin, View):
 
         tags = Tag.objects.for_user(request.user).filter(name__in=request.POST)
         task.tags.add(*tags)
-        task.save()
+        task.save()  # type: ignore[no-untyped-call]
 
         return redirect('tasks:task-detail', username=request.user.username, slug=task.slug)

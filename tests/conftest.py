@@ -16,7 +16,7 @@ from users.models import User
 
 
 @pytest.fixture
-def user_data() -> dict[str: Any]:
+def user_data() -> dict[str, Any]:
     """Returns data for user login and registration."""
     return {
         'email': 'user@example.com',
@@ -26,7 +26,7 @@ def user_data() -> dict[str: Any]:
 
 
 @pytest.fixture
-def other_user_data() -> dict[str: Any]:
+def other_user_data() -> dict[str, Any]:
     """Returns data for other user login and registration."""
     return {
         'email': 'other_user@example.com',
@@ -36,18 +36,18 @@ def other_user_data() -> dict[str: Any]:
 
 
 @pytest.fixture
-def create_user() -> Callable[[dict[str: Any]], User]:
+def create_user() -> Callable[[dict[str, Any]], User]:
     """Fixture for user creation."""
-    def create_user_for_data(data: dict[str: Any]) -> User:
+    def create_user_for_data(data: dict[str, Any]) -> User:
         return User.objects.create_user(**data)
 
     return create_user_for_data
 
 
 @pytest.fixture
-def login(client, create_user) -> Callable[[dict[str: Any]], User]:
+def login(client, create_user) -> Callable[[dict[str, Any]], User]:
     """Fixture for user login on site."""
-    def login_user_with_data(data: dict[str: Any]) -> User:
+    def login_user_with_data(data: dict[str, Any]) -> User:
         user = User.objects.filter(email=data['email']).first()
         if not user:
             user = create_user(data)
@@ -64,9 +64,9 @@ def api_client() -> APIClient:
 
 
 @pytest.fixture
-def token_pair() -> Callable[[User], dict[str: Any]]:
+def token_pair() -> Callable[[User], dict[str, Any]]:
     """Returns dict with access and refresh tokens for user."""
-    def get_token_pair(user: User) -> dict[str: Any]:
+    def get_token_pair(user: User) -> dict[str, Any]:
         refresh = RefreshToken.for_user(user)
         return {
             'refresh': str(refresh),
@@ -77,9 +77,9 @@ def token_pair() -> Callable[[User], dict[str: Any]]:
 
 
 @pytest.fixture
-def authenticated(api_client, create_user, token_pair) -> Callable[[dict[str: Any]], User]:
+def authenticated(api_client, create_user, token_pair) -> Callable[[dict[str, Any]], User]:
     """Fixture for API user authentication."""
-    def get_client_with_credentials(data: dict[str: Any]) -> User:
+    def get_client_with_credentials(data: dict[str, Any]) -> User:
         user = User.objects.filter(email=data['email']).first()
         if not user:
             user = create_user(data)
@@ -118,7 +118,7 @@ def in_a_week() -> datetime.date:
 
 
 @pytest.fixture
-def tasks_user_data(today, tomorrow, in_a_week) -> list[dict[str: Any]]:
+def tasks_user_data(today, tomorrow, in_a_week) -> list[dict[str, Any]]:
     """Returns data for tasks creation by user."""
     return [
         {
@@ -173,7 +173,7 @@ def tasks_user_data(today, tomorrow, in_a_week) -> list[dict[str: Any]]:
 
 
 @pytest.fixture
-def tasks_other_user_data(today, tomorrow, in_a_week) -> list[dict[str: Any]]:
+def tasks_other_user_data(today, tomorrow, in_a_week) -> list[dict[str, Any]]:
     """Returns data for tasks creation by other user."""
     return [
         {
@@ -259,7 +259,7 @@ def create_tasks(
         create_task
 ) -> None:
     """Creates tasks for two users with categories and tags."""
-    def create_tasks_for_user(user: User, tasks_data: list[dict[str: Any]]) -> None:
+    def create_tasks_for_user(user: User, tasks_data: list[dict[str, Any]]) -> None:
         categories = {category.slug: category for category in Category.objects.for_user(user)}
         tags = {tag.name: tag for tag in Tag.objects.for_user(user)}
 
@@ -283,7 +283,7 @@ def create_tasks(
 
 
 @pytest.fixture
-def task_new_with_category() -> dict[str: Any]:
+def task_new_with_category() -> dict[str, Any]:
     """Returns one task data for creation on task list view."""
     return {
         'name': 'New task',
@@ -292,7 +292,7 @@ def task_new_with_category() -> dict[str: Any]:
 
 
 @pytest.fixture
-def task_new_with_date(today) -> dict[str: Any]:
+def task_new_with_date(today) -> dict[str, Any]:
     """Returns one task data for creation on calendar view."""
     return {
         'name': 'New task',
@@ -301,7 +301,7 @@ def task_new_with_date(today) -> dict[str: Any]:
 
 
 @pytest.fixture
-def task_new_with_many_fields(today) -> dict[str: Any]:
+def task_new_with_many_fields(today) -> dict[str, Any]:
     """Returns one task data for creation in API."""
     return {
         'name': 'New task',
@@ -313,7 +313,7 @@ def task_new_with_many_fields(today) -> dict[str: Any]:
 
 
 @pytest.fixture
-def task_update(in_a_week) -> dict[str: Any]:
+def task_update(in_a_week) -> dict[str, Any]:
     """Returns one task data for updating."""
     return {
         'name': 'Completed task',
@@ -325,7 +325,7 @@ def task_update(in_a_week) -> dict[str: Any]:
 
 
 @pytest.fixture
-def task_update_tags_subtasks(in_a_week) -> dict[str: Any]:
+def task_update_tags_subtasks(in_a_week) -> dict[str, Any]:
     """Returns one task data for updating in API."""
     return {
         'name': 'Completed task',
@@ -354,6 +354,10 @@ def task_update_tags_subtasks(in_a_week) -> dict[str: Any]:
 def compare_date_asc() -> Callable[[Task, Task], bool]:
     """Fixture for comparing two tasks by date ascending."""
     def compare_tasks(task1: Task, task2: Task) -> bool:
+        if not task1.date:
+            return True
+        if not task2.date:
+            return False
         return task1.date <= task2.date
 
     return compare_tasks
@@ -363,24 +367,28 @@ def compare_date_asc() -> Callable[[Task, Task], bool]:
 def compare_date_desc() -> Callable[[Task, Task], bool]:
     """Fixture for comparing two tasks by date descending."""
     def compare_tasks(task1: Task, task2: Task) -> bool:
+        if not task2.date:
+            return True
+        if not task1.date:
+            return False
         return task1.date >= task2.date
 
     return compare_tasks
 
 
 @pytest.fixture
-def compare_objects_asc() -> Callable[[dict[str: Any], dict[str: Any], str], bool]:
+def compare_objects_asc() -> Callable[[dict[str, Any], dict[str, Any], str], bool]:
     """Fixture for comparing two dict elements by field ascending."""
-    def compare_objects(obj1: dict[str: Any], obj2: dict[str: Any], field_name: str) -> bool:
+    def compare_objects(obj1: dict[str, Any], obj2: dict[str, Any], field_name: str) -> bool:
         return obj1[field_name] <= obj2[field_name]
 
     return compare_objects
 
 
 @pytest.fixture
-def compare_objects_desc() -> Callable[[dict[str: Any], dict[str: Any], str], bool]:
+def compare_objects_desc() -> Callable[[dict[str, Any], dict[str, Any], str], bool]:
     """Fixture for comparing two dict elements by field descending."""
-    def compare_objects(obj1: dict[str: Any], obj2: dict[str: Any], field_name: str) -> bool:
+    def compare_objects(obj1: dict[str, Any], obj2: dict[str, Any], field_name: str) -> bool:
         return obj1[field_name] >= obj2[field_name]
 
     return compare_objects

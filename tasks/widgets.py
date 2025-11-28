@@ -9,10 +9,10 @@ class TagSelectMultiple(SelectMultiple):
             self,
             name: str,
             value: Any,
-            label: str,
+            label: int | str,
             selected: bool,
             index, subindex: Any = None,
-            attrs: dict[str, Any] = None
+            attrs: dict[str, Any] | None = None
     ) -> dict[str, Any]:
         """
         Overrides method to add option attribute - color - for tags. Used on task

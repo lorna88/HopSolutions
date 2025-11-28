@@ -1,14 +1,16 @@
-from typing import Any, Generator
+from typing import Any, Iterator
 
 from django import template
 from django.contrib.admin.templatetags.admin_list import result_headers, result_hidden_fields, \
     items_for_result, ResultList
 from django.contrib.admin.templatetags.base import InclusionAdminNode
+from django.contrib.admin.views.main import ChangeList
+from django.template.base import Parser, Token
 
 register = template.Library()
 
 
-def results(cl: {Any}) -> Generator[Any, Any, None]:
+def results(cl: ChangeList) -> Iterator[tuple[Any, ResultList]]:
     """
     Additionally receive an instance of the object (res) to result
     """
@@ -20,7 +22,7 @@ def results(cl: {Any}) -> Generator[Any, Any, None]:
             yield res, ResultList(None, items_for_result(cl, res, None))
 
 
-def result_list(cl: {Any}) -> dict[str, Any]:
+def result_list(cl: ChangeList) -> dict[str, Any]:
     """
     Display the headers and data list together.
     Also get URL for change object form
@@ -41,7 +43,7 @@ def result_list(cl: {Any}) -> dict[str, Any]:
 
 
 @register.tag(name='result_list_ext')
-def result_list_tag(parser, token: {Any}) -> InclusionAdminNode:
+def result_list_tag(parser: Parser, token: Token) -> InclusionAdminNode:
     return InclusionAdminNode(
         parser, token,
         func=result_list,

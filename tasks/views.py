@@ -99,8 +99,8 @@ class TaskDetailView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 
     def get_success_url(self) -> str:
         """Get the page redirect"""
-        if self.request.GET.get('next'):
-            return self.request.GET.get('next')
+        if 'next' in self.request.GET:
+            return self.request.GET['next']
         return super().get_success_url()
 
     def get_queryset(self) -> QuerySet:
@@ -115,9 +115,9 @@ class TaskCompleteView(LoginRequiredMixin, View):
         is_completed = request.POST.get("is_completed") is not None
 
         task.is_completed = is_completed
-        task.save()
-        if request.GET.get('next'):
-            return redirect(request.GET.get('next'))
+        task.save()  # type: ignore[no-untyped-call]
+        if 'next' in request.GET:
+            return redirect(request.GET['next'])
         return redirect('tasks:home')
 
 
@@ -126,6 +126,8 @@ class TaskCreateView(LoginRequiredMixin, View):
     def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         """Create a new task on form post"""
         name = request.POST.get("name")
+        if not name:
+            raise ValueError('The new task is missing a name.')
         # Name validation - slug must be unique for the user
         slug = slugify(name)
         if Task.objects.for_user(request.user).filter(slug=slug).exists():
@@ -135,8 +137,10 @@ class TaskCreateView(LoginRequiredMixin, View):
             category_pk = request.POST.get("category")
             if category_pk:
                 category = Category.objects.get(pk=category_pk)
-            else:
+            elif Category.objects.for_user(request.user).exists():
                 category = Category.objects.for_user(request.user).first()
+            else:
+                raise ValueError('No category specified for the new task.')
 
             date_object = None
             date = request.POST.get("date")
@@ -147,11 +151,12 @@ class TaskCreateView(LoginRequiredMixin, View):
                 name=name,
                 category=category,
                 date=date_object,
-                user=request.user)
+                user=request.user
+            )
             messages.success(request, f'Task created successfully: {task.name}')
 
-        if request.GET.get('next'):
-            return redirect(request.GET.get('next'))
+        if 'next' in request.GET:
+            return redirect(request.GET['next'])
         return redirect('tasks:home')
 
 
@@ -162,8 +167,8 @@ class TaskDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
 
     def get_success_url(self) -> str:
         """Get the page redirect"""
-        if self.request.GET.get('next'):
-            return self.request.GET.get('next')
+        if 'next' in self.request.GET:
+            return self.request.GET['next']
         return super().get_success_url()
 
     def get_success_message(self, cleaned_data: dict[str, Any]) -> str:
@@ -201,7 +206,7 @@ class CategoryCreateView(LoginRequiredMixin, CreateView):
         """Display error message if there are errors when filling out the form"""
         for field, error_list in form.errors.items():
             for error in error_list:
-                messages.error(self.request, error)
+                messages.error(self.request, str(error))
         return redirect('tasks:home')
 
 
@@ -235,6 +240,6 @@ class TaskRedirectView(LoginRequiredMixin, View):
     """Redirect to previous page on a task card"""
     def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         """Get URL from the query string"""
-        if request.GET.get('next'):
-            return redirect(request.GET.get('next'))
+        if 'next' in request.GET:
+            return redirect(request.GET['next'])
         return redirect('tasks:home')

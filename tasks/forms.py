@@ -1,3 +1,5 @@
+from typing import Any
+
 from django import forms
 from django.utils.text import slugify
 
@@ -12,7 +14,7 @@ class TaskDateInput(forms.DateInput):
 
 class TaskUpdateForm(forms.ModelForm):
     """A form to edit task attributes"""
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         """
         Filter categories by current user.
         Used on task card form.
@@ -41,7 +43,7 @@ class TaskUpdateForm(forms.ModelForm):
 
 class CategoryCreateForm(forms.ModelForm):
     """A form to create a new category"""
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         """
         Add user to form instance
         """
@@ -58,9 +60,9 @@ class CategoryCreateForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'InputTask', 'placeholder': 'Category name'}),
         }
 
-    def clean_name(self):
+    def clean_name(self) -> Any:
         """A slug computed by name must be unique for the user"""
-        name = self.cleaned_data.get('name')
+        name = self.cleaned_data['name']
         slug = slugify(name)
         if Category.objects.for_user(self.instance.user).filter(slug=slug).exists():
             raise forms.ValidationError(f'A category with slug "{slug}" is already exists.')

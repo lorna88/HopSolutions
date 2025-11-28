@@ -6,7 +6,7 @@ from .models import User
 
 class UserRegistrationForm(UserCreationForm):
     """A form that creates a user, with no privileges, from the given email and password."""
-    class Meta(UserCreationForm.Meta):
+    class Meta(UserCreationForm.Meta):  # type: ignore[name-defined]
         model = User
         fields = ('email', 'username', 'first_name', 'last_name', 'password1', 'password2')
 

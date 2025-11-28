@@ -28,9 +28,9 @@ class TagSelectMultiple(SelectMultiple):
             option_attrs["id"] = self.id_for_label(option_attrs["id"], index)
 
         try:
-            obj = self.choices.queryset.get(pk=value.value)
+            obj = self.choices.queryset.get(pk=value.value)  # type: ignore[attr-defined]
             option_attrs['data-color'] = obj.color
-        except self.choices.queryset.model.DoesNotExist:
+        except self.choices.queryset.model.DoesNotExist:  # type: ignore[attr-defined]
             pass
 
         return {

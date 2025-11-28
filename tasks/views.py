@@ -40,7 +40,7 @@ class TaskListView(LoginRequiredMixin, ListView):
 
         return context
 
-    def get_queryset(self) -> list[Category]:
+    def get_queryset(self) -> list[Category]:  # type: ignore[override]
         """Filter, search and sort options implementation."""
         qs = Category.objects.for_user(self.request.user)
         qs_tasks = Task.objects.for_user(self.request.user)
@@ -138,7 +138,9 @@ class TaskCreateView(LoginRequiredMixin, View):
             if category_pk:
                 category = Category.objects.get(pk=category_pk)
             elif Category.objects.for_user(request.user).exists():
-                category = Category.objects.for_user(request.user).first()
+                category = (
+                    Category.objects.for_user(request.user).first()  # type: ignore[assignment]
+                )
             else:
                 raise ValueError('No category specified for the new task.')
 
@@ -147,7 +149,7 @@ class TaskCreateView(LoginRequiredMixin, View):
             if date:
                 date_object = datetime.strptime(date, "%b %d, %Y").date()
 
-            task = Task.objects.create(
+            task = Task.objects.create(  # type: ignore[misc]
                 name=name,
                 category=category,
                 date=date_object,

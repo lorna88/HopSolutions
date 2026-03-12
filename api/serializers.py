@@ -11,6 +11,7 @@ from subtasks.models import Subtask
 from tags.models import Tag
 from tasks.managers import ForUserManager
 from tasks.models import Task, Category
+from tasks.services import task_create, task_update
 from users.models import User
 
 
@@ -132,14 +133,7 @@ class TaskSerializer(serializers.ModelSerializer):
         """
         Adds set of tags and subtasks to the task when creating.
         """
-        subtasks_data = validated_data.pop('subtasks', [])
-        tags_data = validated_data.pop('tags', [])
-
-        task = Task.objects.create(**validated_data)
-
-        for subtask_data in subtasks_data:
-            Subtask.objects.create(task=task, user=task.user, **subtask_data)
-        task.tags.set(tags_data)
+        task = task_create(**validated_data)
         return task
 
     def update(self, instance: Task, validated_data: dict[str, Any]) -> Task:
@@ -147,31 +141,8 @@ class TaskSerializer(serializers.ModelSerializer):
         Replaces set of tags and subtasks to the task with te data
         from request when updating.
         """
-        tags_data = validated_data.pop('tags', None)
-        subtasks_data = validated_data.pop('subtasks', None)
-
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()  # type: ignore[no-untyped-call]
-
-        if tags_data is not None:
-            instance.tags.set(tags_data)
-
-        if subtasks_data is not None:
-            instance_subtasks = {sub.name: sub for sub in instance.subtasks.all()}
-
-            for subtask in subtasks_data:
-                subtask_name = subtask["name"]
-                if subtask_name not in instance_subtasks.keys():
-                    instance.subtasks.create(task=instance, user=instance.user, **subtask)
-                else:
-                    instance_subtasks.pop(subtask_name)
-                    Subtask.objects.filter(name=subtask_name).update(**subtask)
-
-            for subtask in instance_subtasks.values():
-                subtask.delete()
-
-        return instance
+        task = task_update(instance, **validated_data)
+        return task
 
     def validate(self, data: dict[str, Any]) -> dict[str, Any]:
         """

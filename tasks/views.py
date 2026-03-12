@@ -1,21 +1,20 @@
-from datetime import datetime
 from typing import Any
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db.models import Q, Prefetch, QuerySet, Count
+from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.utils.text import slugify
 from django.views import View
 from django.views.generic import ListView, UpdateView, CreateView, DeleteView
 
-from config.settings import TASKS_QUERY_MAP
 from tags.models import Tag
 from .forms import TaskUpdateForm, CategoryCreateForm
 from .models import Task, Category
+from .selectors import get_categories
+from .services import task_complete, task_create, NonUniqueTaskSlugError, task_delete_completed
 
 
 class TaskListView(LoginRequiredMixin, ListView):
@@ -42,42 +41,11 @@ class TaskListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self) -> list[Category]:  # type: ignore[override]
         """Filter, search and sort options implementation."""
-        qs = Category.objects.for_user(self.request.user)
-        qs_tasks = Task.objects.for_user(self.request.user)
-
-        # filter by category
-        categories = self.request.GET.get('categories', None)
-        if categories:
-            qs = qs.filter(slug__in=categories.split(','))
-
-        # filter by tag
-        tags = self.request.GET.get('tags', None)
-        if tags:
-            qs = qs.annotate(
-                tasks_count=Count(
-                    'tasks',
-                    filter=Q(tasks__tags__name__in=tags.split(','))
-                )
-            ).filter(tasks_count__gt=0)
-            qs_tasks = qs_tasks.filter(tags__name__in=tags.split(',')).distinct()
-
-        # search
-        to_search = self.request.GET.get('q', None)
-        if to_search:
-            qs = qs.filter(
-                Q(tasks__name__icontains=to_search) | Q(tasks__description__icontains=to_search)
-            ).distinct()
-            qs_tasks = qs_tasks.filter(
-                Q(name__icontains=to_search) | Q(description__icontains=to_search)
-            )
-
-        # sort
-        qs_key = self.request.GET.get('sort', 'date_asc')
-        # qs = qs.order_by(TASKS_QUERY_MAP[qs_key])
-        qs_tasks = qs_tasks.order_by(TASKS_QUERY_MAP[qs_key])
-
-        qs = qs.prefetch_related(Prefetch('tasks', queryset=qs_tasks))
-        return list(qs)
+        return list(get_categories(user=self.request.user,
+                                   categories=self.request.GET.get('categories', None),
+                                   tags=self.request.GET.get('tags', None),
+                                   to_search=self.request.GET.get('q', None),
+                                   sort_key=self.request.GET.get('sort', 'date_asc')))
 
 
 class TaskDetailView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
@@ -111,11 +79,11 @@ class TaskCompleteView(LoginRequiredMixin, View):
     """Make a task completed or active"""
     def post(self, request: HttpRequest, pk: int, *args, **kwargs) -> HttpResponse:
         """Update task status on form post"""
-        task = get_object_or_404(Task, pk=pk)
-        is_completed = request.POST.get("is_completed") is not None
+        task_complete(
+            pk=pk,
+            is_completed=request.POST.get("is_completed") is not None
+        )
 
-        task.is_completed = is_completed
-        task.save()  # type: ignore[no-untyped-call]
         if 'next' in request.GET:
             return redirect(request.GET['next'])
         return redirect('tasks:home')
@@ -125,37 +93,17 @@ class TaskCreateView(LoginRequiredMixin, View):
     """Create a new task"""
     def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         """Create a new task on form post"""
-        name = request.POST.get("name")
-        if not name:
-            raise ValueError('The new task is missing a name.')
-        # Name validation - slug must be unique for the user
-        slug = slugify(name)
-        if Task.objects.for_user(request.user).filter(slug=slug).exists():
-            messages.error(request, f'A task with slug "{slug}" is already exists.')
-
-        else:
-            category_pk = request.POST.get("category")
-            if category_pk:
-                category = Category.objects.get(pk=category_pk)
-            elif Category.objects.for_user(request.user).exists():
-                category = (
-                    Category.objects.for_user(request.user).first()  # type: ignore[assignment]
-                )
-            else:
-                raise ValueError('No category specified for the new task.')
-
-            date_object = None
-            date = request.POST.get("date")
-            if date:
-                date_object = datetime.strptime(date, "%b %d, %Y").date()
-
-            task = Task.objects.create(  # type: ignore[misc]
-                name=name,
-                category=category,
-                date=date_object,
-                user=request.user
+        try:
+            task = task_create(
+                validate=True,
+                user=request.user,
+                name=request.POST.get("name"),
+                category=request.POST.get("category"),
+                date=request.POST.get("date")
             )
             messages.success(request, f'Task created successfully: {task.name}')
+        except NonUniqueTaskSlugError as e:
+            messages.error(request, e.message)
 
         if 'next' in request.GET:
             return redirect(request.GET['next'])
@@ -226,11 +174,7 @@ class DeleteCompletedView(LoginRequiredMixin, View):
     """Delete all completed tasks"""
     def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         """Process a menu link in a GET request"""
-        tasks = Task.objects.for_user(request.user).filter(is_completed=True)
-        total_count = tasks.count()
-        for task in tasks:
-            task.delete()
-
+        total_count = task_delete_completed(user=request.user)
         if total_count > 0:
             messages.success(request, f'{total_count} completed tasks were deleted')
         else:

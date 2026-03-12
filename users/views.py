@@ -11,6 +11,7 @@ from django.views.generic import CreateView, TemplateView, UpdateView
 
 from .forms import UserRegistrationForm, UserUpdateForm, ForgotPasswordForm
 from .models import User
+from .services import get_user_name
 
 
 class UserCreateView(CreateView):
@@ -37,12 +38,8 @@ class UserLoginView(LoginView):
 
     def form_valid(self, form: AuthenticationForm) -> HttpResponse:
         """Display success message if form is valid"""
-        user = form.get_user()
-        if user.first_name:
-            username = user.first_name
-        else:
-            username = user.username
-        messages.success(self.request, f'Welcome, {username}!')
+        name = get_user_name(user=form.get_user())
+        messages.success(self.request, f'Welcome, {name}!')
         return super().form_valid(form)
 
     def form_invalid(self, form: AuthenticationForm) -> HttpResponse:

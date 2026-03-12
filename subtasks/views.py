@@ -1,11 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect
 from django.views import View
 
-from subtasks.models import Subtask
-from tasks.models import Task
+from subtasks.services import subtask_complete, subtask_create, NonUniqueSubtaskNameError, subtask_delete
+from tasks.services import get_task_by_user_and_slug
 
 
 class SubtaskCompleteView(LoginRequiredMixin, View):
@@ -17,11 +17,11 @@ class SubtaskCompleteView(LoginRequiredMixin, View):
             subtask_id: int,
             *args, **kwargs) -> HttpResponse:
         """Update subtask status on form post"""
-        subtask = get_object_or_404(Subtask, id=subtask_id)
-        is_completed = request.POST.get("is_completed") is not None
+        subtask_complete(
+            subtask_id=subtask_id,
+            is_completed=request.POST.get("is_completed") is not None
+        )
 
-        subtask.is_completed = is_completed
-        subtask.save()  # type: ignore[no-untyped-call]
         return redirect('tasks:task-detail', username=request.user.username, slug=task_slug)
 
 
@@ -29,15 +29,14 @@ class SubtaskCreateView(LoginRequiredMixin, View):
     """Create a new subtask"""
     def post(self, request: HttpRequest, task_slug: str, *args, **kwargs) -> HttpResponse:
         """Create a new task on form post"""
-        name = request.POST.get("name")
-        if not name:
-            raise ValueError('The new subtask is missing a name.')
-        task = get_object_or_404(Task.objects.for_user(request.user), slug=task_slug)
-        # Name validation - name must be unique for the task
-        if Subtask.objects.filter(task=task, name=name).exists():
-            messages.error(request, 'Name must be unique for each subtask!')
-        else:
-            Subtask.objects.create(name=name, task=task)
+        try:
+            subtask_create(
+                name=request.POST.get("name"),
+                task=get_task_by_user_and_slug(user=request.user, slug=task_slug)
+            )
+        except NonUniqueSubtaskNameError as e:
+            messages.error(request, e.message)
+
         return redirect('tasks:task-detail', username=request.user.username, slug=task_slug)
 
 
@@ -50,6 +49,5 @@ class SubtaskDeleteView(LoginRequiredMixin, View):
             subtask_id: int,
             *args, **kwargs) -> HttpResponse:
         """Delete the subtask on form post"""
-        subtask = get_object_or_404(Subtask, id=subtask_id)
-        subtask.delete()
+        subtask_delete(pk=subtask_id)
         return redirect('tasks:task-detail', username=request.user.username, slug=task_slug)

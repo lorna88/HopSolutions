@@ -186,6 +186,6 @@ class TaskRedirectView(LoginRequiredMixin, View):
     """Redirect to previous page on a task card"""
     def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         """Get URL from the query string"""
-        if 'next' in request.GET:
+        if request.GET.get('next'):
             return redirect(request.GET['next'])
         return redirect('tasks:home')

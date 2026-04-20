@@ -277,7 +277,13 @@ Authorization: Bearer secret.access.token
 
 Запуск тестов:
 ```bash
-pytest
+docker compose run backend pytest
+```
+
+Запуск линтеров:
+```bash
+flake8
+mypy .
 ```
 
 Запуск линтеров:

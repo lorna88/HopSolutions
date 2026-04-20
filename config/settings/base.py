@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 EMAIL_HOST = os.getenv('EMAIL_HOST')
@@ -15,7 +15,7 @@ EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL') == 'True'
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
-DEBUG = True
+DEBUG = False
 ALLOWED_HOSTS = []  # type: ignore[var-annotated]
 AUTH_USER_MODEL = 'users.User'
 

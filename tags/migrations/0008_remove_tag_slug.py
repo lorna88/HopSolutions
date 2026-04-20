@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tags', '0007_remove_tag_tasks'),
+        ('tags', '0002_initial'),
     ]
 
     operations = [

@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('subtasks', '0003_alter_subtask_slug'),
+        ('subtasks', '0003_initial'),
     ]
 
     operations = [

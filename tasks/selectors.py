@@ -1,9 +1,9 @@
 from datetime import datetime
 
+from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.db.models import Count, Q, Prefetch, QuerySet
 
-from config.settings import TASKS_QUERY_MAP
 from tasks.models import Category, Task
 from users.models import User
 
@@ -40,7 +40,7 @@ def get_tasks(*,
 
     # sort
     if sort_key:
-        qs = qs.order_by(TASKS_QUERY_MAP[sort_key])
+        qs = qs.order_by(settings.TASKS_QUERY_MAP[sort_key])
 
     return qs
 

@@ -1,4 +1,3 @@
-from curses.ascii import isdigit
 from datetime import datetime
 
 from django.contrib.auth.models import AnonymousUser
@@ -80,12 +79,8 @@ def task_create(validate=False, **fields) -> Task:
 
     category = fields.get('category')
     if category:
-        if not isinstance(category, Category):
-            # noinspection PyTypeChecker
-            if isdigit(category):
+            if isinstance(category, int) or isinstance(category, str):
                 category = Category.objects.get(pk=category)
-            elif isinstance(category, str):
-                category = Category.objects.get(user=user, slug=category)
     elif Category.objects.for_user(user).exists():
         category = (
             Category.objects.for_user(user).first()  # type: ignore[assignment]
@@ -154,7 +149,8 @@ def task_delete_completed(*, user: User | AnonymousUser) -> int:
     Deletes all completed tasks. Returns the number of tasks deleted.
     """
     tasks = Task.objects.for_user(user).filter(is_completed=True)
-    deleted_count, _ = tasks.delete()
+    _, deleted_objects = tasks.delete()
+    deleted_count = deleted_objects.get('tasks.Task', 0)
     return deleted_count
 
 

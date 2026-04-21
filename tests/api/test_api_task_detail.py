@@ -28,8 +28,8 @@ def test_api_task_create(api_client, authenticated, create_tasks, user_data,
     assert task.category.slug == task_data['category']
     assert task.date == task_data['date']
     assert {tag.name for tag in task.tags.all()} == set(task_data['tags'])
-    assert ({subtask.name for subtask in task.subtasks.all()} ==
-            set(task_new_with_many_fields['subtasks']))
+    assert ({subtask.name for subtask in task.subtasks.all()}
+            == set(task_new_with_many_fields['subtasks']))
 
 
 @pytest.mark.django_db

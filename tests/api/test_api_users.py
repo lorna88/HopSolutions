@@ -27,11 +27,11 @@ def test_api_user_registration_success(api_client, user_data):
     [
         ({'email': 'user.example.com'}, {'email': ['Enter a valid email address.']}),
         (
-                {'username': 'user.'},
-                {'username': [
-                    'Enter a valid username. This value may contain only latin letters, \
+            {'username': 'user.'},
+            {'username': [
+                'Enter a valid username. This value may contain only latin letters, \
 numbers, and -/_ characters.'
-                ]}),
+            ]}),
         ({'password': 'password'}, {'password': ['This password is too common.']}),
     ],
 )

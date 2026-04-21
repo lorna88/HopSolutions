@@ -1,2 +1,14 @@
 [flake8]
+ignore = F405, W503
+
+exclude =
+    .venv,
+    venv,
+    .env,
+    .env.local,
+    .env.example,
+    .git,
+    __pycache__,
+    migrations
+
 max-line-length = 100

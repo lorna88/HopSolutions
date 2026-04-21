@@ -79,8 +79,8 @@ def task_create(validate=False, **fields) -> Task:
 
     category = fields.get('category')
     if category:
-            if isinstance(category, int) or isinstance(category, str):
-                category = Category.objects.get(pk=category)
+        if isinstance(category, int) or isinstance(category, str):
+            category = Category.objects.get(pk=category)
     elif Category.objects.for_user(user).exists():
         category = (
             Category.objects.for_user(user).first()  # type: ignore[assignment]

@@ -4,7 +4,8 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.views import View
 
-from subtasks.services import subtask_complete, subtask_create, NonUniqueSubtaskNameError, subtask_delete
+from subtasks.services import subtask_complete, subtask_create, NonUniqueSubtaskNameError, \
+    subtask_delete
 from tasks.services import get_task_by_user_and_slug
 
 

@@ -7,6 +7,7 @@ from django.db.models import Count, Q, Prefetch, QuerySet
 from tasks.models import Category, Task
 from users.models import User
 
+
 def get_tasks(*,
               user: User | AnonymousUser,
               date: datetime.date = None,
@@ -43,6 +44,7 @@ def get_tasks(*,
         qs = qs.order_by(settings.TASKS_QUERY_MAP[sort_key])
 
     return qs
+
 
 def get_categories(*,
                    user: User | AnonymousUser,

@@ -21,4 +21,4 @@ def create_range(value: int, start_index: int = 1) -> range:
     """
     Creates a range of numbers from 1 to value
     """
-    return range(start_index, value+1)
+    return range(start_index, value + 1)

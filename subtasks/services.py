@@ -25,6 +25,7 @@ def subtask_complete(*, subtask_id: int, is_completed: bool) -> None:
     subtask.is_completed = is_completed
     subtask.save()  # type: ignore[no-untyped-call]
 
+
 def subtask_create(*, name: str, task: Task) -> Subtask:
     """
     Creates the subtask with specified name for the task.
@@ -39,6 +40,7 @@ def subtask_create(*, name: str, task: Task) -> Subtask:
 
     subtask = Subtask.objects.create(name=name, task=task)
     return subtask
+
 
 def subtask_delete(*, pk: int) -> None:
     """

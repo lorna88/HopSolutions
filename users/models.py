@@ -25,11 +25,11 @@ class User(AbstractUser):
     )
 
     phone = models.CharField(max_length=20, null=True, blank=True, validators=[
-            RegexValidator(
-                r'^\+?1?\d{9,15}$',
-                'Enter a valid phone number please.'
-            )
-        ])
+        RegexValidator(
+            r'^\+?1?\d{9,15}$',
+            'Enter a valid phone number please.'
+        )
+    ])
 
     # image = models.ImageField(upload_to='profile_images',
     #                           null=True,

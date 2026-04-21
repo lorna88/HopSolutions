@@ -5,7 +5,6 @@ from django.db.models import QuerySet
 from users.models import User
 
 
-
 class ForUserManager(models.Manager):
     """Manager what automatically filter selecting data by current user."""
 

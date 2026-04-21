@@ -40,3 +40,5 @@ jobs:
       run: |
         poetry run flake8 .
         poetry run pytest
+      env:
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
